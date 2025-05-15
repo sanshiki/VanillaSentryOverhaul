@@ -1,0 +1,15 @@
+Buffs: {
+	ExampleSimpleMinionBuff: {
+		DisplayName: Example Simple Minion Buff
+		Description: Mods.SummonerExpansionMod.Buffs.ExampleSimpleMinionBuff.Description
+	}
+}
+
+Items: {
+	ExampleSimpleMinionItem: {
+		DisplayName: Example Simple Minion Item
+		Tooltip: ""
+	}
+}
+
+Projectiles.ExampleSimpleMinion.DisplayName: Example Simple Minion

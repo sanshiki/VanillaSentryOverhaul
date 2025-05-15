@@ -1,0 +1,3 @@
+displayName = SummonerExpansion
+author = Sanshiki
+version = 0.1
