@@ -6,8 +6,8 @@ Buffs: {
 }
 
 Items: {
-	ExampleSimpleMinionItem: {
-		DisplayName: Example Simple Minion Item
+	ExampleSimpleMinionStaff: {
+		DisplayName: Example Simple Minion Staff
 		Tooltip: ""
 	}
 }
