@@ -3,6 +3,11 @@ Buffs: {
 		DisplayName: Example Simple Minion Buff
 		Description: Mods.SummonerExpansionMod.Buffs.ExampleSimpleMinionBuff.Description
 	}
+
+	BabySlimeOverrideBuff: {
+		DisplayName: Baby Slime Override Buff
+		Description: Mods.SummonerExpansionMod.Buffs.BabySlimeOverrideBuff.Description
+	}
 }
 
 Items: {
@@ -12,4 +17,7 @@ Items: {
 	}
 }
 
-Projectiles.ExampleSimpleMinion.DisplayName: Example Simple Minion
+Projectiles: {
+	ExampleSimpleMinion.DisplayName: Example Simple Minion
+	BabySlimeOverride.DisplayName: Baby Slime Override
+}
