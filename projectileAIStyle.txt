@@ -1,0 +1,74 @@
+0 - Straight Fire
+1 - Arrow A
+2 - Throwing Item
+3 - Boomerang
+4 - Nettle Burst
+5 - Star
+6 - Powder
+7 - Grappling Hook
+8 - Cursed Flames
+9 - Magic Missile
+10 - Dirt Block
+11 - Shadow Orb
+12 - Water Stream
+13 - Harpoon Gun
+14 - Spiky Ball
+15 - Flail
+16 - Bomb
+17 - Tomb
+18 - Demon Sycthe
+19 - Lance
+20 - Chainsaw
+21 - Note
+22 - Ice Block
+23 - Flames
+24 - Crystal Storm
+25 - Boulder
+26 - Bunny
+27 - Demon Trident
+28 - Ice Bolt
+29 - Amethyst Bolt
+30 - Mushroom
+31 - Pure Spray
+32 - Beach Ball
+33 - Flare
+34 - Rocket
+35 - Rope
+36 - Bee
+37 - Spear
+38 - Stationary Flame Turret
+39 - Mechanical Pirahna
+40 - Leaf
+41 - Flower Petal
+42 - Crystal Leaf A
+43 - Crystal Leaf B
+44 - Spore Cloud
+45 - Rain Cloud
+46 - Rainbow
+47 - Magnet Sphere
+48 - Heat Ray
+49 - Explosive Bunny
+50 - Inferno
+51 - Lost Soul
+52 - Spirit Heal
+53 - Frost Hydra
+54 - Raven
+55 - Flaming Jack
+56 - Flaming Scythe
+57 - North Pole
+58 - Present
+59 - Spectre Wrath
+60 - Water Gun
+61 - Bobber
+62 - Hornet
+63 - Baby Spider
+64 - Sharknado A
+65 - Sharknado B
+66 - Retamini
+67 - One Eyed Pirate
+68 - Molotov Cocktail
+69 - Flairon
+70 - Flairon Bubble
+71 - Typhoon
+72 - Bubble
+73 - Firework Fountain
