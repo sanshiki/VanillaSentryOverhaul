@@ -10,7 +10,7 @@ using SummonerExpansionMod.Content.Buffs.Summon;
 
 namespace SummonerExpansionMod.Content.Items.Weapons.Summon
 {
-    public class ExampleSimpleMinionStaff : ModItem
+    public class SentryPlatformStaff : ModItem
     {
         public override void SetStaticDefaults()
         {
@@ -22,7 +22,7 @@ namespace SummonerExpansionMod.Content.Items.Weapons.Summon
 
         public override void SetDefaults()
         {
-            Item.damage = 300;
+            Item.damage = 0;
             Item.knockBack = 3f;
             Item.mana = 10; // mana cost
             Item.width = 32;
@@ -37,9 +37,9 @@ namespace SummonerExpansionMod.Content.Items.Weapons.Summon
             // These below are needed for a minion weapon
             Item.noMelee = true; // this item doesn't do any melee damage
             Item.DamageType = DamageClass.Summon; // Makes the damage register as summon. If your item does not have any damage type, it becomes true damage (which means that damage scalars will not affect it). Be sure to have a damage type
-            Item.buffType = ModContent.BuffType<ExampleSimpleMinionBuff>();
+            Item.buffType = ModContent.BuffType<SentryPlatformBuff>();
             // No buffTime because otherwise the item tooltip would say something like "1 minute duration"
-            Item.shoot = ModContent.ProjectileType<ExampleSimpleMinion>(); // This item creates the minion projectile
+            Item.shoot = ModContent.ProjectileType<SentryPlatform>(); // This item creates the minion projectile
             // Item.shoot = ModContent.ProjectileType<BabySlimeOverride>();
         }
 

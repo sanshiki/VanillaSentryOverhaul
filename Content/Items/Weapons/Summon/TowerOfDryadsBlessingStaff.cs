@@ -10,7 +10,7 @@ using SummonerExpansionMod.Content.Buffs.Summon;
 
 namespace SummonerExpansionMod.Content.Items.Weapons.Summon
 {
-    public class ExampleSimpleMinionStaff : ModItem
+    public class TowerOfDryadsBlessingStaff : ModItem
     {
         public override void SetStaticDefaults()
         {
@@ -22,7 +22,7 @@ namespace SummonerExpansionMod.Content.Items.Weapons.Summon
 
         public override void SetDefaults()
         {
-            Item.damage = 300;
+            Item.damage = 0;
             Item.knockBack = 3f;
             Item.mana = 10; // mana cost
             Item.width = 32;
@@ -37,9 +37,9 @@ namespace SummonerExpansionMod.Content.Items.Weapons.Summon
             // These below are needed for a minion weapon
             Item.noMelee = true; // this item doesn't do any melee damage
             Item.DamageType = DamageClass.Summon; // Makes the damage register as summon. If your item does not have any damage type, it becomes true damage (which means that damage scalars will not affect it). Be sure to have a damage type
-            Item.buffType = ModContent.BuffType<ExampleSimpleMinionBuff>();
+            // Item.buffType = ModContent.BuffType<TowerOfDryadsBlessingBuff>();
             // No buffTime because otherwise the item tooltip would say something like "1 minute duration"
-            Item.shoot = ModContent.ProjectileType<ExampleSimpleMinion>(); // This item creates the minion projectile
+            Item.shoot = ModContent.ProjectileType<TowerOfDryadsBlessing>(); // This item creates the minion projectile
             // Item.shoot = ModContent.ProjectileType<BabySlimeOverride>();
         }
 
@@ -52,11 +52,13 @@ namespace SummonerExpansionMod.Content.Items.Weapons.Summon
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
             // This is needed so the buff that keeps your minion alive and allows you to despawn it properly applies
-            player.AddBuff(Item.buffType, 2);
+            // player.AddBuff(Item.buffType, 2);
 
             // Minions have to be spawned manually, then have originalDamage assigned to the damage of the summon item
             var projectile = Projectile.NewProjectileDirect(source, position, velocity, type, damage, knockback, Main.myPlayer);
             projectile.originalDamage = Item.damage;
+
+            player.UpdateMaxTurrets();
 
             // Since we spawned the projectile manually already, we do not need the game to spawn it for ourselves anymore, so return false
             return false;
