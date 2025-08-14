@@ -21,15 +21,17 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 		private const int TOTAL_FRAMES = 6;
 		
 		// 移动相关常量
-		private const float BASE_MOVE_SPEED = 8f;
+		private const float BASE_MOVE_SPEED = 6f;
 		private const float FLYING_SPEED = 10f;
 		private const float JUMP_SPEED = 8f;
 		private const float BASE_INERTIA = 20f;
 		private const float GRAVITY = 0.4f;
 		private const float MAX_FALL_SPEED = 10f;
+		private const int STUCK_TIME_THRESHOLD = 10;
 		
 		// 距离相关常量
-		private const float FLYING_TRIGGER_DISTANCE = 320f;
+		private const float FLYING_TRIGGER_DISTANCE = 360f;
+		private const float FLYING_TRIGGER_DISTANCE_WHEN_HAS_TARGET = 1700f;
 		private const float FLYING_RETURN_DISTANCE = 200f;
 		private const float STABLE_TRIGGER_DISTANCE = 0.5f;
 		private const float STABLE_SPEED_THRESHOLD = 2f;
@@ -73,6 +75,9 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 		{
 			// 克隆原版史莱姆宝宝的默认设置
 			Projectile.CloneDefaults(ProjectileID.BabySlime);
+
+			Projectile.width = 24; // 35
+			Projectile.height = 26;
 			
 			// 使用自定义AI
 			Projectile.aiStyle = -1;
@@ -91,7 +96,24 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 		public override bool OnTileCollide(Vector2 oldVelocity)
 		{
 			_isOnGround = true;
-			return false;
+			return true;
+		}
+
+		private bool CheckActive(Player owner, int buffType)
+		{
+			if (owner.dead || !owner.active)
+			{
+				owner.ClearBuff(buffType);
+
+				return false;
+			}
+
+			if (owner.HasBuff(buffType))
+			{
+				Projectile.timeLeft = 2;
+			}
+
+			return true;
 		}
 
 		public override void AI()
@@ -108,7 +130,8 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 
 			Player owner = Main.player[Projectile.owner];
 
-			if (!MinionAIHelper.IsActive(owner, ModContent.BuffType<BabySlimeOverrideBuff>()))
+			if (!CheckActive(owner, BuffID.BabySlime))
+			// if (!CheckActive(owner, ModContent.BuffType<BabySlimeOverrideBuff>()))
 			{
 				return;
 			}
@@ -135,7 +158,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 				IsOnGround = _isOnGround,
 				LastHorizontalDistance = _lastHorizontalDistance,
 				HasTarget = targetResult.FoundTarget,
-				TargetCenter = targetResult.TargetCenter
+				TargetCenter = targetResult.TargetCenter,
 			};
 
 			// 更新状态机
@@ -235,6 +258,8 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 		/// </summary>
 		public class BabySlimeStateMachine : StateMachine<BabySlimeState, BabySlimeContext>
 		{
+			private int _stuckTime = 0;
+
 			#region Constructor
 			public BabySlimeStateMachine() : base(BabySlimeState.Moving)
 			{
@@ -282,11 +307,14 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 						return shouldTransition;
 					});
 
-				// 移动 -> 飞行：当距离玩家过远时
+				// 移动 -> 飞行：当距离玩家过远时;如果当前有攻击目标，则该距离适当增加
 				AddTransition(BabySlimeState.Moving, BabySlimeState.Flying,
 					context => 
 					{
-						bool shouldTransition = context.DistanceToIdle > FLYING_TRIGGER_DISTANCE;
+						bool shouldTransitionNormal = context.DistanceToIdle > FLYING_TRIGGER_DISTANCE && !context.HasTarget;
+						bool shouldTransitionHasTarget = context.DistanceToIdle > FLYING_TRIGGER_DISTANCE_WHEN_HAS_TARGET && context.HasTarget;
+						bool shouldTransitionStuck = _stuckTime > STUCK_TIME_THRESHOLD;
+						bool shouldTransition = shouldTransitionNormal || shouldTransitionHasTarget || shouldTransitionStuck;
 						if (DEBUG_MODE && shouldTransition)
 						{
 							Main.NewText($"Transition: Moving -> Flying (Distance to idle: {context.DistanceToIdle:F2} > {FLYING_TRIGGER_DISTANCE})", Color.Orange);
@@ -364,7 +392,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 			private void OnUpdateMoving(BabySlimeContext context)
 			{
 				Vector2 direction = context.MovementDirection;
-				direction.Normalize();
+				float dir_sign = Math.Sign(direction.X);
 
 				// 根据距离调整移动参数
 				float moveSpeed = BASE_MOVE_SPEED;
@@ -376,17 +404,18 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 				}
 				else if (context.HorizontalDistance <= 80f && context.HorizontalDistance > 50f)
 				{
-					moveSpeed = 7f;
+					moveSpeed = 4.0f;
 					inertia = 30f;
 				}
 				else if (context.HorizontalDistance <= 50f)
 				{
-					moveSpeed = Math.Max(context.HorizontalDistance / 5f, 0.5f);
+					float control_speed = context.HorizontalDistance / 15f;
+					moveSpeed = Math.Max(Math.Min(control_speed, 4.0f), 0.5f);
 					inertia = 6f;
 				}
 
 				// 应用水平移动
-				float targetSpeedX = direction.X * moveSpeed;
+				float targetSpeedX = moveSpeed * dir_sign;
 				MinionAIHelper.ApplySmoothHorizontalMovement(context.Projectile, targetSpeedX, inertia);
 
 				// 处理跳跃
@@ -398,6 +427,11 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 					{
 						Main.NewText("Jump triggered", Color.Yellow);
 					}
+					_stuckTime++;
+				}
+				else
+				{
+					_stuckTime = 0;
 				}
 
 				// 应用重力
