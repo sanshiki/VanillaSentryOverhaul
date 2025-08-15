@@ -12,7 +12,7 @@ namespace SummonerExpansionMod.Utils
 	{
 		#region Constants
 		// 默认距离常量
-		public const float DEFAULT_TELEPORT_DISTANCE = 2000f;
+		public const float DEFAULT_TELEPORT_DISTANCE = 2500f;
 		public const float DEFAULT_TARGET_SEARCH_RANGE = 700f;
 		public const float DEFAULT_MAX_TARGET_DISTANCE = 2000f;
 		public const float DEFAULT_CLOSE_THROUGH_WALL_DISTANCE = 100f;
@@ -132,15 +132,14 @@ namespace SummonerExpansionMod.Utils
 		/// <param name="projectile">召唤物</param>
 		/// <param name="searchRange">搜索范围</param>
 		/// <param name="maxDistance">最大目标距离</param>
-		/// <param name="closeThroughWallDistance">穿墙近距离</param>
 		/// <returns>搜索结果</returns>
-		public static TargetSearchResult SearchForTargets(Player owner, Projectile projectile, 
+		public static TargetSearchResult SearchForTargets(Player owner, Projectile minion, 
 			float searchRange = DEFAULT_TARGET_SEARCH_RANGE, 
-			float maxDistance = DEFAULT_MAX_TARGET_DISTANCE,
-			float closeThroughWallDistance = DEFAULT_CLOSE_THROUGH_WALL_DISTANCE)
+			bool checkCanHit = true,
+			Func<NPC, bool> otherCondition = null)
 		{
 			float distanceFromTarget = searchRange;
-			Vector2 targetCenter = projectile.position;
+			Vector2 targetCenter = minion.position;
 			bool foundTarget = false;
 			NPC targetNPC = null;
 
@@ -148,9 +147,9 @@ namespace SummonerExpansionMod.Utils
 			if (owner.HasMinionAttackTargetNPC)
 			{
 				NPC npc = Main.npc[owner.MinionAttackTargetNPC];
-				float distance = Vector2.Distance(npc.Center, projectile.Center);
+				float distance = Vector2.Distance(npc.Center, minion.Center);
 
-				if (distance < maxDistance)
+				if (distance < searchRange)
 				{
 					distanceFromTarget = distance;
 					targetCenter = npc.Center;
@@ -164,16 +163,13 @@ namespace SummonerExpansionMod.Utils
 			{
 				foreach (var npc in Main.ActiveNPCs)
 				{
-					if (npc.CanBeChasedBy())
+					bool canBeChased = npc.CanBeChasedBy(minion);
+					bool canHit = checkCanHit ? Collision.CanHitLine(minion.position, minion.width, minion.height, 
+																  npc.position, npc.width, npc.height) : true;
+					if (canBeChased && canHit && (otherCondition == null || otherCondition(npc)))
 					{
-						float distance = Vector2.Distance(npc.Center, projectile.Center);
-						bool isClosest = Vector2.Distance(projectile.Center, targetCenter) > distance;
-						bool inRange = distance < distanceFromTarget;
-						bool hasLineOfSight = Collision.CanHitLine(projectile.position, projectile.width, projectile.height, 
-																  npc.position, npc.width, npc.height);
-						bool isCloseThroughWall = distance < closeThroughWallDistance;
-
-						if (((isClosest && inRange) || !foundTarget) && (hasLineOfSight || isCloseThroughWall))
+						float distance = Vector2.Distance(npc.Center, minion.Center);
+						if (distance < distanceFromTarget)
 						{
 							distanceFromTarget = distance;
 							targetCenter = npc.Center;
@@ -286,28 +282,6 @@ namespace SummonerExpansionMod.Utils
 		#endregion
 
 		#region Utility Methods
-		/// <summary>
-		/// 检查召唤物是否应该保持活跃状态
-		/// </summary>
-		/// <param name="owner">召唤物主人</param>
-		/// <param name="buffType">关联的Buff类型</param>
-		/// <returns>是否应该保持活跃</returns>
-		public static bool IsActive(Player owner, int buffType)
-		{
-			if (owner.dead || !owner.active)
-			{
-				owner.ClearBuff(buffType);
-				return false;
-			}
-            return true;
-
-			// if (owner.HasBuff(buffType))
-			// {
-			// 	return true;
-			// }
-
-			// return false;
-		}
 
 		/// <summary>
 		/// 计算两点之间的距离

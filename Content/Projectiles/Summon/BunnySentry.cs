@@ -8,6 +8,7 @@ using Terraria.ModLoader;
 using Terraria.Audio;
 
 using SummonerExpansionMod.Content.Buffs.Summon;
+using SummonerExpansionMod.Utils;
 
 namespace SummonerExpansionMod.Content.Projectiles.Summon
 {
@@ -59,7 +60,12 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             }
 
             // Targeting
-            NPC target = FindTarget(600f); // Range: 600 pixels
+            NPC target = MinionAIHelper.SearchForTargets(
+                    owner, 
+                    Projectile, 
+                    600f, 
+                    true, 
+                    null).TargetNPC;
 
             if (target != null)
             {
@@ -108,27 +114,27 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             UpdateAnimation(target, shootTimer);
         }
 
-        private NPC FindTarget(float range)
-        {
-            NPC closest = null;
-            float closestDist = range;
+        // private NPC FindTarget(float range)
+        // {
+        //     NPC closest = null;
+        //     float closestDist = range;
 
-            for (int i = 0; i < Main.maxNPCs; i++)
-            {
-                NPC npc = Main.npc[i];
-                if (npc.CanBeChasedBy(this) && Collision.CanHit(Projectile.Center, 1, 1, npc.Center, 1, 1))
-                {
-                    float distance = Vector2.Distance(Projectile.Center, npc.Center);
-                    if (distance < closestDist)
-                    {
-                        closestDist = distance;
-                        closest = npc;
-                    }
-                }
-            }
+        //     for (int i = 0; i < Main.maxNPCs; i++)
+        //     {
+        //         NPC npc = Main.npc[i];
+        //         if (npc.CanBeChasedBy(this) && Collision.CanHit(Projectile.Center, 1, 1, npc.Center, 1, 1))
+        //         {
+        //             float distance = Vector2.Distance(Projectile.Center, npc.Center);
+        //             if (distance < closestDist)
+        //             {
+        //                 closestDist = distance;
+        //                 closest = npc;
+        //             }
+        //         }
+        //     }
 
-            return closest;
-        }
+        //     return closest;
+        // }
 
         private void UpdateAnimation(NPC target, int shootTimer)
         {

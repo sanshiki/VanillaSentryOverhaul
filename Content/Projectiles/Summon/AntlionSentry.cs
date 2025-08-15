@@ -8,6 +8,7 @@ using Terraria.ModLoader;
 using Terraria.Audio;
 
 using SummonerExpansionMod.Content.Buffs.Summon;
+using SummonerExpansionMod.Utils;
 
 namespace SummonerExpansionMod.Content.Projectiles.Summon
 {
@@ -31,6 +32,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         public static float MaxGravity = 20f;
         private const float BULLET_SPEED_Y = 25f;
         private const float BULLET_GRAVITY = 1.0f;
+        private const float MAX_LEGAL_HEIGHT = BULLET_SPEED_Y * BULLET_SPEED_Y / (2 * BULLET_GRAVITY)*0.8f;
 
         public override void SetStaticDefaults()
         {
@@ -67,7 +69,12 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             }
 
             // Targeting
-            NPC target = FindTarget(600f); // Range: 600 pixels
+            NPC target = MinionAIHelper.SearchForTargets(
+                owner, 
+                Projectile, 
+                600f, 
+                false, 
+                n => n.Center.Y < Projectile.Center.Y + MAX_LEGAL_HEIGHT).TargetNPC;
 
             if (target != null)
             {
@@ -143,40 +150,40 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             UpdateAnimation(target, shootTimer);
         }
 
-        private NPC FindTarget(float range)
-        {
-            NPC closest = null;
-            float closestDist = range;
+        // private NPC FindTarget(float range)
+        // {
+        //     NPC closest = null;
+        //     float closestDist = range;
 
-            for (int i = 0; i < Main.maxNPCs; i++)
-            {
-                NPC npc = Main.npc[i];
-                if (npc.CanBeChasedBy(this)/*  && Collision.CanHit(Projectile.Center, 1, 1, npc.Center, 1, 1) */)
-                {
-                    float distance = Vector2.Distance(Projectile.Center, npc.Center);
-                    // check if the target is legal
-                    float MaxHeight = BULLET_SPEED_Y * BULLET_SPEED_Y / (2 * BULLET_GRAVITY)*0.8f;
-                    if(npc.Center.Y > Projectile.Center.Y + MaxHeight)
-                    {
-                        continue;
-                    }
-                    if (distance < closestDist)
-                    {
-                        closestDist = distance;
-                        closest = npc;
-                    }
-                }
-            }
+        //     for (int i = 0; i < Main.maxNPCs; i++)
+        //     {
+        //         NPC npc = Main.npc[i];
+        //         if (npc.CanBeChasedBy(this)/*  && Collision.CanHit(Projectile.Center, 1, 1, npc.Center, 1, 1) */)
+        //         {
+        //             float distance = Vector2.Distance(Projectile.Center, npc.Center);
+        //             // check if the target is legal
+        //             float MaxHeight = BULLET_SPEED_Y * BULLET_SPEED_Y / (2 * BULLET_GRAVITY)*0.8f;
+        //             if(npc.Center.Y > Projectile.Center.Y + MaxHeight)
+        //             {
+        //                 continue;
+        //             }
+        //             if (distance < closestDist)
+        //             {
+        //                 closestDist = distance;
+        //                 closest = npc;
+        //             }
+        //         }
+        //     }
 
-            // check if the target is legal
-            // float MaxHeight = BULLET_SPEED_Y * BULLET_SPEED_Y / (2 * Gravity);
-            // if(closest.Center.Y > Projectile.Center.Y + MaxHeight)
-            // {
-            //     return null;
-            // }
+        //     // check if the target is legal
+        //     // float MaxHeight = BULLET_SPEED_Y * BULLET_SPEED_Y / (2 * Gravity);
+        //     // if(closest.Center.Y > Projectile.Center.Y + MaxHeight)
+        //     // {
+        //     //     return null;
+        //     // }
 
-            return closest;
-        }
+        //     return closest;
+        // }
 
         private void UpdateAnimation(NPC target, int shootTimer)
         {

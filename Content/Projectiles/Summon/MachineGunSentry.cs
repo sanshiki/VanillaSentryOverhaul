@@ -8,6 +8,7 @@ using Terraria.ModLoader;
 using Terraria.Audio;
 
 using SummonerExpansionMod.Content.Buffs.Summon;
+using SummonerExpansionMod.Utils;
 
 namespace SummonerExpansionMod.Content.Projectiles.Summon
 {
@@ -27,6 +28,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         private const float PRED_BULLET_SPEED = 20f;
         private const float ACC_FACTOR = 0.05f;
         private const int FRAME_COUNT = 36;
+        private const float MAX_RANGE = 1500f;
 
         private const int SHOOT_INTERVAL = 10;
         private const int SPAWN_TIME = 2*26;
@@ -83,7 +85,13 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             }
 
             // Targeting
-            NPC target = FindTarget(1500f); // Range: 1500 pixels
+            // NPC target = FindTarget(1500f); // Range: 1500 pixels
+            NPC target = MinionAIHelper.SearchForTargets(
+                owner, 
+                Projectile, 
+                MAX_RANGE, 
+                true, 
+                null).TargetNPC;
 
             if (target != null && spawnTimer > SPAWN_TIME)
             {

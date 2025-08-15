@@ -8,6 +8,7 @@ using Terraria.ModLoader;
 using Terraria.Audio;
 
 using SummonerExpansionMod.Content.Buffs.Summon;
+using SummonerExpansionMod.Utils;
 
 namespace SummonerExpansionMod.Content.Projectiles.Summon
 {
@@ -40,7 +41,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         private const int INTERVAL_BETWEEN_ROCKETS = 20;
         private const int ROCKET_NUM = 2;
         private const int SPAWN_TIME = 2*26;
-
+        private const float MAX_RANGE = 1500f;
         // gravity
         public static float Gravity = 0.5f;
         public static float MaxGravity = 20f;
@@ -88,7 +89,13 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             }
 
             // Targeting
-            NPC target = FindTarget(1500f); // Range: 1500 pixels
+            // NPC target = FindTarget(1500f); // Range: 1500 pixels
+            NPC target = MinionAIHelper.SearchForTargets(
+                owner, 
+                Projectile, 
+                MAX_RANGE, 
+                true, 
+                null).TargetNPC;
 
             if (target != null && spawnTimer > SPAWN_TIME)
             {

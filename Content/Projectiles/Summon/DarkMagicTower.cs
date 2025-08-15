@@ -8,6 +8,7 @@ using Terraria.ModLoader;
 using Terraria.Audio;
 
 using SummonerExpansionMod.Content.Buffs.Summon;
+using SummonerExpansionMod.Utils;
 
 namespace SummonerExpansionMod.Content.Projectiles.Summon
 {
@@ -67,7 +68,13 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             }
 
             // find target and fire, as well as cooldown control
-            NPC target = FindTarget();
+            // NPC target = FindTarget();
+            NPC target = MinionAIHelper.SearchForTargets(
+                owner, 
+                Projectile, 
+                1000f, 
+                true, 
+                null).TargetNPC;
             if (target != null && fireTimer >= fireInterval)
             {
                 FireAt(target);
