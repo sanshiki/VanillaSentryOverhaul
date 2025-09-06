@@ -8,6 +8,26 @@ Buffs: {
 		DisplayName: Baby Slime Override Buff
 		Description: Mods.SummonerExpansionMod.Buffs.BabySlimeOverrideBuff.Description
 	}
+
+	SentryPlatformBuff: {
+		DisplayName: Sentry Platform Buff
+		Description: Mods.SummonerExpansionMod.Buffs.SentryPlatformBuff.Description
+	}
+
+	SentryEnhancementBuff: {
+		DisplayName: Sentry Enhancement Buff
+		Description: Mods.SummonerExpansionMod.Buffs.SentryEnhancementBuff.Description
+	}
+
+	SentryRecallBuff: {
+		DisplayName: Sentry Recall Buff
+		Description: Mods.SummonerExpansionMod.Buffs.SentryRecallBuff.Description
+	}
+
+	SentryTargetBuff: {
+		DisplayName: Sentry Target Buff
+		Description: Mods.SummonerExpansionMod.Buffs.SentryTargetBuff.Description
+	}
 }
 
 Items: {
@@ -15,9 +35,84 @@ Items: {
 		DisplayName: Example Simple Minion Staff
 		Tooltip: ""
 	}
+
+	SentryPlatformStaff: {
+		DisplayName: Sentry Platform Staff
+		Tooltip: ""
+	}
+
+	DarkMagicTowerStaff: {
+		DisplayName: Dark Magic Tower Staff
+		Tooltip: ""
+	}
+
+	BunnySentryStaff: {
+		DisplayName: Bunny Sentry Staff
+		Tooltip: ""
+	}
+
+	MachineGunSentryStaff: {
+		DisplayName: Machine Gun Sentry Staff
+		Tooltip: ""
+	}
+
+	RocketSentryStaff: {
+		DisplayName: Rocket Sentry Staff
+		Tooltip: ""
+	}
+
+	AntlionSentryStaff: {
+		DisplayName: Antlion Sentry Staff
+		Tooltip: ""
+	}
+
+	TowerOfDryadsBlessingStaff: {
+		DisplayName: Tower Of Dryads Blessing Staff
+		Tooltip: ""
+	}
+
+	FlagWeapon: {
+		DisplayName: Flag Weapon
+		Tooltip: ""
+	}
+
+	FlagPoleWeapon: {
+		DisplayName: Flag Pole Weapon
+		Tooltip: ""
+	}
+
+	HoneyCombSentryStaff: {
+		DisplayName: Honey Comb Sentry Staff
+		Tooltip: ""
+	}
+
+	MechEyeballTurretStaff: {
+		DisplayName: Mech Eyeball Turret Staff
+		Tooltip: ""
+	}
 }
 
 Projectiles: {
 	ExampleSimpleMinion.DisplayName: Example Simple Minion
 	BabySlimeOverride.DisplayName: Baby Slime Override
+	SentryPlatform.DisplayName: Sentry Platform
+	DarkMagicTower.DisplayName: Dark Magic Tower
+	BunnySentry.DisplayName: Bunny Sentry
+	MachineGunSentry.DisplayName: Machine Gun Sentry
+	RocketSentry.DisplayName: Rocket Sentry
+	AntlionSentry.DisplayName: Antlion Sentry
+	AntlionSentryBullet.DisplayName: Antlion Sentry Bullet
+	TowerOfDryadsBlessing.DisplayName: Tower Of Dryads Blessing
+	TowerOfDryadsBlessingProjectile.DisplayName: Tower Of Dryads Blessing Projectile
+	MachineGunSentryBullet.DisplayName: Machine Gun Sentry Bullet
+	FlagWeaponProjectile.DisplayName: Flag Weapon Projectile
+	FlagPole.DisplayName: Flag Pole
+	FlagProjectile.DisplayName: Flag Projectile
+	FlagWeaponProjectileV1.DisplayName: Flag Weapon Projectile V1
+	HoneyCombSentry.DisplayName: Honey Comb Sentry
+	HoneyCombSentryBullet.DisplayName: Honey Comb Sentry Bullet
+	DarkMagicTowerBullet.DisplayName: Dark Magic Tower Bullet
+	MechEyeballTurret.DisplayName: Mech Eyeball Turret
 }
+
+NPCs.CursorTargetDummy.DisplayName: Cursor Target Dummy
