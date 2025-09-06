@@ -11,6 +11,7 @@ using Microsoft.Xna.Framework.Graphics;
 using SummonerExpansionMod.Content.Buffs.Summon;
 using SummonerExpansionMod.Utils;
 using SummonerExpansionMod.Initialization;
+using Terraria.Audio;
 
 namespace SummonerExpansionMod.Content.Projectiles.Summon
 {
@@ -39,6 +40,8 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 
         public void SetDefaults(Projectile projectile)
         {
+            projectile.width = 26;
+            projectile.height = 54;
             projectile.aiStyle = -1;
             projectile.timeLeft = Projectile.SentryLifeTime;
             projectile.ignoreWater = true;
@@ -129,14 +132,6 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
     }
     public class BallistaTowerT1Override : BallistaSentryOverride
     {
-
-        public void SetDefaults(Projectile projectile)
-        {
-            base.SetDefaults(projectile);
-            projectile.width = 26;
-            projectile.height = 54;
-        }
-
         public override bool PreAI(Projectile projectile)
         {
             // apply gravity
@@ -169,6 +164,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                 if(shootTimer == 0)
                 {
                     TimerDuringShoot = 0;
+                    SoundEngine.PlaySound(SoundID.DD2_BallistaTowerShot, projectile.Center);
                 }
                 
             }
@@ -260,6 +256,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                 if(shootTimer == 0)
                 {
                     TimerDuringShoot = 0;
+                    SoundEngine.PlaySound(SoundID.DD2_BallistaTowerShot, projectile.Center);
                 }
             }
 
@@ -348,7 +345,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             // shooting
             if(target != null)
             {
-                Main.NewText("Target speed: " + target.velocity.Length());
+                // Main.NewText("Target speed: " + target.velocity.Length());
                 // calculate target direction
                 Vector2 TargetPredictedPos = MinionAIHelper.PredictTargetPosition(projectile, target, PRED_BULLET_SPEED);
                 TargetPredictedDirection = TargetPredictedPos - projectile.Center;
@@ -363,6 +360,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                 if(shootTimer == 0)
                 {
                     TimerDuringShoot = 0;
+                    SoundEngine.PlaySound(SoundID.DD2_BallistaTowerShot, projectile.Center);
                 }
             }
 
