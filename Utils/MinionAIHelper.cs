@@ -2,7 +2,9 @@ using Microsoft.Xna.Framework;
 using System;
 using Terraria;
 using Terraria.ModLoader;
-
+using SummonerExpansionMod.Content.Buffs.Summon;
+using Microsoft.Xna.Framework.Graphics;
+using Terraria.GameContent;
 namespace SummonerExpansionMod.Utils
 {
 	/// <summary>
@@ -148,8 +150,11 @@ namespace SummonerExpansionMod.Utils
 			{
 				NPC npc = Main.npc[owner.MinionAttackTargetNPC];
 				float distance = Vector2.Distance(npc.Center, minion.Center);
+				bool canBeChased = npc.CanBeChasedBy(minion);
+				bool canHit = checkCanHit ? Collision.CanHitLine(minion.position, minion.width, minion.height, 
+																  npc.position, npc.width, npc.height) : true;
 
-				if (distance < searchRange)
+				if (distance < searchRange && canHit && canBeChased && (otherCondition == null || otherCondition(npc)))
 				{
 					distanceFromTarget = distance;
 					targetCenter = npc.Center;
@@ -169,13 +174,17 @@ namespace SummonerExpansionMod.Utils
 					if (canBeChased && canHit && (otherCondition == null || otherCondition(npc)))
 					{
 						float distance = Vector2.Distance(npc.Center, minion.Center);
-						if (distance < distanceFromTarget)
+						// bool hasSentryTargetTag = npc.HasBuff(ModBuffID.SentryTarget);
+						bool hasSentryTargetTag = false;	// temporarily disabled
+						if (distance < distanceFromTarget || hasSentryTargetTag)
 						{
 							distanceFromTarget = distance;
 							targetCenter = npc.Center;
 							foundTarget = true;
 							targetNPC = npc;
 						}
+
+						if (hasSentryTargetTag) break;
 					}
 				}
 			}
@@ -281,6 +290,94 @@ namespace SummonerExpansionMod.Utils
 		}
 		#endregion
 
+		#region Prediction Methods
+		/// <summary>
+		/// 预测目标位置
+		/// </summary>
+		/// <param name="projectile">发射物</param>
+		/// <param name="target">目标</param>
+		/// <param name="bulletSpeed">子弹速度</param>
+		/// <param name="accelerationFactor">加速度因子</param>
+		/// <param name="maxPredictionTicks">最大预测帧数</param>
+		/// <param name="tickStep">预测步长</param>
+		/// <returns>预测位置</returns>
+		public static Vector2 PredictTargetPosition(Projectile projectile, NPC target, float bulletSpeed, int maxPredictionTicks = 60, int tickStep = 3)
+		{
+			Vector2 predictedPos = target.Center;
+			
+			for (int tick = 0; tick < maxPredictionTicks; tick += tickStep)
+			{
+				Vector2 targetPredictedPos = target.Center + target.velocity * tick;
+				predictedPos = targetPredictedPos;
+
+				float bulletFlyTime = Vector2.Distance(projectile.Center, targetPredictedPos) / bulletSpeed;
+
+				if (bulletFlyTime < tick)
+				{
+					break;
+				}
+			}
+
+			return predictedPos;
+		}
+
+		public static Vector2 PredictTargetPosition(Vector2 projectileCenter, Vector2 targetCenter, Vector2 targetVelocity, float bulletSpeed, int maxPredictionTicks = 60, int tickStep = 3)
+		{
+			Vector2 predictedPos = targetCenter;
+			
+			for (int tick = 0; tick < maxPredictionTicks; tick += tickStep)
+			{
+				Vector2 targetPredictedPos = targetCenter + targetVelocity * tick;
+				predictedPos = targetPredictedPos;
+
+				float bulletFlyTime = Vector2.Distance(projectileCenter, targetPredictedPos) / bulletSpeed;
+
+				if (bulletFlyTime < tick)
+				{
+					break;
+				}
+			}
+
+			return predictedPos;
+		}
+
+		/// <summary>
+		/// 预测目标位置（带加速度计算）
+		/// </summary>
+		/// <param name="projectile">发射物</param>
+		/// <param name="target">目标</param>
+		/// <param name="bulletSpeed">子弹速度</param>
+		/// <param name="lastVelocity">上一帧速度</param>
+		/// <param name="accelerationFactor">加速度因子</param>
+		/// <param name="maxPredictionTicks">最大预测帧数</param>
+		/// <param name="tickStep">预测步长</param>
+		/// <returns>预测位置和当前速度</returns>
+		public static (Vector2 PredictedPosition, Vector2 CurrentVelocity) PredictTargetPositionWithAcceleration(
+			Projectile projectile, NPC target, float bulletSpeed, Vector2 lastVelocity, 
+			float accelerationFactor = 0.05f, int maxPredictionTicks = 60, int tickStep = 3)
+		{
+			Vector2 predictedPos = target.Center;
+			Vector2 acceleration = (target.velocity - lastVelocity) * accelerationFactor;
+			Vector2 currentVelocity = target.velocity;
+
+			for (int tick = 0; tick < maxPredictionTicks; tick += tickStep)
+			{
+				Vector2 targetPredictedPos = target.Center + target.velocity * tick + 
+					0.5f * acceleration * tick * tick;
+				predictedPos = targetPredictedPos;
+
+				float bulletFlyTime = Vector2.Distance(projectile.Center, targetPredictedPos) / bulletSpeed;
+
+				if (bulletFlyTime < tick)
+				{
+					break;
+				}
+			}
+
+			return (predictedPos, currentVelocity);
+		}
+		#endregion
+
 		#region Utility Methods
 
 		/// <summary>
@@ -304,6 +401,94 @@ namespace SummonerExpansionMod.Utils
 		{
 			return Math.Abs(point1.X - point2.X);
 		}
+		#endregion
+
+		#region Texture Methods
+		/// <summary>
+		/// 绘制纹理
+		/// </summary>
+		/// <param name="projectile">召唤物</param>
+		/// <param name="texture">纹理</param>
+		/// <param name="worldPos">世界坐标（屏幕坐标，屏幕左上角为原点），由本地坐标使用ConvertToWorldPos转换得到</param>
+		/// <param name="rect">矩形（贴图坐标，贴图左上角为原点）</param>
+		/// <param name="color">颜色</param>
+		/// <param name="origin">原点（碰撞箱坐标，碰撞箱中心为原点）</param>
+		/// <param name="rotation">旋转角度</param>
+		public static void DrawPart(Projectile projectile, Texture2D texture, Vector2 worldPos, Rectangle rect, Color color,float rotation, Vector2 origin)
+        {
+            Main.spriteBatch.Draw(
+                texture,
+                worldPos,
+                rect,
+                color,
+                rotation,
+                origin,
+                projectile.scale,
+                projectile.spriteDirection == 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally,
+                0f
+            );
+        }
+
+		/// <summary>
+		/// 转换为世界坐标
+		/// </summary>
+		/// <param name="projectile">召唤物</param>
+		/// <param name="localPos">本地坐标（碰撞箱坐标，碰撞箱左上角为原点）</param>
+		/// <returns>世界坐标（屏幕坐标，屏幕左上角为原点）</returns>
+		public static Vector2 ConvertToWorldPos(Projectile projectile, Vector2 localPos)
+        {
+            return projectile.Center + localPos.RotatedBy(projectile.rotation) - Main.screenPosition;
+        }
+
+		public static Vector2 CenterMapping(Vector2 center, Vector2 offset, float rotation)
+		{
+			return center + offset.RotatedBy(rotation);
+		}
+
+		/// <summary>
+		/// 计算裁剪矩形
+		/// </summary>
+		/// <param name="rect">矩形</param>
+		/// <param name="pos">位置</param>
+		/// <param name="origin">原点</param>
+		/// <param name="threshold_y">阈值，映射后的Y坐标低于这个阈值的矩形部分需要裁剪</param>
+		public static Rectangle CalculateClipRect(Rectangle rect, Vector2 pos, Vector2 origin,float threshold_x = -1f, float threshold_y = -1f)
+		{
+			// float Vertex_Y1 = pos.Y - origin.Y;
+			// float Vertex_Y2 = pos.Y + rect.Height - origin.Y;
+			Vector2 Vertex_1 = pos - origin;
+			Vector2 Vertex_2 = pos - origin + new Vector2(rect.Width, rect.Height);
+			int clip_width = rect.Width;
+			int clip_height = rect.Height;
+			if(threshold_x > -1f && Vertex_2.X > threshold_x)
+			{
+				clip_width = (int)(threshold_x - Vertex_1.X);
+				if(clip_width > rect.Width)
+				{
+					clip_width = rect.Width;
+				}
+				else if (clip_width < 0)
+				{
+					clip_width = 0;
+				}
+			}
+			if(threshold_y > -1f && Vertex_2.Y > threshold_y)
+			{
+				clip_height = (int)(threshold_y - Vertex_1.Y);
+				if(clip_height > rect.Height)
+				{
+					clip_height = rect.Height;
+				}
+				else if (clip_height < 0)
+				{
+					clip_height = 0;
+				}
+			}
+			Rectangle clip_rect = new Rectangle(rect.X, rect.Y, clip_width, clip_height);
+			return clip_rect;
+		}
+
+
 		#endregion
 	}
 } 
