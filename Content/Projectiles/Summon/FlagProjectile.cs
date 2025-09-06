@@ -10,6 +10,8 @@ using Terraria.GameContent;
 
 using Microsoft.Xna.Framework.Graphics;
 using SummonerExpansionMod.Content.Items.Weapons.Summon;
+using SummonerExpansionMod.Initialization;
+
 
 namespace SummonerExpansionMod.Content.Projectiles.Summon
 {
@@ -23,6 +25,10 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         private const float FAST_WAVE_SPEED_FACTOR = 1.5f;
 
         private const int WAVE_SLICE_WIDTH = 4;
+
+        private const string TEXTURE_PATH = ModGlobal.MOD_TEXTURE_PATH + "Projectiles/FlagProjectile";
+
+        public override string Texture => TEXTURE_PATH;
 
         // private variables
         private int FixedDirection = 1;
@@ -85,7 +91,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         public override bool PreDraw(ref Color lightColor)
         {
             Player player = Main.player[Projectile.owner];
-            Texture2D flagTexture = ModContent.Request<Texture2D>("SummonerExpansionMod/Content/Projectiles/Summon/FlagProjectile").Value;
+            Texture2D flagTexture = ModContent.Request<Texture2D>(TEXTURE_PATH).Value;
             int width = flagTexture.Width;
             int height = flagTexture.Height;
             Vector2 origin = new Vector2(width / 2 * Projectile.spriteDirection, height / 2);

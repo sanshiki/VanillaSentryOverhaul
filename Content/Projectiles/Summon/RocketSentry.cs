@@ -6,17 +6,26 @@ using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Audio;
+using Microsoft.Xna.Framework.Graphics;
 
 using SummonerExpansionMod.Content.Buffs.Summon;
 using SummonerExpansionMod.Utils;
+using SummonerExpansionMod.Initialization;
 
 namespace SummonerExpansionMod.Content.Projectiles.Summon
 {
-    public class RocketSentry : ModProjectile
+    public class RocketSentry : SentryWithSpawnAnime
     {
         // timers
         private int shootTimer;
         private int spawnTimer;
+
+        // textures
+        private const string BASE_TEXTURE_PATH = ModGlobal.MOD_TEXTURE_PATH + "Projectiles/RocketSentryV2Base";
+        private const string GUN_TEXTURE_PATH = ModGlobal.MOD_TEXTURE_PATH + "Projectiles/RocketSentryV2Gun";
+        private const string FRONT_BOARD_TEXTURE_PATH = ModGlobal.MOD_TEXTURE_PATH + "Projectiles/SentryFrontBoard";
+        private const string BACK_BOARD_TEXTURE_PATH = ModGlobal.MOD_TEXTURE_PATH + "Projectiles/SentryBackBoard";
+        public override string Texture => BASE_TEXTURE_PATH;
 
         // sentry state
         private bool onGround;
@@ -24,8 +33,8 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         private int rocketCount = 0;
 
         // sentry parameters
-        private const float REAL_BULLET_SPEED = 15f;
-        private const float PRED_BULLET_SPEED = 22f;
+        private const float REAL_BULLET_SPEED = 25f;
+        private const float PRED_BULLET_SPEED = 25f;
 
         // buff constants
         private const float ENHANCEMENT_FACTOR = 0.75f;
@@ -37,17 +46,17 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         private const int SHOOT_FRAME_SPEED = 5;
 
         // private const int SHOOT_INTERVAL = 6;
-        private const int TOTAL_SHOOT_INTERVAL = 60;
-        private const int INTERVAL_BETWEEN_ROCKETS = 20;
+        private const int TOTAL_SHOOT_INTERVAL = 120;
+        private const int INTERVAL_BETWEEN_ROCKETS = 30;
         private const int ROCKET_NUM = 2;
         private const int SPAWN_TIME = 2*26;
         private const float MAX_RANGE = 1500f;
         // gravity
-        public static float Gravity = 0.5f;
+        public static float Gravity = ModGlobal.SENTRY_GRAVITY;
         public static float MaxGravity = 20f;
 
         // direction
-        private Vector2 direction = Vector2.Zero;
+        private Vector2 direction = new Vector2(0, -1);
 
         public override void SetStaticDefaults()
         {
@@ -58,8 +67,8 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 
         public override void SetDefaults()
         {
-            Projectile.width = 36;
-            Projectile.height = 53;
+            Projectile.width = 50;
+            Projectile.height = 52;
             Projectile.friendly = false;
             Projectile.ignoreWater = true;
             Projectile.tileCollide = true;
@@ -67,6 +76,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             Projectile.sentry = true;
             Projectile.aiStyle = -1;
             Projectile.timeLeft = Projectile.SentryLifeTime;
+            Projectile.DamageType = DamageClass.Summon;
             
             BUFF_ID = ModBuffID.SentryEnhancement;
         }
@@ -115,20 +125,22 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 
                 if(USE_PREDICTION)
                 {
-                    for(int tick = 0; tick < 60; tick+=3)
-                    {
-                        Vector2 TargetPredictedPos = target.Center + target.velocity * tick;
-                        PredictedPos = TargetPredictedPos;
+                    // for(int tick = 0; tick < 60; tick+=3)
+                    // {
+                    //     Vector2 TargetPredictedPos = target.Center + target.velocity * tick;
+                    //     PredictedPos = TargetPredictedPos;
 
-                        float bulletFlyTime = Vector2.Distance(Projectile.Center, TargetPredictedPos) / PRED_BULLET_SPEED;
+                    //     float bulletFlyTime = Vector2.Distance(Projectile.Center, TargetPredictedPos) / PRED_BULLET_SPEED;
 
-                        if (bulletFlyTime < tick)
-                        {
-                            // Main.NewText("bulletFlyTime: " + bulletFlyTime + " tick: " + tick);
-                            break;
-                        }
+                    //     if (bulletFlyTime < tick)
+                    //     {
+                    //         // Main.NewText("bulletFlyTime: " + bulletFlyTime + " tick: " + tick);
+                    //         break;
+                    //     }
 
-                    }
+                    // }
+                    PredictedPos = MinionAIHelper.PredictTargetPosition(
+                        Projectile, target, PRED_BULLET_SPEED);
                 }
                 direction = PredictedPos - Projectile.Center;
                 direction.Normalize();
@@ -143,7 +155,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 
                     Vector2 bulletOffset = new Vector2(15f, -5f) + direction * 27f;
 
-                    Projectile.NewProjectile(
+                    Projectile rocket = Projectile.NewProjectileDirect(
                         Projectile.GetSource_FromAI(),
                         Projectile.Center + bulletOffset,
                         bulletVelocity,
@@ -151,6 +163,15 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                         Projectile.damage,
                         0,
                         Projectile.owner);
+
+
+                    rocket.DamageType = DamageClass.Summon;
+                    rocket.hostile = false;
+                    rocket.friendly = true;
+                    rocket.usesLocalNPCImmunity = true;
+                    // rocket.usesIDStaticNPCImmunity = true;
+                    rocket.localNPCHitCooldown = 20;
+                    // Main.NewText("Damage: " + Projectile.damage + "Rocket Damage: " + rocket.damage);
 
                     rocketCount++;
 
@@ -176,30 +197,10 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             }
 
             // Animation
-            UpdateAnimation(target);
+            // UpdateAnimation(target);
+            Projectile.spriteDirection = direction.X > 0 ? 1 : -1;
         }
 
-        private NPC FindTarget(float range)
-        {
-            NPC closest = null;
-            float closestDist = range;
-
-            for (int i = 0; i < Main.maxNPCs; i++)
-            {
-                NPC npc = Main.npc[i];
-                if (npc.CanBeChasedBy(this) && Collision.CanHit(Projectile.Center, 1, 1, npc.Center, 1, 1))
-                {
-                    float distance = Vector2.Distance(Projectile.Center, npc.Center);
-                    if (distance < closestDist)
-                    {
-                        closestDist = distance;
-                        closest = npc;
-                    }
-                }
-            }
-
-            return closest;
-        }
 
         private void UpdateAnimation(NPC target)
         {
@@ -246,6 +247,95 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             // Main.NewText("frame: " + Projectile.frame + " spawnTimer: " + spawnTimer);
         }
 
+        public override bool PreDraw(ref Color lightColor)
+        {
+            Texture2D BaseTexture = ModContent.Request<Texture2D>(BASE_TEXTURE_PATH).Value;
+            Texture2D GunTexture = ModContent.Request<Texture2D>(GUN_TEXTURE_PATH).Value;
+            Texture2D FrontBoardTexture = ModContent.Request<Texture2D>(FRONT_BOARD_TEXTURE_PATH).Value;
+            Texture2D BackBoardTexture = ModContent.Request<Texture2D>(BACK_BOARD_TEXTURE_PATH).Value;
+
+            float SpawnProcess = (float)Math.Min((float)spawnTimer / SPAWN_TIME * 2, 1.0f);
+            float GunAdjustProcess = (float)Math.Min(Math.Max((float)(spawnTimer - SPAWN_TIME/2) / SPAWN_TIME * 2, 0.0f), 1.0f);
+            float SpawnStartY = (BaseTexture.Height + 22f) * (1 - SpawnProcess);
+
+            if (spawnTimer >= SPAWN_TIME / 2 && spawnTimer < SPAWN_TIME)
+            {
+                // (0, -1) -> (-1, 0)
+                float ang = GunAdjustProcess * ModGlobal.PI_FLOAT / 2;
+                direction = new Vector2(-(float)Math.Sin(ang), -(float)Math.Cos(ang));
+                direction.Normalize();
+            }
+
+            // always draw base
+            Vector2 BaseWorldPos = MinionAIHelper.ConvertToWorldPos(Projectile, new Vector2(0, 0));
+            Vector2 BaseOrigin = new Vector2(BaseTexture.Width / 2, BaseTexture.Height / 2);
+            float ClipThreshold = BaseWorldPos.Y + 21f;
+            MinionAIHelper.DrawPart(
+                Projectile,
+                BaseTexture,
+                BaseWorldPos,
+                new Rectangle(0, 0, BaseTexture.Width, BaseTexture.Height),
+                lightColor,
+                Projectile.rotation,
+                BaseOrigin
+            );
+
+            // draw back board
+            float BackBoardWorldY = SpawnStartY;
+            Vector2 BackBoardWorldPos = MinionAIHelper.ConvertToWorldPos(Projectile, new Vector2(0, BackBoardWorldY)); // 1 3
+            Vector2 BackBoardOrigin = new Vector2(BackBoardTexture.Width / 2, BackBoardTexture.Height / 2);
+            Rectangle BackBoardRect = MinionAIHelper.CalculateClipRect(new Rectangle(0, 0, BackBoardTexture.Width, BackBoardTexture.Height), BackBoardWorldPos, BackBoardOrigin, -1f, ClipThreshold);
+            // Main.NewText("BackBoardRect:" + BackBoardRect + " WorldPos:" + BackBoardWorldPos + " Origin:" + BackBoardOrigin + " ClipThreshold:" + ClipThreshold);
+            MinionAIHelper.DrawPart(
+                Projectile,
+                BackBoardTexture,
+                BackBoardWorldPos,
+                BackBoardRect,
+                lightColor,
+                Projectile.rotation,
+                BackBoardOrigin
+            );
+
+            // draw gun
+            float GunWorldY = SpawnStartY-10f;
+            Vector2 GunWorldPos = MinionAIHelper.ConvertToWorldPos(Projectile, new Vector2(0f, GunWorldY));
+            Vector2 GunOrigin = new Vector2(GunTexture.Width / 2 - 6 * Projectile.spriteDirection, 16);
+            Vector2 GunWorldPosTemp = new Vector2(GunWorldPos.Y, GunWorldPos.X);
+            Vector2 GunOriginTemp = new Vector2(GunOrigin.Y, GunOrigin.X);
+            Rectangle GunRectClip = MinionAIHelper.CalculateClipRect(new Rectangle(0, 0, GunTexture.Width, GunTexture.Height), GunWorldPosTemp, GunOrigin, ClipThreshold, -1f);
+            // Main.NewText("GunRectClip:" + GunRectClip + " GunWorldPos:" + GunWorldPosTemp + " GunOrigin:" + GunOriginTemp + " ClipThreshold:" + ClipThreshold);
+            Rectangle GunRect = new Rectangle(GunTexture.Width - GunRectClip.Width, GunRectClip.Y, GunRectClip.Width , GunTexture.Height);
+            MinionAIHelper.DrawPart(
+                Projectile,
+                GunTexture,
+                GunWorldPos,
+                GunRect,
+                lightColor,
+                // Projectile.rotation,
+                direction.ToRotation() + (Projectile.spriteDirection == 1 ? 0 : MathHelper.Pi),
+                GunOrigin
+            );
+
+            // draw front board
+            float FrontBoardWorldY = SpawnStartY-6f;
+            Vector2 FrontBoardWorldPos = MinionAIHelper.ConvertToWorldPos(Projectile, new Vector2(-7 * Projectile.spriteDirection, FrontBoardWorldY)); // 7 9
+            Vector2 FrontBoardOrigin = new Vector2(FrontBoardTexture.Width / 2, FrontBoardTexture.Height / 2);
+            Rectangle FrontBoardRect = MinionAIHelper.CalculateClipRect(new Rectangle(0, 0, FrontBoardTexture.Width, FrontBoardTexture.Height), FrontBoardWorldPos, FrontBoardOrigin, -1f, ClipThreshold);
+            
+            MinionAIHelper.DrawPart(
+                Projectile,
+                FrontBoardTexture,
+                FrontBoardWorldPos,
+                FrontBoardRect,
+                lightColor,
+                Projectile.rotation,
+                FrontBoardOrigin
+            );
+
+
+            return false;
+        }
+
         public override bool OnTileCollide(Vector2 oldVelocity)
         {
             onGround = true;
@@ -253,7 +343,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             return false;
         }
 
-        public void SetAttached(bool attached)
+        public override void SetAttached(bool attached)
         {
             onGround = attached;
             // Projectile.tileCollide = !attached;
@@ -269,5 +359,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 		{
 			return false;
 		}
+
+
     }
 }

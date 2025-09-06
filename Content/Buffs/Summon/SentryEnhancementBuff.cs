@@ -14,7 +14,7 @@ namespace SummonerExpansionMod.Content.Buffs.Summon
         public override void SetStaticDefaults()
         {
             Main.buffNoSave[Type] = true; // This buff won't save when you exit the world
-            Main.buffNoTimeDisplay[Type] = true; // The time remaining won't display on this buff
+            Main.buffNoTimeDisplay[Type] = false; // The time remaining won't display on this buff
             Main.debuff[Type] = false;    // 不是负面效果
         }
 

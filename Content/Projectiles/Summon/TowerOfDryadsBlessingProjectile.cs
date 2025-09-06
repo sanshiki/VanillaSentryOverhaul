@@ -8,6 +8,7 @@ using Terraria.ModLoader;
 using Terraria.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria.GameContent;
+using SummonerExpansionMod.Initialization;
 
 namespace SummonerExpansionMod.Content.Projectiles.Summon
 {
@@ -31,7 +32,8 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         public float RotateSpeed;
         private static int BuffProjectileID = -1;
 
-        public override string Texture => "Terraria/Images/Projectile_" + ProjectileID.DryadsWardCircle;
+        // public override string Texture => "Terraria/Images/Projectile_" + ProjectileID.DryadsWardCircle;
+        public override string Texture => ModGlobal.VANILLA_TEXTURE_PATH + ProjectileID.DryadsWardCircle;
 
         public override void SetStaticDefaults()
         {

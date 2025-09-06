@@ -7,6 +7,8 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Audio;
 
+using SummonerExpansionMod.Initialization;
+
 namespace SummonerExpansionMod.Content.Projectiles.Summon
 {
     public class AntlionSentryBullet : ModProjectile
@@ -15,6 +17,8 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         private const float GRAVITY = 1.0f;
         private const float MAX_GRAVITY = 30f;
         private const float EXPLOSION_RADIUS = 60f;
+
+        public override string Texture => ModGlobal.VANILLA_TEXTURE_PATH + ProjectileID.SandBallFalling;
 
         public override void SetDefaults()
         {

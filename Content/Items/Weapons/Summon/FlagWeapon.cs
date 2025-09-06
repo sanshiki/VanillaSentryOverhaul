@@ -5,12 +5,13 @@ using Microsoft.Xna.Framework;
 using System;
 using Terraria.DataStructures;
 using SummonerExpansionMod.Content.Projectiles.Summon;
-
+using SummonerExpansionMod.Initialization;
 namespace SummonerExpansionMod.Content.Items.Weapons.Summon
 {
+    
     public class FlagWeapon : ModItem
     {
-
+        public override string Texture => ModGlobal.MOD_TEXTURE_PATH + "Items/FlagWeapon";
         private int RaiseTimer = 0;
         private int Direction = 1;
         private uint LastShootTime = 0;
@@ -40,7 +41,7 @@ namespace SummonerExpansionMod.Content.Items.Weapons.Summon
             MOD_PROJECTILE_ID = ModProjectileID.FlagPole;
             Item.useStyle = ItemUseStyleID.Swing;
             Item.useTime = WAVE_USE_TIME;
-            Item.damage = 42;
+            Item.damage = 25;
             Item.knockBack = 4f;
             Item.DamageType = DamageClass.Summon;
             Item.useAnimation = WAVE_USE_TIME;
@@ -101,55 +102,76 @@ namespace SummonerExpansionMod.Content.Items.Weapons.Summon
             // Main.NewText("HoldItem:"+State);
             if (player.controlUseTile) // right-click
             {
-                if(State == IDLE_STATE)
+                switch(State)
                 {
-                    Item.useStyle = ItemUseStyleID.Thrust;
-                    Item.useTime = RAISE_USE_TIME;
-                    Item.autoReuse = false;
-                    Item.shoot = ProjectileID.None;
-                    RaiseTimer = 0;
-                    if(!IsRightPressed)
+                    case IDLE_STATE:
                     {
-                        // Main.NewText("Raising");
-                        if(FlagProjectile != null && FlagProjectile.active)
+                        Item.useStyle = ItemUseStyleID.Thrust;
+                        Item.useTime = RAISE_USE_TIME;
+                        Item.autoReuse = false;
+                        Item.shoot = ProjectileID.None;
+                        RaiseTimer = 0;
+                        if(!IsRightPressed)
+                        {
+                            // Main.NewText("Raising");
+                            if(FlagProjectile != null && FlagProjectile.active)
+                            {
+                                FlagProjectile.Kill();
+                                FlagProjectile = null;
+                            }
+                            
+                            FlagProjectile = GenerateFlagProjectile(player, player.GetSource_ItemUse(Item), player.Center, Vector2.Zero, MOD_PROJECTILE_ID, Item.damage, Item.knockBack);
+                            if (FlagProjectile.ModProjectile is FlagPole flagPole)
+                            {
+                                flagPole.State = RAISE_STATE;
+                                State = RAISE_STATE;
+                                flagPole.PoleLength = 280;
+                            }
+                            IsRightPressed = true;
+                        }
+                    } break;
+                    case WAVE_STATE:
+                    {
+                        if (FlagProjectile != null && FlagProjectile.active)
                         {
                             FlagProjectile.Kill();
                             FlagProjectile = null;
                         }
-                        
-                        FlagProjectile = GenerateFlagProjectile(player, player.GetSource_ItemUse(Item), player.Center, Vector2.Zero, MOD_PROJECTILE_ID, Item.damage, Item.knockBack);
-                        if (FlagProjectile.ModProjectile is FlagPole flagPole)
-                        {
-                            flagPole.State = RAISE_STATE;
-                            State = RAISE_STATE;
-                            flagPole.PoleLength = 280;
-                        }
-                        IsRightPressed = true;
+
+                        goto case IDLE_STATE;
                     }
-                }
-                else if(State == RAISE_STATE)
-                {
-                    RaiseTimer++;
-                    if(RaiseTimer > MAX_RAISE_TIME)
+                    case RAISE_STATE:
                     {
-                        RaiseTimer = 0;
-                        State = PLANT_STATE;
+                        RaiseTimer++;
+                        if(RaiseTimer > MAX_RAISE_TIME)
+                        {
+                            RaiseTimer = 0;
+                            State = PLANT_STATE;
+                            if(FlagProjectile.ModProjectile is FlagPole flagPole)
+                            {
+                                flagPole.SwitchFlag = true;
+                            }
+                        }
+                    } break;
+                    case PLANT_STATE:
+                    {
                         if(FlagProjectile.ModProjectile is FlagPole flagPole)
                         {
-                            flagPole.SwitchFlag = true;
+                            if(flagPole.OnGroundCnt > ONGROUND_CNT_THRESHOLD)
+                            {
+                                flagPole.SwitchFlag = true;
+                                State = RECALL_STATE;
+                            }
                         }
-                    }
-                }
-                else if(State == PLANT_STATE)
-                {
-                    if(FlagProjectile.ModProjectile is FlagPole flagPole)
+                    } break;
+                    case RECALL_STATE:
                     {
-                        if(flagPole.OnGroundCnt > ONGROUND_CNT_THRESHOLD)
-                        {
-                            flagPole.SwitchFlag = true;
-                            State = RECALL_STATE;
-                        }
-                    }
+
+                    } break;
+                    default:
+                    {
+
+                    } break;
                 }
             }
             else

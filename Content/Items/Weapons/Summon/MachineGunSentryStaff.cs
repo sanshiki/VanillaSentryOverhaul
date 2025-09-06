@@ -7,11 +7,13 @@ using Terraria.ModLoader;
 
 using SummonerExpansionMod.Content.Projectiles.Summon;
 using SummonerExpansionMod.Content.Buffs.Summon;
+using SummonerExpansionMod.Initialization;
 
 namespace SummonerExpansionMod.Content.Items.Weapons.Summon
 {
     public class MachineGunSentryStaff : ModItem
     {
+        public override string Texture => ModGlobal.MOD_TEXTURE_PATH + "Items/DummyStaff";
         public override void SetStaticDefaults()
         {
             ItemID.Sets.GamepadWholeScreenUseRange[Item.type] = true; // This lets the player target anywhere on the whole screen while using a controller
@@ -22,7 +24,7 @@ namespace SummonerExpansionMod.Content.Items.Weapons.Summon
 
         public override void SetDefaults()
         {
-            Item.damage = 20;
+            Item.damage = 17;
             Item.knockBack = 2f;
             Item.mana = 10; // mana cost
             Item.width = 32;

@@ -7,31 +7,43 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Audio;
 
+using Microsoft.Xna.Framework.Graphics;
 using SummonerExpansionMod.Content.Buffs.Summon;
 using SummonerExpansionMod.Utils;
+using SummonerExpansionMod.Initialization;
 
 namespace SummonerExpansionMod.Content.Projectiles.Summon
 {
     public class DarkMagicTower : ModProjectile
     {
+        // animation
+        private const int FRAME_COUNT = 3;
+        private int FRAME_SPEED = 10;
         // private int fireCooldown = 30;
-        private const int FIRE_INTERVAL = 30;
+        private const int FIRE_INTERVAL = 40;
         private int fireTimer = 0;
+
+        private const float REAL_BULLET_SPEED = 15f;
+        private const float PRED_BULLET_SPEED = 15f;
+        private const float DEACCELERATION = 0.5f;
+        private const bool USE_PREDICTION = true;
 
         private const float ENHANCEMENT_FACTOR = 0.75f;
         private int BUFF_ID = -1;
+
+        public override string Texture => ModGlobal.MOD_TEXTURE_PATH + "Projectiles/DarkMagicTower";
 
         public override void SetStaticDefaults()
         {
             ProjectileID.Sets.MinionSacrificable[Projectile.type] = true;
             ProjectileID.Sets.MinionTargettingFeature[Projectile.type] = true;
-            Main.projFrames[Projectile.type] = 1;
+            Main.projFrames[Projectile.type] = FRAME_COUNT;
         }
 
         public override void SetDefaults()
         {
-            Projectile.width = 44;
-            Projectile.height = 112;
+            Projectile.width = 38;
+            Projectile.height = 92;
             Projectile.friendly = false;
             Projectile.DamageType = DamageClass.Summon;
             Projectile.ignoreWater = true;
@@ -50,8 +62,22 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             Lighting.AddLight(Projectile.Center, 0.2f, 0.2f, 0.5f); // Add a faint magic glow
 
             // Float in the air
-            Projectile.velocity = Vector2.Zero;
-            Projectile.position.Y += (float)Math.Sin(Main.GameUpdateCount * 0.05f) * 0.5f;
+            Vector2 vel = Projectile.velocity;
+            Vector2 vel_dir = vel.SafeNormalize(Vector2.Zero);
+            if(vel.Length() > DEACCELERATION)
+            {
+                Projectile.velocity -= vel_dir * DEACCELERATION;
+            }
+            else
+            {
+                Projectile.velocity = Vector2.Zero;
+            }
+
+            float FloatAmplitude = 0.5f;
+            FloatAmplitude = Math.Min(FloatAmplitude, 2f / vel.Length());
+            
+            float FloatOffset = (float)(Math.Sin(Main.GameUpdateCount * 0.05f) * FloatAmplitude);
+            Projectile.Center += new Vector2(0, FloatOffset);
 
             // teleport to owner if needed
             float maxDistance = 2000f;
@@ -82,6 +108,8 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             }
 
             fireTimer++;
+
+            UpdateAnimation(target);
         }
 
         private NPC FindTarget()
@@ -108,30 +136,35 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 
         private void FireAt(NPC target)
         {
-            Vector2 distanceToTarget = target.Center - Projectile.Center;
-            float speed = 8f;
-            float hitTime = distanceToTarget.Length() / speed;
-            float heightDiff = distanceToTarget.Y;
-            float gravity = 0.1f;
-            float predictedFallDist = 0.5f * gravity * hitTime * hitTime;
-            distanceToTarget.Y -= predictedFallDist;
-            Vector2 direction = distanceToTarget;
-            direction.Normalize();
+            Vector2 PredictedPos = target.Center;
+            if(USE_PREDICTION)
+            {
+                PredictedPos = MinionAIHelper.PredictTargetPosition(
+                    Projectile, target, PRED_BULLET_SPEED);
+            }
             
+            Vector2 direction = PredictedPos - Projectile.Center;
+            direction.Normalize();
 
-            Vector2 CrystalOffset = new Vector2(0, -30f);
+            Vector2 ShootOffset = new Vector2(0, -23f);
 
-            Projectile.NewProjectile(
+            Projectile proj = Projectile.NewProjectileDirect(
                 Projectile.GetSource_FromAI(),
-                Projectile.Center + CrystalOffset,
-                direction * speed,
-                ProjectileID.WaterStream, // Reusing vanilla projectile
+                Projectile.Center + ShootOffset,
+                direction * REAL_BULLET_SPEED,
+                // ProjectileID.WaterStream, // Reusing vanilla projectile
+                // ModProjectileID.DarkMagicTowerBullet,
+                ProjectileID.SapphireBolt,
                 Projectile.damage,
                 Projectile.knockBack,
                 Projectile.owner
             );
+            proj.penetrate = 10; 
+            proj.usesLocalNPCImmunity = true;
+            proj.localNPCHitCooldown = 60;
+            proj.DamageType = DamageClass.Summon;
 
-            SoundEngine.PlaySound(SoundID.Item13, Projectile.Center);
+            SoundEngine.PlaySound(SoundID.Item43, Projectile.Center);
         }
 
         private void TryTeleportNearPlayer(Player player)
@@ -198,5 +231,22 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 		{
 			return false;
 		}
+
+        private void UpdateAnimation(NPC target)
+        {
+            Projectile.frameCounter++;
+            if (Projectile.frameCounter >= FRAME_SPEED)
+            {
+                Projectile.frame = (Projectile.frame + 1) % FRAME_COUNT;
+                Projectile.frameCounter = 0;
+            }
+
+            if (target != null)
+            {
+                Vector2 direction = target.Center - Projectile.Center;
+                direction.Normalize();
+                Projectile.spriteDirection = direction.X > 0 ? -1 : 1;
+            }
+        }
     }
 }

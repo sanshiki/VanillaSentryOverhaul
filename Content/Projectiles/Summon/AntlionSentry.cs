@@ -7,8 +7,10 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Audio;
 
+using Microsoft.Xna.Framework.Graphics;
 using SummonerExpansionMod.Content.Buffs.Summon;
 using SummonerExpansionMod.Utils;
+using SummonerExpansionMod.Initialization;
 
 namespace SummonerExpansionMod.Content.Projectiles.Summon
 {
@@ -19,7 +21,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         private bool isShooting = false;
         private bool isOnSand = false;
 
-        private const int NORMAL_FRAME_SPEED = 10;
+        private const int NORMAL_FRAME_SPEED = 15;
         private const int SHOOT_FRAME_SPEED = 5;
 
         private const int SHOOT_INTERVAL = 120;
@@ -28,23 +30,26 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         private int BUFF_ID = -1;
         private int shootInterval = SHOOT_INTERVAL;
 
-        public static float Gravity = 0.5f;
+        public static float Gravity = ModGlobal.SENTRY_GRAVITY;
         public static float MaxGravity = 20f;
         private const float BULLET_SPEED_Y = 25f;
         private const float BULLET_GRAVITY = 1.0f;
         private const float MAX_LEGAL_HEIGHT = BULLET_SPEED_Y * BULLET_SPEED_Y / (2 * BULLET_GRAVITY)*0.8f;
+        private const int FRAME_COUNT = 9;
+
+        public override string Texture => "SummonerExpansionMod/Assets/Textures/Projectiles/AntlionSentry";
 
         public override void SetStaticDefaults()
         {
             ProjectileID.Sets.MinionSacrificable[Projectile.type] = true;
             ProjectileID.Sets.MinionTargettingFeature[Projectile.type] = true;
-            Main.projFrames[Projectile.type] = 11;
+            Main.projFrames[Projectile.type] = FRAME_COUNT;
         }
 
         public override void SetDefaults()
         {
-            Projectile.width = 30;
-            Projectile.height = 55;
+            Projectile.width = 38;
+            Projectile.height = 58;
             Projectile.friendly = false;
             Projectile.ignoreWater = true;
             Projectile.tileCollide = true;
@@ -91,7 +96,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                 if (shootTimer >= shootInterval)
                 {
                     // Fire!
-                    Vector2 ShootOffset = new Vector2(20f, -15f);
+                    Vector2 ShootOffset = new Vector2(0f, -15f);
                     Vector2 ShootCenter = Projectile.Center + ShootOffset;
                     Vector2 direction = target.Center - ShootCenter;
                     Vector2 dir_compensation = target.velocity;
@@ -112,7 +117,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                     float pred_t = Math.Max(pred_t1, pred_t2);
                     float vx = direction.X / pred_t;
 
-                    Main.NewText("pred_t:"+ pred_t.ToString() + " vx:" + vx.ToString() + "isOnSand:" + isOnSand.ToString());    
+                    // Main.NewText("pred_t:"+ pred_t.ToString() + " vx:" + vx.ToString() + "isOnSand:" + isOnSand.ToString());    
 
                     if(vx > max_vx)
                     {
@@ -150,47 +155,12 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             UpdateAnimation(target, shootTimer);
         }
 
-        // private NPC FindTarget(float range)
-        // {
-        //     NPC closest = null;
-        //     float closestDist = range;
-
-        //     for (int i = 0; i < Main.maxNPCs; i++)
-        //     {
-        //         NPC npc = Main.npc[i];
-        //         if (npc.CanBeChasedBy(this)/*  && Collision.CanHit(Projectile.Center, 1, 1, npc.Center, 1, 1) */)
-        //         {
-        //             float distance = Vector2.Distance(Projectile.Center, npc.Center);
-        //             // check if the target is legal
-        //             float MaxHeight = BULLET_SPEED_Y * BULLET_SPEED_Y / (2 * BULLET_GRAVITY)*0.8f;
-        //             if(npc.Center.Y > Projectile.Center.Y + MaxHeight)
-        //             {
-        //                 continue;
-        //             }
-        //             if (distance < closestDist)
-        //             {
-        //                 closestDist = distance;
-        //                 closest = npc;
-        //             }
-        //         }
-        //     }
-
-        //     // check if the target is legal
-        //     // float MaxHeight = BULLET_SPEED_Y * BULLET_SPEED_Y / (2 * Gravity);
-        //     // if(closest.Center.Y > Projectile.Center.Y + MaxHeight)
-        //     // {
-        //     //     return null;
-        //     // }
-
-        //     return closest;
-        // }
-
         private void UpdateAnimation(NPC target, int shootTimer)
         {
             Projectile.frameCounter++;
             if (target != null)
             {
-                if (shootTimer == shootInterval - (int)(SHOOT_FRAME_SPEED * 1.5f))
+                if (shootTimer == shootInterval - (int)(SHOOT_FRAME_SPEED * 3f))
                 {
                     isShooting = true;
                     Projectile.frameCounter = 0;
@@ -203,7 +173,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                 {
                     Projectile.frameCounter = 0;
                     Projectile.frame++;
-                    if (Projectile.frame >= 11)
+                    if (Projectile.frame >= FRAME_COUNT)
                     {
                         isShooting = false;
                         Projectile.frame = 0;
@@ -215,7 +185,11 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                 if (Projectile.frameCounter > NORMAL_FRAME_SPEED)
                 {
                     Projectile.frameCounter = 0;
-                    Projectile.frame = Projectile.frame == 0 ? 1 : 0;
+                    Projectile.frame++;
+                    if (Projectile.frame >= 4)
+                    {
+                        Projectile.frame = 0;
+                    }
                 }
             }
         }
@@ -263,5 +237,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 		{
 			return false;
 		}
+
+
     }
 }

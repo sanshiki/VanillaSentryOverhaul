@@ -8,6 +8,8 @@ using Terraria.ModLoader;
 using System.Linq;
 
 using SummonerExpansionMod.Content.Buffs.Summon;
+using SummonerExpansionMod.Utils;
+using SummonerExpansionMod.Initialization;
 
 namespace SummonerExpansionMod.Content.Projectiles.Summon
 {    
@@ -15,6 +17,8 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 	{
 
 		private static Dictionary<SentryPlatform, int> attachedSentryDict = new Dictionary<SentryPlatform, int>();
+
+		public override string Texture => ModGlobal.MOD_TEXTURE_PATH + "Projectiles/SentryPlatform";
 
 		public override void SetStaticDefaults()
 		{
@@ -31,8 +35,8 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 
 		public sealed override void SetDefaults()
 		{
-			Projectile.width = 18;
-			Projectile.height = 28;
+			Projectile.width = 32;
+			Projectile.height = 36;
 			Projectile.tileCollide = false; // Makes the minion go through tiles freely
 
 			// These below are needed for a minion weapon
@@ -119,9 +123,9 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                     if (distance < 48f)
                     {
                         attachedSentryDict[this] = i;
-						if(other.ModProjectile is MachineGunSentry machineGunSentry)
+						if(other.ModProjectile is SentryWithSpawnAnime sentryWithSpawnAnime)
 						{
-							machineGunSentry.SetAttached(true);
+							sentryWithSpawnAnime.SetAttached(true);
 						}
 						// Main.NewText("attached to " + other.type);
                         break;
@@ -135,7 +139,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                 Projectile sentry = Main.projectile[attachedSentryDict[this]];
                 if (sentry.active && sentry.owner == owner.whoAmI)
                 {
-                    sentry.Center = Projectile.Center + new Vector2(10, -16);
+                    sentry.Center = Projectile.Center + new Vector2(0, -sentry.height / 2 - 7);
                     sentry.velocity = Projectile.velocity;
 					
                     
@@ -297,6 +301,10 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 				if (sentry != null && sentry.active && sentry.owner == Projectile.owner)
 				{
 					sentry.tileCollide = true;
+					if(sentry.ModProjectile is SentryWithSpawnAnime sentryWithSpawnAnime)
+					{
+						sentryWithSpawnAnime.SetAttached(false);
+					}
 				}
 			}
 			attachedSentryDict.Remove(this);

@@ -11,6 +11,8 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         public static int AntlionSentryBullet;
         public static int TowerOfDryadsBlessingProjectile;
         public static int MachineGunSentryBullet;
+        public static int HoneyCombSentryBullet;
+        public static int DarkMagicTowerBullet;
         // minion
         public static int SentryPlatform;
 

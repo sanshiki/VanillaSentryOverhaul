@@ -10,6 +10,8 @@ using Terraria.GameContent;
 using Microsoft.Xna.Framework.Graphics;
 using SummonerExpansionMod.Content.Items.Weapons.Summon;
 using SummonerExpansionMod.Content.Buffs.Summon;
+using SummonerExpansionMod.Initialization;
+using SummonerExpansionMod.Utils;
 
 namespace SummonerExpansionMod.Content.Projectiles.Summon
 {
@@ -30,9 +32,11 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         private const int MIN_POLE_PENGTH = 64;
         private const int TIP_HEIGHT = 30;
         private const int REPEAT_SLICE_HEIGHT = 2;
+        private const string TEXTURE_PATH = ModGlobal.MOD_TEXTURE_PATH + "Projectiles/FlagPole";
+        public override string Texture => TEXTURE_PATH;
 
         // waving
-        private const float ROT_ANGLE = 150f * (float)Math.PI / 180f;
+        private const float ROT_ANGLE = 150f * ModGlobal.PI_FLOAT / 180f;
         private const int TIME_LEFT_WAVE = 24;
 
         // raising
@@ -49,7 +53,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         private const float SENTRY_RECALL_THRESHOLD = 200f;
         private const float SENTRY_RECALL_DECAY_DIST = 1500f;
         private const float SENTRY_RECALL_MAX_DIST = 4000f;
-        private const float SENTRY_RECALL_TARGET_OFFSET = 300f;
+        private const float SENTRY_RECALL_TARGET_OFFSET = 150f;
         private const float SENTRY_RANDOM_OFFSET = 20f;
 
         // recall flag
@@ -71,11 +75,11 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 
         // buff constants
         private int BUFF_ID = -1;
+        private int TAG_BUFF_ID = -1;
         private const int BUFF_START_TIME = 25;
         private const int BUFFING_INTERVAL = 60;
         private const int BUFF_DURATION = 150; // 30s
         private const int SENTRY_TARGET_DURATION = 60*60; // 1 min
-
         // public attributes
         public float WaveDirection = 1;
         public int State = WAVE_STATE;
@@ -110,6 +114,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             Projectile.usesLocalNPCImmunity = true;
             
             BUFF_ID = ModBuffID.SentryEnhancement;
+            TAG_BUFF_ID = ModBuffID.SentryTarget;
         }
         public override void AI()
         {
@@ -171,7 +176,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                 FixedDirection = player.direction;
                 // get mouse dir
                 Vector2 aimDir = (Main.MouseWorld - player.Center).SafeNormalize(Vector2.UnitX);
-                AimAngle = aimDir.ToRotation() + (float)Math.PI / 2f;
+                AimAngle = aimDir.ToRotation() + ModGlobal.PI_FLOAT / 2f;
                 // Main.NewText("WaveAI:"+Projectile.identity);
                 SoundEngine.PlaySound(SoundID.Item32, Projectile.Center);
                 Initialized = true;
@@ -249,6 +254,9 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                 Projectile.tileCollide = true;
                 Projectile.friendly = false;
 
+                // reset buff
+                player.AddBuff(BUFF_ID, BUFF_DURATION);
+
                 // Main.NewText("PlantAI:"+Projectile.identity);
                 Initialized = true;
             }
@@ -299,6 +307,9 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                         // Main.NewText("Sentry "+i+" target pos: "+info.TargetPos);
                     }
 
+                    // reset buff
+                    player.AddBuff(BUFF_ID, BUFF_DURATION);
+
                     SentryRecallInitialized = true;
                 }
                 foreach(var info in SentryRecallInfos)
@@ -310,6 +321,8 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                         Vector2 ToTargetDir = ToTargetDist.SafeNormalize(Vector2.UnitX);
                         float DecayFactor = Math.Min(1f, ToTargetDist.Length() / SENTRY_RECALL_DECAY_DIST);
                         sentry.velocity = ToTargetDir * SENTRY_RECALL_SPEED * DecayFactor;
+                        // sentry.velocity = Vector2.Zero;
+                        // sentry.Center += ToTargetDir * SENTRY_RECALL_SPEED * DecayFactor;
                     }
                     else
                     {
@@ -362,7 +375,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         public override bool PreDraw(ref Color lightColor)
         {
             Player player = Main.player[Projectile.owner];
-            Texture2D flagTexture = ModContent.Request<Texture2D>("SummonerExpansionMod/Content/Projectiles/Summon/FlagPole").Value;
+            Texture2D flagTexture = ModContent.Request<Texture2D>(TEXTURE_PATH).Value;
             int width = flagTexture.Width;
             int height = Projectile.height;
             int TextureHeight = flagTexture.Height;
@@ -371,7 +384,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             // draw tip part
             Rectangle tipRect = new Rectangle(0, 0, width, TIP_HEIGHT);
             Vector2 tipLocalPos = new Vector2(0, 0);
-            Vector2 tipWorldPos = ConvertToWorldPos(tipLocalPos);
+            Vector2 tipWorldPos = MinionAIHelper.ConvertToWorldPos(Projectile, tipLocalPos);
             DrawPart(flagTexture, tipWorldPos, tipRect, lightColor, origin);
 
             // draw repeat part
@@ -380,14 +393,14 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                 int repeatY = i * REPEAT_SLICE_HEIGHT + TIP_HEIGHT;
                 Rectangle repeatRect = new Rectangle(0, TIP_HEIGHT, width, REPEAT_SLICE_HEIGHT);
                 Vector2 repeatLocalPos = new Vector2(0, repeatY);
-                Vector2 repeatWorldPos = ConvertToWorldPos(repeatLocalPos);
+                Vector2 repeatWorldPos = MinionAIHelper.ConvertToWorldPos(Projectile, repeatLocalPos);
                 DrawPart(flagTexture, repeatWorldPos, repeatRect, lightColor, origin);
             }
 
             // draw base part
             Rectangle baseRect = new Rectangle(0, TextureHeight - BASE_HEIGHT, width, BASE_HEIGHT);
             Vector2 baseLocalPos = new Vector2(0, PoleLength - BASE_HEIGHT);
-            Vector2 baseWorldPos = ConvertToWorldPos(baseLocalPos);
+            Vector2 baseWorldPos = MinionAIHelper.ConvertToWorldPos(Projectile, baseLocalPos);
             DrawPart(flagTexture, baseWorldPos, baseRect, lightColor, origin);
 
             return false;
@@ -461,14 +474,18 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
-            foreach(NPC npc in Main.npc)
-            {
-                if(npc.active && npc.HasBuff(ModBuffID.SentryTarget))
-                {
-                    npc.DelBuff(npc.FindBuffIndex(ModBuffID.SentryTarget));
-                }
-            }
-            target.AddBuff(ModBuffID.SentryTarget, SENTRY_TARGET_DURATION);
+            // foreach(NPC npc in Main.npc)
+            // {
+            //     if(npc.active && npc.HasBuff(TAG_BUFF_ID))
+            //     {
+            //         npc.DelBuff(npc.FindBuffIndex(TAG_BUFF_ID));
+            //     }
+            // }
+            target.AddBuff(TAG_BUFF_ID, SENTRY_TARGET_DURATION);
+
+            Player player = Main.player[Projectile.owner];
+            player.MinionAttackTargetNPC = target.whoAmI;
+            // player.HasMinionAttackTargetNPC = true;
         }
 
         private Vector2 ConvertToWorldPos(Vector2 localPos)

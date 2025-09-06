@@ -11,7 +11,7 @@ using SummonerExpansionMod.Initialization;
 
 namespace SummonerExpansionMod.Content.Items.Weapons.Summon
 {
-    public class BunnySentryStaff : ModItem
+    public class MechEyeballTurretStaff : ModItem
     {
         public override string Texture => ModGlobal.MOD_TEXTURE_PATH + "Items/DummyStaff";
         public override void SetStaticDefaults()
@@ -24,7 +24,7 @@ namespace SummonerExpansionMod.Content.Items.Weapons.Summon
 
         public override void SetDefaults()
         {
-            Item.damage = 11;
+            Item.damage = 40;
             Item.knockBack = 3f;
             Item.mana = 10; // mana cost
             Item.width = 32;
@@ -41,7 +41,7 @@ namespace SummonerExpansionMod.Content.Items.Weapons.Summon
             Item.DamageType = DamageClass.Summon; // Makes the damage register as summon. If your item does not have any damage type, it becomes true damage (which means that damage scalars will not affect it). Be sure to have a damage type
             // Item.buffType = ModContent.BuffType<BunnySentryBuff>();
             // No buffTime because otherwise the item tooltip would say something like "1 minute duration"
-            Item.shoot = ModContent.ProjectileType<BunnySentry>(); // This item creates the minion projectile
+            Item.shoot = ModContent.ProjectileType<MechEyeballTurret>(); // This item creates the minion projectile
             // Item.shoot = ModContent.ProjectileType<BabySlimeOverride>();
         }
 

@@ -7,7 +7,9 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Audio;
 
+using Microsoft.Xna.Framework.Graphics;
 using SummonerExpansionMod.Content.Buffs.Summon;
+using SummonerExpansionMod.Initialization;
 
 namespace SummonerExpansionMod.Content.Projectiles.Summon
 {
@@ -28,12 +30,14 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 
         private int LeafTimer = LEAF_RESPAWN_INTERVAL - 40*3;
 
-        public static float Gravity = 0.5f;
+        public static float Gravity = ModGlobal.SENTRY_GRAVITY;
         public static float MaxGravity = 20f;
 
-        Vector2 CenterOffset = new Vector2(10, -10);
+        Vector2 CenterOffset = new Vector2(0, -10);
 
         private List<int> LeafProjectileIndex = new List<int>();
+
+        public override string Texture => ModGlobal.MOD_TEXTURE_PATH + "Projectiles/TowerOfDryadsBlessing";
 
         public override void SetStaticDefaults()
         {
@@ -44,8 +48,8 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 
         public override void SetDefaults()
         {
-            Projectile.width = 48;
-            Projectile.height = 48;
+            Projectile.width = 45;
+            Projectile.height = 43;
             Projectile.friendly = false;
             Projectile.sentry = true;
             Projectile.penetrate = -1;
@@ -184,5 +188,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             fallThrough = false;
             return true;
         }
+
+
     }
 }

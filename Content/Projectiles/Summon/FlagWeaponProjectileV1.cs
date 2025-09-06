@@ -8,6 +8,7 @@ using Terraria.ModLoader;
 using Terraria.Audio;
 using Terraria.GameContent;
 
+using SummonerExpansionMod.Initialization;
 using Microsoft.Xna.Framework.Graphics;
 using SummonerExpansionMod.Content.Items.Weapons.Summon;
 
@@ -18,7 +19,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         // animation constants
         // waving
         private Vector2 STICK_OFFSET = new Vector2(-55f, -144f);
-        private const float ROT_ANGLE = 150f * (float)Math.PI / 180f;
+        private const float ROT_ANGLE = 150f * ModGlobal.PI_FLOAT / 180f;
         private const int TIME_LEFT_WAVE = 24;
         private const int WAVE_DEAD_ZONE = 20;
         private const int WAVE_SLICE_WIDTH = 4;
@@ -111,7 +112,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                 FixedDirection = player.direction;
                 // get mouse dir
                 Vector2 aimDir = (Main.MouseWorld - player.Center).SafeNormalize(Vector2.UnitX);
-                AimAngle = aimDir.ToRotation() + (float)Math.PI / 2f;
+                AimAngle = aimDir.ToRotation() + ModGlobal.PI_FLOAT / 2f;
                 Amplitude = WAVE_AMPLITUDE;
                 WaveSpeed = WAVE_SPEED_FACTOR;
                 // Main.NewText("WaveAI:"+Projectile.identity);

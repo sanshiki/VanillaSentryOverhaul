@@ -6,41 +6,45 @@ using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Audio;
-
+using Terraria.GameContent.Creative;
 using Microsoft.Xna.Framework.Graphics;
+
 using SummonerExpansionMod.Content.Buffs.Summon;
 using SummonerExpansionMod.Utils;
 using SummonerExpansionMod.Initialization;
 
 namespace SummonerExpansionMod.Content.Projectiles.Summon
 {
-    public class BunnySentry : ModProjectile
+    public class HoneyCombSentry : ModProjectile
     {
         private int shootTimer;
 
         private const int NORMAL_FRAME_SPEED = 20;
         private const int SHOOT_FRAME_SPEED = 5;
 
-        private const int SHOOT_INTERVAL = 50;
+        private const int SHOOT_INTERVAL = 60*2;
+        private const int MAX_BEES_PER_SHOT = 10;
+        private const int MIN_BEES_PER_SHOT = 5;
         private const float ENHANCEMENT_FACTOR = 0.75f;
         private int BUFF_ID = -1;
 
         public static float Gravity = ModGlobal.SENTRY_GRAVITY;
         public static float MaxGravity = 20f;
 
-        public override string Texture => ModGlobal.MOD_TEXTURE_PATH + "Projectiles/BunnySentry";
+        private const string TEXTURE_PATH = ModGlobal.MOD_TEXTURE_PATH + "Projectiles/HoneyCombSentry";
+        public override string Texture => TEXTURE_PATH;
 
         public override void SetStaticDefaults()
         {
             ProjectileID.Sets.MinionSacrificable[Projectile.type] = true;
             ProjectileID.Sets.MinionTargettingFeature[Projectile.type] = true;
-            Main.projFrames[Projectile.type] = 2;
+            Main.projFrames[Projectile.type] = 1;
         }
 
         public override void SetDefaults()
         {
-            Projectile.width = 28;
-            Projectile.height = 26;
+            Projectile.width = 43;
+            Projectile.height = 31;
             Projectile.friendly = false;
             Projectile.ignoreWater = true;
             Projectile.tileCollide = true;
@@ -49,6 +53,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             Projectile.aiStyle = -1;
             Projectile.timeLeft = Projectile.SentryLifeTime;
             Projectile.DamageType = DamageClass.Summon;
+            
             BUFF_ID = ModBuffID.SentryEnhancement;
         }
 
@@ -74,10 +79,10 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             if (target != null)
             {
                 shootTimer++;
-                if (shootTimer >= 1 && shootTimer <= 4)
+                if (shootTimer == 1)
                 {
                     // Shooting animation
-                    Projectile.frame = 1; // Frame 3
+                    Projectile.frame = 2; // Frame 3
                 }
                 else
                 {
@@ -94,26 +99,50 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                 {
                     // Fire!
                     Vector2 direction = target.Center - Projectile.Center;
-                    float distance = direction.Length();
                     direction.Normalize();
-                    direction *= 10f; // Bullet speed
-                    direction.Y -= distance * 0.002f;
+                    // direction *= 10f;
+                    float dir = direction.ToRotation();
+                    Vector2 BaseVel = new Vector2(3f, 0f);
+                    
+                    Random beeNumRandom = new Random();
+                    int bees_per_shot = beeNumRandom.Next(MIN_BEES_PER_SHOT, MAX_BEES_PER_SHOT + 1);
+                    for (int i = 0; i < bees_per_shot; i++)
+                    {
+                        Random random = new Random();
+                        float random_seed_dir = (float)random.NextDouble();
+                        float random_seed_vel = (float)random.NextDouble();
+                        float dir_offset = (random_seed_dir*2-1) * ModGlobal.PI_FLOAT / 8f;
+                        float vel_offset = (random_seed_vel*2-1) * 0.5f + 1f;
+                        // Main.NewText("random_seed: " + random_seed + " dir_offset: " + dir_offset);
+                        Vector2 Velocity = (BaseVel * vel_offset).RotatedBy(dir + dir_offset);
 
-                    Vector2 bulletOffset = new Vector2(-18f * Projectile.spriteDirection, 7f);
+                        int bee = Projectile.NewProjectile(
+                            Projectile.GetSource_FromAI(),
+                            Projectile.Center,
+                            Velocity,
+                            // ModProjectileID.HoneyCombSentryBullet,
+                            ProjectileID.Bee,
+                            Projectile.damage,
+                            0,
+                            Projectile.owner);
 
-                    Projectile seed = Projectile.NewProjectileDirect(
-                        Projectile.GetSource_FromAI(),
-                        Projectile.Center + bulletOffset,
-                        direction,
-                        ProjectileID.Seed,
-                        Projectile.damage,
-                        0,
-                        Projectile.owner);
-
-                    seed.DamageType = DamageClass.Summon;
-                    // Main.NewText("Damage: " + Projectile.damage + "Seed Damage: " + seed.damage);
-
-                    shootTimer = 0; // Reset shoot animation
+                        if(bee != Main.maxProjectiles)
+                        {
+                            Main.projectile[bee].DamageType = DamageClass.Summon;
+                            // Main.NewText(bee + " " + Main.projectile[bee].DamageType);
+                            // Main.NewText("Damage: " + Projectile.damage + "Bee Damage: " + Main.projectile[bee].damage);
+                        }
+                    }
+                    for(int i = 0;i < 5;i++)
+                    {
+                        Random random = new Random();
+                        float random_seed = (float)random.NextDouble();
+                        float scale = random_seed * 3f + 0.5f;
+                        int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.Smoke, 0f, 0f, 50, default, 1f);
+                        Main.dust[dust].noGravity = true;
+                        Main.dust[dust].scale = scale;
+                    }
+                    shootTimer = 0;
                 }
             }
             else
@@ -122,7 +151,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             }
 
             // Animation
-            UpdateAnimation(target, shootTimer);
+            // UpdateAnimation(target, shootTimer);
         }
 
         // private NPC FindTarget(float range)
@@ -147,34 +176,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         //     return closest;
         // }
 
-        private void UpdateAnimation(NPC target, int shootTimer)
-        {
-            // Projectile.frameCounter++;
-            if (target != null)
-            {
-                // if (shootTimer < SHOOT_FRAME_SPEED)
-                // {
-                //     Projectile.frame = 1;
-                // }
-                // else
-                // {
-                //     Projectile.frame = 0;
-                // }
-                // Projectile.frameCounter = 0;
-                // face towards target
-                Vector2 direction = target.Center - Projectile.Center;
-                direction.Normalize();
-                Projectile.spriteDirection = direction.X > 0 ? -1 : 1;
-            }
-            // else
-            // {
-            //     if (Projectile.frameCounter > NORMAL_FRAME_SPEED)
-            //     {
-            //         Projectile.frameCounter = 0;
-            //         Projectile.frame = Projectile.frame == 0 ? 1 : 0;
-            //     }
-            // }
-        }
+
 
         public override bool OnTileCollide(Vector2 oldVelocity)
         {
@@ -192,7 +194,5 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 		{
 			return false;
 		}
-
-
     }
 }
