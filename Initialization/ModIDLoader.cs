@@ -30,6 +30,8 @@ namespace SummonerExpansionMod.Initialization
 			ModProjectileID.AntlionSentryBullet = ModContent.ProjectileType<AntlionSentryBullet>();
 			ModProjectileID.TowerOfDryadsBlessingProjectile = ModContent.ProjectileType<TowerOfDryadsBlessingProjectile>();
 			ModProjectileID.MachineGunSentryBullet = ModContent.ProjectileType<MachineGunSentryBullet>();
+			ModProjectileID.HoneyCombSentryBullet = ModContent.ProjectileType<HoneyCombSentryBullet>();
+			ModProjectileID.DarkMagicTowerBullet = ModContent.ProjectileType<DarkMagicTowerBullet>();
 			// minion
 			ModProjectileID.SentryPlatform = ModContent.ProjectileType<SentryPlatform>();
 
