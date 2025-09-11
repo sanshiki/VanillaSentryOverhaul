@@ -11,7 +11,7 @@ using SummonerExpansionMod.Initialization;
 
 namespace SummonerExpansionMod.Content.Items.Weapons.Summon
 {
-    public class DarkMagicTowerStaff : ModItem
+    public class CursedMagicTowerStaff : ModItem
     {
         public override string Texture => ModGlobal.MOD_TEXTURE_PATH + "Items/DummyStaff";
         public override void SetStaticDefaults()
@@ -41,7 +41,7 @@ namespace SummonerExpansionMod.Content.Items.Weapons.Summon
             Item.DamageType = DamageClass.Summon; // Makes the damage register as summon. If your item does not have any damage type, it becomes true damage (which means that damage scalars will not affect it). Be sure to have a damage type
             // Item.buffType = ModContent.BuffType<DarkMagicTowerBuff>();
             // No buffTime because otherwise the item tooltip would say something like "1 minute duration"
-            Item.shoot = ModContent.ProjectileType<DarkMagicTower>(); // This item creates the minion projectile
+            Item.shoot = ModContent.ProjectileType<CursedMagicTower>(); // This item creates the minion projectile
             // Item.shoot = ModContent.ProjectileType<BabySlimeOverride>();
         }
 
