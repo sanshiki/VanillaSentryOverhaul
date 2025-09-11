@@ -9,7 +9,7 @@ using Terraria.Audio;
 
 using Microsoft.Xna.Framework.Graphics;
 using SummonerExpansionMod.Content.Buffs.Summon;
-using SummonerExpansionMod.Utils;
+using SummonerExpansionMod.ModUtils;
 using SummonerExpansionMod.Initialization;
 
 namespace SummonerExpansionMod.Content.Projectiles.Summon
@@ -17,11 +17,12 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
     public class DarkMagicTower : ModProjectile
     {
         // animation
-        private const int FRAME_COUNT = 3;
+        private const int FRAME_COUNT = 6;
         private int FRAME_SPEED = 10;
         // private int fireCooldown = 30;
         private const int FIRE_INTERVAL = 40;
         private int fireTimer = 0;
+        private long floatCnt = 0;
 
         private const float REAL_BULLET_SPEED = 15f;
         private const float PRED_BULLET_SPEED = 15f;
@@ -42,25 +43,22 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 
         public override void SetDefaults()
         {
-            Projectile.width = 38;
-            Projectile.height = 92;
+            Projectile.width = 40;
+            Projectile.height = 58;
             Projectile.friendly = false;
             Projectile.DamageType = DamageClass.Summon;
             Projectile.ignoreWater = true;
             Projectile.tileCollide = false;
             Projectile.penetrate = -1;
-            Projectile.timeLeft = 3600;
+            Projectile.timeLeft = Projectile.SentryLifeTime;
             Projectile.sentry = true;
             Projectile.netImportant = true;
-            Projectile.timeLeft = Projectile.SentryLifeTime;
             
             BUFF_ID = ModBuffID.SentryEnhancement;
         }
 
         public override void AI()
         {
-            Lighting.AddLight(Projectile.Center, 0.2f, 0.2f, 0.5f); // Add a faint magic glow
-
             // Float in the air
             Vector2 vel = Projectile.velocity;
             Vector2 vel_dir = vel.SafeNormalize(Vector2.Zero);
@@ -76,7 +74,8 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             float FloatAmplitude = 0.5f;
             FloatAmplitude = Math.Min(FloatAmplitude, 2f / vel.Length());
             
-            float FloatOffset = (float)(Math.Sin(Main.GameUpdateCount * 0.05f) * FloatAmplitude);
+            float FloatOffset = (float)(Math.Sin(floatCnt * 0.05f) * FloatAmplitude);
+            floatCnt++;
             Projectile.Center += new Vector2(0, FloatOffset);
 
             // teleport to owner if needed
@@ -112,28 +111,6 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             UpdateAnimation(target);
         }
 
-        private NPC FindTarget()
-        {
-            float maxDetectDistance = 1000f;
-            NPC closestNPC = null;
-            float closestDistance = maxDetectDistance;
-
-            foreach (NPC npc in Main.npc)
-            {
-                if (npc.CanBeChasedBy(this))
-                {
-                    float distance = Vector2.Distance(Projectile.Center, npc.Center);
-                    if (distance < closestDistance)
-                    {
-                        closestDistance = distance;
-                        closestNPC = npc;
-                    }
-                }
-            }
-
-            return closestNPC;
-        }
-
         private void FireAt(NPC target)
         {
             Vector2 PredictedPos = target.Center;
@@ -146,7 +123,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             Vector2 direction = PredictedPos - Projectile.Center;
             direction.Normalize();
 
-            Vector2 ShootOffset = new Vector2(0, -23f);
+            Vector2 ShootOffset = new Vector2(0, -8f);
 
             Projectile proj = Projectile.NewProjectileDirect(
                 Projectile.GetSource_FromAI(),
@@ -247,6 +224,9 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                 direction.Normalize();
                 Projectile.spriteDirection = direction.X > 0 ? -1 : 1;
             }
+
+            // add light
+            Lighting.AddLight(Projectile.Center, 0.8f, 0.2f, 0.2f);
         }
     }
 }

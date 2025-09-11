@@ -11,7 +11,7 @@ using Microsoft.Xna.Framework.Graphics;
 using SummonerExpansionMod.Content.Items.Weapons.Summon;
 using SummonerExpansionMod.Content.Buffs.Summon;
 using SummonerExpansionMod.Initialization;
-using SummonerExpansionMod.Utils;
+using SummonerExpansionMod.ModUtils;
 
 namespace SummonerExpansionMod.Content.Projectiles.Summon
 {

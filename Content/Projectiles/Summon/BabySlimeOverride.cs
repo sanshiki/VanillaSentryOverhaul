@@ -7,7 +7,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 
 using SummonerExpansionMod.Content.Buffs.Summon;
-using SummonerExpansionMod.Utils;
+using SummonerExpansionMod.ModUtils;
 
 namespace SummonerExpansionMod.Content.Projectiles.Summon
 {

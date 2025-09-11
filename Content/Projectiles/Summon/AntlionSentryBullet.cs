@@ -18,7 +18,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         private const float MAX_GRAVITY = 30f;
         private const float EXPLOSION_RADIUS = 60f;
 
-        public override string Texture => ModGlobal.VANILLA_TEXTURE_PATH + ProjectileID.SandBallFalling;
+        public override string Texture => ModGlobal.VANILLA_PROJECTILE_TEXTURE_PATH + ProjectileID.SandBallFalling;
 
         public override void SetDefaults()
         {

@@ -33,7 +33,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         private static int BuffProjectileID = -1;
 
         // public override string Texture => "Terraria/Images/Projectile_" + ProjectileID.DryadsWardCircle;
-        public override string Texture => ModGlobal.VANILLA_TEXTURE_PATH + ProjectileID.DryadsWardCircle;
+        public override string Texture => ModGlobal.VANILLA_PROJECTILE_TEXTURE_PATH + ProjectileID.DryadsWardCircle;
 
         public override void SetStaticDefaults()
         {

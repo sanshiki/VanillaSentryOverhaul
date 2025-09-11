@@ -9,7 +9,7 @@ using Terraria.Audio;
 
 using Microsoft.Xna.Framework.Graphics;
 using SummonerExpansionMod.Content.Buffs.Summon;
-using SummonerExpansionMod.Utils;
+using SummonerExpansionMod.ModUtils;
 using SummonerExpansionMod.Initialization;
 using Terraria.Audio;
 
@@ -38,7 +38,13 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         protected bool SquireArmorSet = false;
         protected bool SquireAltArmorSet = false;
 
-        public void SetDefaults(Projectile projectile)
+        public BallistaSentryOverride()
+        {
+            RegisterFlags["SetDefaults"] = true;
+            RegisterFlags["PreAI"] = true;
+        }
+
+        public override void SetDefaults(Projectile projectile)
         {
             projectile.width = 26;
             projectile.height = 54;
@@ -51,14 +57,6 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             projectile.netImportant = true;
             projectile.DamageType = DamageClass.Summon;
         }
-
-        public void AI(Projectile projectile) {}
-
-        public virtual bool PreAI(Projectile projectile) => true;
-
-        public bool OnTileCollide(Projectile projectile, Vector2 oldVelocity) => true;
-
-        public void Kill(Projectile projectile, int timeLeft) {}
 
         protected void CheckArmorSet(Player player)
         {
@@ -216,13 +214,6 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 
         private const float MAX_RANGE = 1200f;
 
-        public void SetDefaults(Projectile projectile)
-        {
-            base.SetDefaults(projectile);
-            projectile.width = 26;
-            projectile.height = 54;
-        }
-
         public override bool PreAI(Projectile projectile)
         {
             int shootInterval = GetShootInterval(Main.player[projectile.owner]);
@@ -317,12 +308,6 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         private const float MAX_RANGE = 1500f;
         // private const float BULLET_SPEED = 50f;
         // private const float PRED_BULLET_SPEED = 50f;
-        public void SetDefaults(Projectile projectile)
-        {
-            base.SetDefaults(projectile);
-            projectile.width = 26;
-            projectile.height = 54;
-        }
 
         public override bool PreAI(Projectile projectile)
         {

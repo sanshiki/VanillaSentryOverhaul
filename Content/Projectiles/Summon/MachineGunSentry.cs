@@ -10,7 +10,7 @@ using Terraria.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria.GameContent;
 using SummonerExpansionMod.Content.Buffs.Summon;
-using SummonerExpansionMod.Utils;
+using SummonerExpansionMod.ModUtils;
 using SummonerExpansionMod.Initialization;
 
 namespace SummonerExpansionMod.Content.Projectiles.Summon

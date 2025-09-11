@@ -12,13 +12,26 @@ using SummonerExpansionMod.Content.Projectiles.Summon;
 
 namespace SummonerExpansionMod.Content.Projectiles.Summon
 {
-	public interface IProjectileOverride
+	public abstract class IProjectileOverride
 	{
-		void SetDefaults(Projectile projectile);
-		bool PreAI(Projectile projectile);
-		void AI(Projectile projectile);
-		bool OnTileCollide(Projectile projectile, Vector2 oldVelocity);
-		void Kill(Projectile projectile, int timeLeft);
+		// virturl entries
+		public virtual void SetDefaults(Projectile projectile) {}
+		public virtual bool PreAI(Projectile projectile) => true;
+		public virtual void AI(Projectile projectile) {}
+		public virtual bool OnTileCollide(Projectile projectile, Vector2 oldVelocity) => true;
+		public virtual bool? Colliding(Projectile projectile, Rectangle myRect, Rectangle targetRect) => null;
+		public virtual void OnHitNPC(Projectile projectile, NPC target, NPC.HitInfo hit, int damageDone) {}
+
+		// register flags
+		public Dictionary<string, bool> RegisterFlags = new()
+		{
+			{ "SetDefaults", false },
+			{ "PreAI", false },
+			{ "AI", false },
+			{ "OnTileCollide", false },
+			{ "Colliding", false },
+			{ "OnHitNPC", false },
+		};
 	}
 	
 	public class VanillaSentryOverride : GlobalProjectile
@@ -37,13 +50,20 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 			{ ProjectileID.DD2FlameBurstTowerT1Shot, new FlameburstShotOverride() },
 			{ ProjectileID.DD2FlameBurstTowerT2Shot, new FlameburstShotT2Override() },
 			{ ProjectileID.DD2FlameBurstTowerT3Shot, new FlameburstShotT3Override() },
+			// { ProjectileID.DD2LightningAuraT1, new LightningAuraT1Override() },
 			// 以后只需要在这里加映射
 		};
 
 		public override void SetDefaults(Projectile projectile)
 		{
 			if (overrides.TryGetValue(projectile.type, out var handler))
-				handler.SetDefaults(projectile);
+			{
+				if (handler.RegisterFlags["SetDefaults"])
+					handler.SetDefaults(projectile);
+				else
+					base.SetDefaults(projectile);
+			}
+				
 			else
 				base.SetDefaults(projectile);
 		}
@@ -51,14 +71,24 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 		public override bool PreAI(Projectile projectile)
 		{
 			if (overrides.TryGetValue(projectile.type, out var handler))
-				return handler.PreAI(projectile);
+			{
+				if (handler.RegisterFlags["PreAI"])
+					return handler.PreAI(projectile);
+				else
+					return base.PreAI(projectile);
+			}
 			return base.PreAI(projectile);
 		}
 
 		public override void AI(Projectile projectile)
 		{
 			if (overrides.TryGetValue(projectile.type, out var handler))
-				handler.AI(projectile);
+			{
+				if (handler.RegisterFlags["AI"])
+					handler.AI(projectile);
+				else
+					base.AI(projectile);
+			}
 			else
 				base.AI(projectile);
 		}
@@ -66,15 +96,33 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 		public override bool OnTileCollide(Projectile projectile, Vector2 oldVelocity)
 		{
 			if (overrides.TryGetValue(projectile.type, out var handler))
-				return handler.OnTileCollide(projectile, oldVelocity);
+			{
+				if (handler.RegisterFlags["OnTileCollide"])
+					return handler.OnTileCollide(projectile, oldVelocity);
+				else
+					return base.OnTileCollide(projectile, oldVelocity);
+			}
 			return base.OnTileCollide(projectile, oldVelocity);
 		}
 
-		public override void Kill(Projectile projectile, int timeLeft)
+		public override bool? Colliding(Projectile projectile, Rectangle myRect, Rectangle targetRect)
 		{
 			if (overrides.TryGetValue(projectile.type, out var handler))
-				handler.Kill(projectile, timeLeft);
+			{
+				if (handler.RegisterFlags["Colliding"])
+					return handler.Colliding(projectile, myRect, targetRect);
+				else
+					return base.Colliding(projectile, myRect, targetRect);
+			}
+			return base.Colliding(projectile, myRect, targetRect);
+		}
+
+		public override void OnHitNPC(Projectile projectile, NPC target, NPC.HitInfo hit, int damageDone)
+		{
+			if (overrides.TryGetValue(projectile.type, out var handler))
+				handler.OnHitNPC(projectile, target, hit, damageDone);
+			else
+				base.OnHitNPC(projectile, target, hit, damageDone);
 		}
 	}
-
 }
