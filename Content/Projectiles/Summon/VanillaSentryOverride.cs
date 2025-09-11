@@ -31,6 +31,12 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 			{ ProjectileID.DD2BallistraTowerT1, new BallistaTowerT1Override() },
 			{ ProjectileID.DD2BallistraTowerT2, new BallistaTowerT2Override() },
 			{ ProjectileID.DD2BallistraTowerT3, new BallistaTowerT3Override() },
+			{ ProjectileID.DD2FlameBurstTowerT1, new FlameburstTowerT1Override() },
+			{ ProjectileID.DD2FlameBurstTowerT2, new FlameburstTowerT2Override() },
+			{ ProjectileID.DD2FlameBurstTowerT3, new FlameburstTowerT3Override() },
+			{ ProjectileID.DD2FlameBurstTowerT1Shot, new FlameburstShotOverride() },
+			{ ProjectileID.DD2FlameBurstTowerT2Shot, new FlameburstShotT2Override() },
+			{ ProjectileID.DD2FlameBurstTowerT3Shot, new FlameburstShotT3Override() },
 			// 以后只需要在这里加映射
 		};
 

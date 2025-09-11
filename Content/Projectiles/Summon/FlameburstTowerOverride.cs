@@ -9,7 +9,7 @@ using Terraria.Audio;
 
 using Microsoft.Xna.Framework.Graphics;
 using SummonerExpansionMod.Content.Buffs.Summon;
-using SummonerExpansionMod.Utils;
+using SummonerExpansionMod.ModUtils;
 using SummonerExpansionMod.Initialization;
 
 namespace SummonerExpansionMod.Content.Projectiles.Summon
@@ -38,7 +38,13 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         protected bool SquireArmorSet = false;
         protected bool SquireAltArmorSet = false;
 
-        public void SetDefaults(Projectile projectile)
+        public FlameburstTowerOverride()
+        {
+            RegisterFlags["SetDefaults"] = true;
+            RegisterFlags["PreAI"] = true;
+        }
+
+        public override void SetDefaults(Projectile projectile)
         {
             projectile.width = 30;
 			projectile.height = 54;
@@ -51,14 +57,6 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             projectile.netImportant = true;
             projectile.DamageType = DamageClass.Summon;
         }
-
-        public void AI(Projectile projectile) {}
-
-        public virtual bool PreAI(Projectile projectile) => true;
-
-        public bool OnTileCollide(Projectile projectile, Vector2 oldVelocity) => true;
-
-        public void Kill(Projectile projectile, int timeLeft) {}
 
         protected void CheckArmorSet(Player player)
         {
@@ -112,11 +110,12 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 
         protected float lastError = 0f;
 
-        public void SetDefaults(Projectile projectile) {}
+        public FlameburstShotOverride()
+        {
+            RegisterFlags["AI"] = true;
+        }
 
-        public bool PreAI(Projectile projectile) => true;
-
-        public void AI(Projectile projectile)
+        public override void AI(Projectile projectile)
         {
             // get target
             int targetId = (int)projectile.ai[0];
@@ -136,10 +135,6 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             Vector2 velocity = projectile.velocity;
             projectile.velocity = velocity.RotatedBy(turn_speed);
         }
-
-        public bool OnTileCollide(Projectile projectile, Vector2 oldVelocity) => true;
-
-        public void Kill(Projectile projectile, int timeLeft) {}
     }
 
     public class FlameburstShotT1Override : FlameburstShotOverride
