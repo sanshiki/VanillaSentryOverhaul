@@ -14,6 +14,12 @@ namespace SummonerExpansionMod.Initialization
 
         public const string MOD_TEXTURE_PATH = "SummonerExpansionMod/Assets/Textures/";
 
-        public const string VANILLA_TEXTURE_PATH = "Terraria/Images/Projectile_";
+        public const string VANILLA_PROJECTILE_TEXTURE_PATH = "Terraria/Images/Projectile_";
+
+        public const string VANILLA_NPC_TEXTURE_PATH = "Terraria/Images/NPC_";
+
+        public const string VANILLA_ITEM_TEXTURE_PATH = "Terraria/Images/Item_";
+
+        public const string VANILLA_BUFF_TEXTURE_PATH = "Terraria/Images/Buff_";
     }
 }
