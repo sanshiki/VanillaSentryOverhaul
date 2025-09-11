@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace SummonerExpansionMod.Utils
+namespace SummonerExpansionMod.ModUtils
 {
 	/// <summary>
 	/// 通用状态机基类，用于管理召唤物的状态转换

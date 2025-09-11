@@ -3,7 +3,7 @@ using Terraria;
 using Terraria.ModLoader;
 using System.Collections.Generic;
 
-namespace SummonerExpansionMod.Utils
+namespace SummonerExpansionMod.ModUtils
 {
 	/// <summary>
 	/// 动画状态信息

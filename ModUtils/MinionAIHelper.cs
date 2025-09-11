@@ -5,7 +5,9 @@ using Terraria.ModLoader;
 using SummonerExpansionMod.Content.Buffs.Summon;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria.GameContent;
-namespace SummonerExpansionMod.Utils
+using System.Collections.Generic;
+
+namespace SummonerExpansionMod.ModUtils
 {
 	/// <summary>
 	/// 召唤物AI通用工具类
@@ -487,8 +489,51 @@ namespace SummonerExpansionMod.Utils
 			Rectangle clip_rect = new Rectangle(rect.X, rect.Y, clip_width, clip_height);
 			return clip_rect;
 		}
-
-
 		#endregion
+
+		#region Random Methods
+		public static float RandomFloat(float min, float max)
+		{
+			return (float)Main.rand.NextDouble() * (max - min) + min;
+		}
+		public static float RandomFloat(double min, double max)
+		{
+			return (float)(Main.rand.NextDouble() * (max - min) + min);
+		}
+		public static float RandomFloat(float min, double max)
+		{
+			return (float)Main.rand.NextDouble() * ((float)max - min) + min;
+		}
+		public static float RandomFloat(double min, float max)
+		{
+			return (float)Main.rand.NextDouble() * (max - (float)min) + (float)min;
+		}
+		public static bool RandomBool()
+		{
+			return Main.rand.Next(2) == 1;
+		}
+		#endregion
+
+		public static void GenerateLightning(Vector2 start, Vector2 end, float displacement, float minDisplacement, List<Vector2> points)
+		{
+			if (displacement < minDisplacement)
+			{
+				points.Add(start);
+				points.Add(end);
+			}
+			else
+			{
+				Vector2 mid = (start + end) / 2;
+				// 垂直方向
+				Vector2 dir = new Vector2(end.Y - start.Y, start.X - end.X);
+				dir.Normalize();
+				// 随机偏移
+				mid += dir * (RandomFloat(-displacement, displacement));
+
+				// 递归生成
+				GenerateLightning(start, mid, displacement / 2, minDisplacement, points);
+				GenerateLightning(mid, end, displacement / 2, minDisplacement, points);
+			}
+		}
 	}
 } 
