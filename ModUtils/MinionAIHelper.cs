@@ -194,6 +194,23 @@ namespace SummonerExpansionMod.ModUtils
 			return new TargetSearchResult(foundTarget, distanceFromTarget, targetCenter, targetNPC);
 		}
 
+		public static List<int> SearchForProjectiles(int type, Vector2 center, float radius)
+		{
+			List<int> projectileIDs = new List<int>();
+			for(int i = 0; i < Main.maxProjectiles; i++)
+			{
+				Projectile projectile = Main.projectile[i];
+				if(projectile.type == type && projectile.active)
+				{
+					if(projectile.Center.Distance(center) < radius)
+					{
+						projectileIDs.Add(i);
+					}
+				}
+			}
+			return projectileIDs;
+		}
+
 		/// <summary>
 		/// 更新召唤物的友好状态
 		/// </summary>
@@ -512,8 +529,13 @@ namespace SummonerExpansionMod.ModUtils
 		{
 			return Main.rand.Next(2) == 1;
 		}
+		public static float RandomSign()
+		{
+			return Main.rand.Next(2) == 1 ? 1 : -1;
+		}
 		#endregion
 
+		#region Dust Methods
 		public static void GenerateLightning(Vector2 start, Vector2 end, float displacement, float minDisplacement, List<Vector2> points)
 		{
 			if (displacement < minDisplacement)
@@ -535,5 +557,16 @@ namespace SummonerExpansionMod.ModUtils
 				GenerateLightning(mid, end, displacement / 2, minDisplacement, points);
 			}
 		}
+		#endregion
+
+		#region Homein Methods
+		public static void HomeinToTarget(Projectile projectile, Vector2 target, float speed, float inertia)
+		{
+			Vector2 direction = target - projectile.Center;
+			direction.Normalize();
+			direction *= speed;
+			projectile.velocity = (projectile.velocity * (inertia - 1) + direction) / inertia;
+		}
+		#endregion
 	}
 } 

@@ -12,14 +12,21 @@ using Terraria.ModLoader;
 using ReLogic.Content;
 using Terraria;
 using SummonerExpansionMod.Initialization;
+using System.IO;
+using Microsoft.Xna.Framework;
+using Terraria.UI;
+using Terraria.GameContent.UI.States;
+using SummonerExpansionMod.ModUtils;
 
 namespace SummonerExpansionMod
 {
 	// Please read https://github.com/tModLoader/tModLoader/wiki/Basic-tModLoader-Modding-Guide#mod-skeleton-contents for more information about the various files in a mod.
 	public class SummonerExpansionMod : Mod
 	{
+		internal static ModKeybind ToggleDynamicParamManagerUI;
 		public override void Load()
 		{
+			ToggleDynamicParamManagerUI = KeybindLoader.RegisterKeybind(this, "Toggle Dynamic Param Manager UI", "P");
 			ModIDLoader.Load();
 			// if (Main.netMode != NetmodeID.Server)
 			// {
