@@ -20,14 +20,14 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         private const int FRAME_COUNT = 3;
         private int FRAME_SPEED = 10;
         // private int fireCooldown = 30;
-        private const int FIRE_INTERVAL = 40;
+        private const int FIRE_INTERVAL = 120;
         private int fireTimer = 0;
         private long floatCnt = 0;
 
-        private const float REAL_BULLET_SPEED = 15f;
+        private const float REAL_BULLET_SPEED = 9.5f;
         private const float PRED_BULLET_SPEED = 15f;
         private const float DEACCELERATION = 0.5f;
-        private const bool USE_PREDICTION = true;
+        private const bool USE_PREDICTION = false;
 
         private const float ENHANCEMENT_FACTOR = 0.75f;
         private int BUFF_ID = -1;
@@ -55,7 +55,11 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             Projectile.netImportant = true;
             
             BUFF_ID = ModBuffID.SentryEnhancement;
+
+            // DynamicParamManager.Register("CursedMagicTower.RealBulletSpeed", REAL_BULLET_SPEED, 0f, 30f, null);
+
         }
+
 
         public override void AI()
         {
@@ -97,16 +101,23 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             NPC target = MinionAIHelper.SearchForTargets(
                 owner, 
                 Projectile, 
-                1000f, 
-                true, 
+                1500f, 
+                false, 
                 null).TargetNPC;
-            if (target != null && fireTimer >= fireInterval)
-            {
-                FireAt(target);
-                fireTimer = 0;
-            }
-
+            
             fireTimer++;
+            if(fireTimer >= fireInterval)
+            {
+                if(target != null)
+                {
+                    FireAt(target);
+                    fireTimer = 0;
+                }
+                else
+                {
+                    fireTimer = fireInterval;
+                }
+            }
 
             UpdateAnimation(target);
         }
@@ -114,32 +125,38 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         private void FireAt(NPC target)
         {
             Vector2 PredictedPos = target.Center;
-            if(USE_PREDICTION)
-            {
-                PredictedPos = MinionAIHelper.PredictTargetPosition(
-                    Projectile, target, PRED_BULLET_SPEED);
-            }
             
             Vector2 direction = PredictedPos - Projectile.Center;
             direction.Normalize();
 
+            float AngleOffset = MinionAIHelper.RandomFloat(-0.1f, 0.1f);
+            direction = direction.RotatedBy(AngleOffset);
+
             Vector2 ShootOffset = new Vector2(0, -8f);
+
+            // float RealBulletSpeed = (float)DynamicParamManager.Get("CursedMagicTower.RealBulletSpeed").value;
+            float RealBulletSpeed = REAL_BULLET_SPEED;
+
+            float SpeedOffset = MinionAIHelper.RandomFloat(-1f, 1f);
 
             Projectile proj = Projectile.NewProjectileDirect(
                 Projectile.GetSource_FromAI(),
                 Projectile.Center + ShootOffset,
-                direction * REAL_BULLET_SPEED,
+                direction * (RealBulletSpeed + SpeedOffset),
                 // ProjectileID.WaterStream, // Reusing vanilla projectile
-                // ModProjectileID.CursedMagicTowerBullet,
-                ProjectileID.SapphireBolt,
+                ModProjectileID.CursedMagicTowerBulletSmall,
+                // ProjectileID.SapphireBolt,
                 Projectile.damage,
                 Projectile.knockBack,
                 Projectile.owner
             );
-            proj.penetrate = 10; 
-            proj.usesLocalNPCImmunity = true;
-            proj.localNPCHitCooldown = 60;
-            proj.DamageType = DamageClass.Summon;
+
+            proj.ai[0] = target.whoAmI;
+
+            if(proj.ModProjectile is CursedMagicTowerBulletSmall bullet)
+            {
+                bullet.Target = PredictedPos;
+            }
 
             SoundEngine.PlaySound(SoundID.Item43, Projectile.Center);
         }
@@ -148,6 +165,8 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         {
             Vector2 bestPosition = Projectile.Center;
             int bestTileCount = int.MaxValue;
+
+            if(player.Center.Distance(Projectile.Center) > 4000f) return;
 
             for (int xOffset = -5; xOffset <= 5; xOffset++)
             {
@@ -226,7 +245,17 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             }
 
             // add light
-            Lighting.AddLight(Projectile.Center, 0.8f, 0.2f, 0.2f);
+            Lighting.AddLight(Projectile.Center, 0.2f, 0.2f, 0.8f);
+
+            // add sparkle dust
+            float seed = MinionAIHelper.RandomFloat(0f,1f);
+            if(seed > 0.95f)
+            {
+                int BlueDustID = 29;
+                Dust BlueDust = Dust.NewDustDirect(Projectile.Center - Projectile.Size/2f, Projectile.width, Projectile.height, BlueDustID, 0f, 0f);
+                BlueDust.noGravity = true;
+                BlueDust.noLight = true;
+            }
         }
     }
 }
