@@ -25,6 +25,9 @@ namespace SummonerExpansionMod.Initialization
 			ModProjectileID.DarkMagicTower = ModContent.ProjectileType<DarkMagicTower>();
 			ModProjectileID.BunnySentry = ModContent.ProjectileType<BunnySentry>();
 			ModProjectileID.MachineGunSentry = ModContent.ProjectileType<MachineGunSentry>();
+			ModProjectileID.RocketSentry = ModContent.ProjectileType<RocketSentry>();
+			ModProjectileID.GatlingSentry = ModContent.ProjectileType<GatlingSentry>();
+			ModProjectileID.AutocannonSentry = ModContent.ProjectileType<AutocannonSentry>();
 
 			// sentry projectiles
 			ModProjectileID.AntlionSentryBullet = ModContent.ProjectileType<AntlionSentryBullet>();
@@ -34,6 +37,8 @@ namespace SummonerExpansionMod.Initialization
 			ModProjectileID.DarkMagicTowerBullet = ModContent.ProjectileType<DarkMagicTowerBullet>();
 			ModProjectileID.CursedMagicTowerBulletSmall = ModContent.ProjectileType<CursedMagicTowerBulletSmall>();
 			ModProjectileID.CursedMagicTowerBulletSphere = ModContent.ProjectileType<CursedMagicTowerBulletSphere>();
+			ModProjectileID.RocketSentryBullet = ModContent.ProjectileType<RocketSentryBullet>();
+			ModProjectileID.AutocannonSentryBullet = ModContent.ProjectileType<AutocannonSentryBullet>();
 			// minion
 			ModProjectileID.SentryPlatform = ModContent.ProjectileType<SentryPlatform>();
 
@@ -45,6 +50,7 @@ namespace SummonerExpansionMod.Initialization
 			/* ------------------------------- buffs ------------------------------- */
 			ModBuffID.SentryEnhancement = ModContent.BuffType<SentryEnhancementBuff>();
 			ModBuffID.SentryTarget = ModContent.BuffType<SentryTargetBuff>();
+			ModBuffID.ElectricShock = ModContent.BuffType<ElectricShock>();
         }
 
 		
