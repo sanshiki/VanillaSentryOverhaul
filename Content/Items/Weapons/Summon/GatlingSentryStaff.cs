@@ -11,7 +11,7 @@ using SummonerExpansionMod.Initialization;
 
 namespace SummonerExpansionMod.Content.Items.Weapons.Summon
 {
-    public class DarkMagicTowerStaff : ModItem
+    public class GatlingSentryStaff : ModItem
     {
         public override string Texture => ModGlobal.MOD_TEXTURE_PATH + "Items/DummyStaff";
         public override void SetStaticDefaults()
@@ -24,8 +24,8 @@ namespace SummonerExpansionMod.Content.Items.Weapons.Summon
 
         public override void SetDefaults()
         {
-            Item.damage = 15;
-            Item.knockBack = 3f;
+            Item.damage = 6;
+            Item.knockBack = 2f;
             Item.mana = 10; // mana cost
             Item.width = 32;
             Item.height = 32;
@@ -39,9 +39,9 @@ namespace SummonerExpansionMod.Content.Items.Weapons.Summon
             // These below are needed for a minion weapon
             Item.noMelee = true; // this item doesn't do any melee damage
             Item.DamageType = DamageClass.Summon; // Makes the damage register as summon. If your item does not have any damage type, it becomes true damage (which means that damage scalars will not affect it). Be sure to have a damage type
-            // Item.buffType = ModContent.BuffType<DarkMagicTowerBuff>();
+            // Item.buffType = ModContent.BuffType<MachineGunSentryBuff>();
             // No buffTime because otherwise the item tooltip would say something like "1 minute duration"
-            Item.shoot = ModContent.ProjectileType<DarkMagicTower>(); // This item creates the minion projectile
+            Item.shoot = ModContent.ProjectileType<GatlingSentry>(); // This item creates the minion projectile
             // Item.shoot = ModContent.ProjectileType<BabySlimeOverride>();
         }
 
