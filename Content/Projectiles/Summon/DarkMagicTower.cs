@@ -130,8 +130,8 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                 Projectile.Center + ShootOffset,
                 direction * REAL_BULLET_SPEED,
                 // ProjectileID.WaterStream, // Reusing vanilla projectile
-                // ModProjectileID.DarkMagicTowerBullet,
-                ProjectileID.SapphireBolt,
+                ModProjectileID.DarkMagicTowerBullet,
+                // ProjectileID.SapphireBolt,
                 Projectile.damage,
                 Projectile.knockBack,
                 Projectile.owner

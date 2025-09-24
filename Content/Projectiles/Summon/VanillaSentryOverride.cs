@@ -21,7 +21,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 		public virtual bool OnTileCollide(Projectile projectile, Vector2 oldVelocity) => true;
 		public virtual bool? Colliding(Projectile projectile, Rectangle myRect, Rectangle targetRect) => null;
 		public virtual void OnHitNPC(Projectile projectile, NPC target, NPC.HitInfo hit, int damageDone) {}
-
+		public virtual bool TileCollideStyle(Projectile projectile, ref int width, ref int height, ref bool fallThrough, ref Vector2 hitboxCenterFrac) => true;
 		// register flags
 		public Dictionary<string, bool> RegisterFlags = new()
 		{
@@ -31,6 +31,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 			{ "OnTileCollide", false },
 			{ "Colliding", false },
 			{ "OnHitNPC", false },
+			{ "TileCollideStyle", false },
 		};
 	}
 	
@@ -51,6 +52,10 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 			{ ProjectileID.DD2FlameBurstTowerT2Shot, new FlameburstShotT2Override() },
 			{ ProjectileID.DD2FlameBurstTowerT3Shot, new FlameburstShotT3Override() },
 			// { ProjectileID.DD2LightningAuraT1, new LightningAuraT1Override() },
+			{ ProjectileID.SpiderHiver, new QueenSpiderOverride() },
+			{ ProjectileID.HoundiusShootius, new EyeBallTurretOverride() },
+			{ ProjectileID.FrostHydra, new FrostHydraOverrdie() },
+			{ ProjectileID.FrostBlastFriendly, new FrostBlastOverride() },
 			// 以后只需要在这里加映射
 		};
 
@@ -115,6 +120,14 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 					return base.Colliding(projectile, myRect, targetRect);
 			}
 			return base.Colliding(projectile, myRect, targetRect);
+		}
+
+		public override bool TileCollideStyle(Projectile projectile, ref int width, ref int height, ref bool fallThrough, ref Vector2 hitboxCenterFrac)
+		{
+			if (overrides.TryGetValue(projectile.type, out var handler))
+				return handler.TileCollideStyle(projectile, ref width, ref height, ref fallThrough, ref hitboxCenterFrac);
+			else
+				return base.TileCollideStyle(projectile, ref width, ref height, ref fallThrough, ref hitboxCenterFrac);
 		}
 
 		public override void OnHitNPC(Projectile projectile, NPC target, NPC.HitInfo hit, int damageDone)

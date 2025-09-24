@@ -29,8 +29,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 
         // sentry state
         private bool onGround;
-        private const bool USE_PREDICTION = true;
-        private int rocketCount = 0;
+        private const bool USE_PREDICTION = false;
 
         // sentry parameters
         private const float REAL_BULLET_SPEED = 25f;
@@ -46,9 +45,9 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         private const int SHOOT_FRAME_SPEED = 5;
 
         // private const int SHOOT_INTERVAL = 6;
-        private const int TOTAL_SHOOT_INTERVAL = 120;
-        private const int INTERVAL_BETWEEN_ROCKETS = 30;
-        private const int ROCKET_NUM = 2;
+        private const int TOTAL_SHOOT_INTERVAL = 80;
+        // private const int INTERVAL_BETWEEN_ROCKETS = 30;
+        // private const int ROCKET_NUM = 2;
         private const int SPAWN_TIME = 2*26;
         private const float MAX_RANGE = 1500f;
         // gravity
@@ -62,7 +61,9 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         {
             ProjectileID.Sets.MinionSacrificable[Projectile.type] = true;
             ProjectileID.Sets.MinionTargettingFeature[Projectile.type] = true;
-            Main.projFrames[Projectile.type] = FRAME_COUNT;
+            Main.projFrames[Projectile.type] = 1;
+            ProjectileID.Sets.MinionShot[Projectile.type] = true;
+            ProjectileID.Sets.CultistIsResistantTo[Projectile.type] = true;
         }
 
         public override void SetDefaults()
@@ -109,91 +110,78 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 
             if (target != null && spawnTimer > SPAWN_TIME)
             {
-                shootTimer++;
-                if (shootTimer == 1)
-                {
-                    // Shooting animation
-                    Projectile.frame = 2; // Frame 3
-                }
-                else
-                {
-                    Projectile.frame = 0;
-                }
-
                 // calculate direction
                 Vector2 PredictedPos = target.Center;
-
                 if(USE_PREDICTION)
                 {
-                    // for(int tick = 0; tick < 60; tick+=3)
-                    // {
-                    //     Vector2 TargetPredictedPos = target.Center + target.velocity * tick;
-                    //     PredictedPos = TargetPredictedPos;
 
-                    //     float bulletFlyTime = Vector2.Distance(Projectile.Center, TargetPredictedPos) / PRED_BULLET_SPEED;
-
-                    //     if (bulletFlyTime < tick)
-                    //     {
-                    //         // Main.NewText("bulletFlyTime: " + bulletFlyTime + " tick: " + tick);
-                    //         break;
-                    //     }
-
-                    // }
                     PredictedPos = MinionAIHelper.PredictTargetPosition(
-                        Projectile, target, PRED_BULLET_SPEED);
+                        Projectile, target, PRED_BULLET_SPEED, 60, 5);
                 }
                 direction = PredictedPos - Projectile.Center;
                 direction.Normalize();
 
-                if ((shootTimer >= INTERVAL_BETWEEN_ROCKETS && rocketCount == 0) ||
-                    (shootTimer >= INTERVAL_BETWEEN_ROCKETS*2 && rocketCount == 1))
+                // if ((shootTimer >= INTERVAL_BETWEEN_ROCKETS && rocketCount == 0) ||
+                //     (shootTimer >= INTERVAL_BETWEEN_ROCKETS*2 && rocketCount == 1))
+                if (shootTimer >= TOTAL_SHOOT_INTERVAL)
                 {
-                    
+                shootTimer = 0;
+                }
+                if(shootTimer == 0)
+                {
+                    // Whip add damage
+                    int addDamage = 0;
+                    foreach(var item in ModGlobal.WhipAddDamageDict)
+                    {
+                        if(target.HasBuff(item.Key))
+                        {
+                            addDamage += item.Value;
+                        }
+                    }
+                    int totalDamage = Projectile.damage + addDamage;
 
                     // Fire!
                     Vector2 bulletVelocity = direction * REAL_BULLET_SPEED;
 
-                    Vector2 bulletOffset = new Vector2(15f, -5f) + direction * 27f;
+                    Vector2 bulletOffset = new Vector2(0f, -5f) + direction * 27f;
 
                     Projectile rocket = Projectile.NewProjectileDirect(
                         Projectile.GetSource_FromAI(),
                         Projectile.Center + bulletOffset,
                         bulletVelocity,
-                        ProjectileID.RocketI,
+                        // ProjectileID.RocketI,
+                        ModProjectileID.RocketSentryBullet,
                         Projectile.damage,
                         0,
                         Projectile.owner);
 
 
-                    rocket.DamageType = DamageClass.Summon;
-                    rocket.hostile = false;
-                    rocket.friendly = true;
-                    rocket.usesLocalNPCImmunity = true;
+                    // rocket.DamageType = DamageClass.Summon;
+                    // rocket.hostile = false;
+                    // rocket.friendly = true;
+                    // rocket.usesLocalNPCImmunity = true;
                     // rocket.usesIDStaticNPCImmunity = true;
-                    rocket.localNPCHitCooldown = 20;
+                    // rocket.localNPCHitCooldown = 20;
                     // Main.NewText("Damage: " + Projectile.damage + "Rocket Damage: " + rocket.damage);
+                    rocket.ai[0] = target.whoAmI;
 
-                    rocketCount++;
 
                     SoundEngine.PlaySound(SoundID.Item11, Projectile.Center);
                 }
 
-                int shootInterval = TOTAL_SHOOT_INTERVAL;
-                if(owner.HasBuff(BUFF_ID))
-                {
-                    shootInterval = (int)(shootInterval * ENHANCEMENT_FACTOR);
-                }
+                // int shootInterval = TOTAL_SHOOT_INTERVAL;
+                // if(owner.HasBuff(BUFF_ID))
+                // {
+                //     shootInterval = (int)(shootInterval * ENHANCEMENT_FACTOR);
+                // }
 
-                if (shootTimer >= shootInterval)
-                {
-                    shootTimer = 0;
-                    rocketCount = 0;
-                }
+
             }
-            else
+
+            shootTimer++;
+            if (shootTimer >= TOTAL_SHOOT_INTERVAL)
             {
-                shootTimer = 0; // Reset if no target
-                rocketCount = 0;
+                shootTimer = TOTAL_SHOOT_INTERVAL;
             }
 
             // Animation

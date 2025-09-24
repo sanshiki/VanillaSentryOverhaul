@@ -6,24 +6,24 @@ using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Audio;
-
 using Microsoft.Xna.Framework.Graphics;
-using Terraria.GameContent;
+
 using SummonerExpansionMod.Content.Buffs.Summon;
 using SummonerExpansionMod.ModUtils;
 using SummonerExpansionMod.Initialization;
 using SummonerExpansionMod.Content.Dusts;
+
 namespace SummonerExpansionMod.Content.Projectiles.Summon
 {
-    public class MachineGunSentry : SentryWithSpawnAnime
+    public class AutocannonSentry : SentryWithSpawnAnime
     {
         // timers
         private int shootTimer;
         private int spawnTimer;
 
         // textures
-        private const string BASE_TEXTURE_PATH = ModGlobal.MOD_TEXTURE_PATH + "Projectiles/MachineGunSentryV3Base";
-        private const string GUN_TEXTURE_PATH = ModGlobal.MOD_TEXTURE_PATH + "Projectiles/MachineGunSentryV3Gun";
+        private const string BASE_TEXTURE_PATH = ModGlobal.MOD_TEXTURE_PATH + "Projectiles/RocketSentryV2Base";
+        private const string GUN_TEXTURE_PATH = ModGlobal.MOD_TEXTURE_PATH + "Projectiles/AutocannonSentryGun";
         private const string FRONT_BOARD_TEXTURE_PATH = ModGlobal.MOD_TEXTURE_PATH + "Projectiles/SentryFrontBoard";
         private const string BACK_BOARD_TEXTURE_PATH = ModGlobal.MOD_TEXTURE_PATH + "Projectiles/SentryBackBoard";
         public override string Texture => BASE_TEXTURE_PATH;
@@ -33,44 +33,46 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         private const bool USE_PREDICTION = true;
 
         // sentry parameters
-        private const float REAL_BULLET_SPEED = 20f;
-        private const float PRED_BULLET_SPEED = 35f;
-        private const float ACC_FACTOR = 0.05f;
-        private const int FRAME_COUNT = 36;
-        private const float MAX_RANGE = 800f;
-
-        private const int SHOOT_INTERVAL = 10;
-        private const int SPAWN_TIME = 2*26;
+        private const float REAL_BULLET_SPEED = 80f;
+        private const float PRED_BULLET_SPEED = 55f;
 
         // buff constants
         private const float ENHANCEMENT_FACTOR = 0.75f;
         private int BUFF_ID = -1;
 
+        // animation frame parameters
+        private const int FRAME_COUNT = 4;
+        private const int NORMAL_FRAME_SPEED = 20;
+        private const int SHOOT_FRAME_SPEED = 3;
+
+        // private const int SHOOT_INTERVAL = 6;
+        private const int TOTAL_SHOOT_INTERVAL = 130;
+        private const int INVERVAL_BETWEEN_SHOTS = 30;
+        private const int SHOT_NUM = 3;
+        private const int SPAWN_TIME = 2*26;
+        private const float MAX_RANGE = 1500f;
         // gravity
         public static float Gravity = ModGlobal.SENTRY_GRAVITY;
         public static float MaxGravity = 20f;
 
-        // damage
-        private const int DEFENSE_TO_IGNORE = 20;
-        private const float WHIP_DAGGER_DECAY = 0.5f;
-
         // direction
         private Vector2 direction = new Vector2(0, -1);
-        // private Vector2 direction = new Vector2(1, 0);
+
+        private bool isShooting = false;
 
         public override void SetStaticDefaults()
         {
             ProjectileID.Sets.MinionSacrificable[Projectile.type] = true;
             ProjectileID.Sets.MinionTargettingFeature[Projectile.type] = true;
-            Main.projFrames[Projectile.type] = FRAME_COUNT;
+            Main.projFrames[Projectile.type] = 1;
             ProjectileID.Sets.MinionShot[Projectile.type] = true;
             ProjectileID.Sets.CultistIsResistantTo[Projectile.type] = true;
         }
 
         public override void SetDefaults()
         {
-            Projectile.width = 54;
-            Projectile.height = 48;
+            Projectile.width = 50;
+            Projectile.height = 52;
             Projectile.friendly = false;
             Projectile.ignoreWater = true;
             Projectile.tileCollide = true;
@@ -79,9 +81,13 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             Projectile.aiStyle = -1;
             Projectile.timeLeft = Projectile.SentryLifeTime;
             Projectile.DamageType = DamageClass.Summon;
-            Projectile.ArmorPenetration = 5;
             
             BUFF_ID = ModBuffID.SentryEnhancement;
+
+            // DynamicParamManager.Register("GunTipDistOffset", 0f, -50f, 50f);
+            // DynamicParamManager.Register("GunTipPosOffset", 0f, -50f, 50f);
+            // DynamicParamManager.Register("GunTipOriginOffsetX", 0f, -50f, 50f);
+            // DynamicParamManager.Register("GunTipOriginOffsetY", 0f, -50f, 50f);
         }
 
         public override void AI()
@@ -112,89 +118,126 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 
             if (target != null && spawnTimer > SPAWN_TIME)
             {
-                shootTimer++;
-
-                int shootInterval = SHOOT_INTERVAL;
-                // if(owner.HasBuff(BUFF_ID))
-                // {
-                //     shootInterval = (int)(shootInterval * ENHANCEMENT_FACTOR);
-                // }
-
-                if (shootTimer >= shootInterval)
+                // calculate direction
+                Vector2 PredictedPos = target.Center;
+                Vector2 ShootPos = Projectile.Center + new Vector2(0, -17f);
+                if(USE_PREDICTION)
                 {
-                    // calculate prediction
-                    Vector2 PredictedPos = target.Center;
-                    
-                    if(USE_PREDICTION)
-                    {
-                        PredictedPos = MinionAIHelper.PredictTargetPosition(
-                            Projectile, target, PRED_BULLET_SPEED, 60, 1);
-                    }
 
+                    PredictedPos = MinionAIHelper.PredictTargetPosition(
+                        ShootPos, target.Center, target.velocity, PRED_BULLET_SPEED, 60, 1);
+                }
+                direction = PredictedPos - ShootPos;
+                direction.Normalize();
+
+                // if ((shootTimer >= INTERVAL_BETWEEN_ROCKETS && rocketCount == 0) ||
+                //     (shootTimer >= INTERVAL_BETWEEN_ROCKETS*2 && rocketCount == 1))
+                if (shootTimer >= TOTAL_SHOOT_INTERVAL)
+                {
+                shootTimer = 0;
+                }
+                if(shootTimer == 0 || shootTimer == INVERVAL_BETWEEN_SHOTS || shootTimer == INVERVAL_BETWEEN_SHOTS*2)
+                {
                     // Whip add damage
                     int addDamage = 0;
                     foreach(var item in ModGlobal.WhipAddDamageDict)
                     {
                         if(target.HasBuff(item.Key))
                         {
-                            addDamage += (int)(item.Value * WHIP_DAGGER_DECAY);
+                            addDamage += item.Value;
                         }
                     }
                     int totalDamage = Projectile.damage + addDamage;
 
-                    // Main.NewText("projectile damage: " + Projectile.damage + " add damage: " + addDamage + " total damage: " + totalDamage);
-
-                    // if (Main.rand.NextFloat() < 0.29069766f)
-                    // {
-                    //     Dust dust;
-                    //     // You need to set position depending on what you are doing. You may need to subtract width/2 and height/2 as well to center the spawn rectangle.
-                    //     Vector2 position = Main.LocalPlayer.Center;
-                    //     dust = Main.dust[Terraria.Dust.NewDust(position, 0, 0, 325, -2.5581398f, -1.860465f, 0, new Color(255,255,255), 0.6395349f)];
-                    // }
-
-                    Vector2 BulletShellVelocity = direction.RotatedBy(-2f/3f*ModGlobal.PI_FLOAT*Projectile.spriteDirection) * 2f;
-                    Dust BulletShellDust = Dust.NewDustDirect(Projectile.Center + new Vector2(-5f*Projectile.spriteDirection, -18f), 1, 1, ModContent.DustType<SmallBulletShell>(), BulletShellVelocity.X, BulletShellVelocity.Y);
+                    Vector2 BulletShellVelocity = direction.RotatedBy(-2f/3f*ModGlobal.PI_FLOAT*Projectile.spriteDirection) * 3.5f;
+                    Dust BulletShellDust = Dust.NewDustDirect(Projectile.Center + new Vector2(-5f*Projectile.spriteDirection, -18f), 1, 1, ModContent.DustType<BigBulletShell>(), BulletShellVelocity.X, BulletShellVelocity.Y);
                     BulletShellDust.scale = 0.65f;
                     BulletShellDust.alpha = 0;
 
                     // Fire!
-                    direction = PredictedPos - Projectile.Center;
-                    direction.Normalize();
                     Vector2 bulletVelocity = direction * REAL_BULLET_SPEED;
 
-                    Vector2 bulletOffset = new Vector2(15f, -5f) + direction * 27f;
+                    Vector2 bulletOffset = direction * 50f;
 
                     Projectile bullet = Projectile.NewProjectileDirect(
                         Projectile.GetSource_FromAI(),
-                        Projectile.Center + bulletOffset,
+                        ShootPos + bulletOffset,
                         bulletVelocity,
-                        // ModProjectileID.MachineGunSentryBullet,
-                        ProjectileID.Bullet,
-                        totalDamage,
-                        0,
+                        // ProjectileID.RocketI,
+                        // ModProjectileID.RocketSentryBullet,
+                        // ProjectileID.ExplosiveBullet,
+                        // ModProjectileID.AutocannonSentryBullet,
+                        ProjectileID.BulletHighVelocity,
+                        Projectile.damage,
+                        Projectile.knockBack,
                         Projectile.owner);
 
+
                     bullet.DamageType = DamageClass.Summon;
-                    ProjectileID.Sets.MinionShot[bullet.type] = true;
-                    bullet.friendly = true;
                     bullet.hostile = true;
-                    // Main.NewText("Damage: " + Projectile.damage + "Bullet Damage: " + bullet.damage);
+                    bullet.friendly = true;
+                    // rocket.hostile = false;
+                    // rocket.friendly = true;
+                    // rocket.usesLocalNPCImmunity = true;
+                    // // rocket.usesIDStaticNPCImmunity = true;
+                    // rocket.localNPCHitCooldown = 20;
+                    // // Main.NewText("Damage: " + Projectile.damage + "Rocket Damage: " + rocket.damage);
+                    // rocket.ai[0] = target.whoAmI;
 
-                    shootTimer = 0; // Reset shoot animation
+                    isShooting = true;
 
-                    SoundEngine.PlaySound(SoundID.Item11, Projectile.Center);
+
+                    SoundEngine.PlaySound(SoundID.Item38, Projectile.Center);
+                }
+
+                // int shootInterval = TOTAL_SHOOT_INTERVAL;
+                // if(owner.HasBuff(BUFF_ID))
+                // {
+                //     shootInterval = (int)(shootInterval * ENHANCEMENT_FACTOR);
+                // }
+
+
+            }
+
+            shootTimer++;
+            if (shootTimer >= TOTAL_SHOOT_INTERVAL)
+            {
+                shootTimer = TOTAL_SHOOT_INTERVAL;
+            }
+
+            // Animation
+            UpdateAnimation();
+            Projectile.spriteDirection = direction.X > 0 ? 1 : -1;
+        }
+
+
+        private void UpdateAnimation()
+        {
+            if(isShooting)
+            {
+                if(Projectile.frameCounter >= SHOOT_FRAME_SPEED)
+                {
+                    Projectile.frame = (Projectile.frame + 1) % FRAME_COUNT;
+                    Projectile.frameCounter = 0;
+                    if(Projectile.frame >= FRAME_COUNT - 1)
+                    {
+                        isShooting = false;
+                        Projectile.frame = FRAME_COUNT - 1;
+                    }
                 }
             }
             else
             {
-                shootTimer = 0; // Reset if no target
+                Projectile.frame = FRAME_COUNT - 1;
+                Projectile.frameCounter = 0;
             }
 
-            // Animation
-            // UpdateAnimation(target);
-            Projectile.spriteDirection = direction.X > 0 ? 1 : -1;
+            Projectile.frameCounter++;
+            if(Projectile.frameCounter >= SHOOT_FRAME_SPEED)
+            {
+                Projectile.frameCounter = SHOOT_FRAME_SPEED;
+            }
         }
-
 
         public override bool PreDraw(ref Color lightColor)
         {
@@ -218,7 +261,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             // always draw base
             Vector2 BaseWorldPos = MinionAIHelper.ConvertToWorldPos(Projectile, new Vector2(0, 0));
             Vector2 BaseOrigin = new Vector2(BaseTexture.Width / 2, BaseTexture.Height / 2);
-            float ClipThreshold = BaseWorldPos.Y + 19f;
+            float ClipThreshold = BaseWorldPos.Y + 21f;
             MinionAIHelper.DrawPart(
                 Projectile,
                 BaseTexture,
@@ -230,7 +273,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             );
 
             // draw back board
-            float BackBoardWorldY = SpawnStartY-2f;
+            float BackBoardWorldY = SpawnStartY;
             Vector2 BackBoardWorldPos = MinionAIHelper.ConvertToWorldPos(Projectile, new Vector2(0, BackBoardWorldY)); // 1 3
             Vector2 BackBoardOrigin = new Vector2(BackBoardTexture.Width / 2, BackBoardTexture.Height / 2);
             Rectangle BackBoardRect = MinionAIHelper.CalculateClipRect(new Rectangle(0, 0, BackBoardTexture.Width, BackBoardTexture.Height), BackBoardWorldPos, BackBoardOrigin, -1f, ClipThreshold);
@@ -246,14 +289,21 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             );
 
             // draw gun
-            float GunWorldY = SpawnStartY-14f;
-            Vector2 GunWorldPos = MinionAIHelper.ConvertToWorldPos(Projectile, new Vector2(3 * Projectile.spriteDirection, GunWorldY));
-            Vector2 GunOrigin = new Vector2(GunTexture.Width / 2 - 6 * Projectile.spriteDirection, 7);
+            int GunWidth = GunTexture.Width - (GunAdjustProcess >= 1.0f ? 0 : 42);
+            int GunHeight = GunTexture.Height / FRAME_COUNT;
+            int CurrentFrameHeight = GunHeight * Projectile.frame;
+            float GunWorldY = SpawnStartY-17f;
+            Vector2 GunWorldPos = MinionAIHelper.ConvertToWorldPos(Projectile, new Vector2(0f, GunWorldY));
+            Vector2 GunOrigin = new Vector2(GunWidth / 2 + (GunAdjustProcess >= 1.0f ? -14 : 8) * Projectile.spriteDirection, 9);
             Vector2 GunWorldPosTemp = new Vector2(GunWorldPos.Y, GunWorldPos.X);
             Vector2 GunOriginTemp = new Vector2(GunOrigin.Y, GunOrigin.X);
-            Rectangle GunRectClip = MinionAIHelper.CalculateClipRect(new Rectangle(0, 0, GunTexture.Width, GunTexture.Height), GunWorldPosTemp, GunOrigin, ClipThreshold, -1f);
+            Rectangle GunRectClip = MinionAIHelper.CalculateClipRect(new Rectangle(0, 0, GunWidth, GunHeight), GunWorldPosTemp, GunOrigin, ClipThreshold, -1f);
             // Main.NewText("GunRectClip:" + GunRectClip + " GunWorldPos:" + GunWorldPosTemp + " GunOrigin:" + GunOriginTemp + " ClipThreshold:" + ClipThreshold);
-            Rectangle GunRect = new Rectangle(GunTexture.Width - GunRectClip.Width, GunRectClip.Y, GunRectClip.Width , GunTexture.Height);
+            if(SpawnProcess >= 1.0f)
+            {
+                GunRectClip = new Rectangle(0, 0, GunWidth, GunHeight);
+            }
+            Rectangle GunRect = new Rectangle(GunWidth - GunRectClip.Width, GunRectClip.Y + CurrentFrameHeight, GunRectClip.Width , GunHeight);
             MinionAIHelper.DrawPart(
                 Projectile,
                 GunTexture,
@@ -265,9 +315,34 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                 GunOrigin
             );
 
+            // draw gun tip
+            if(SpawnProcess >= 1.0f && GunAdjustProcess < 1.0f)
+            {
+                // float GunTipOffset = DynamicParamManager.Get("GunTipDistOffset").value; // 17f
+                // float GunTipPosOffset = DynamicParamManager.Get("GunTipPosOffset").value; // 5.2f
+                // float GunTipOriginOffsetX = DynamicParamManager.Get("GunTipOriginOffsetX").value; // 3f
+                // float GunTipOriginOffsetY = DynamicParamManager.Get("GunTipOriginOffsetY").value; // 13f
+                float GunTipOffset = 17f;
+                float GunTipPosOffset = 5.2f;
+                float GunTipOriginOffsetX = 3f;
+                float GunTipOriginOffsetY = 13f;
+                Vector2 GunTipWorldPos = GunWorldPos + direction * GunTipOffset + new Vector2(0, GunTipPosOffset);
+                Vector2 GunTipOrigin = new Vector2(GunTexture.Width/2f + GunTipOriginOffsetX * Projectile.spriteDirection, GunTipOriginOffsetY);
+                Rectangle GunTipRect = new Rectangle(48, 0, 42, GunHeight);
+                MinionAIHelper.DrawPart(
+                    Projectile,
+                    GunTexture,
+                    GunTipWorldPos,
+                    GunTipRect,
+                    lightColor,
+                    (1-GunAdjustProcess) * ModGlobal.PI_FLOAT*3f/2f,
+                    GunTipOrigin
+                );
+            }
+
             // draw front board
-            float FrontBoardWorldY = SpawnStartY-8f;
-            Vector2 FrontBoardWorldPos = MinionAIHelper.ConvertToWorldPos(Projectile, new Vector2(-6 * Projectile.spriteDirection, FrontBoardWorldY)); // 7 9
+            float FrontBoardWorldY = SpawnStartY-6f;
+            Vector2 FrontBoardWorldPos = MinionAIHelper.ConvertToWorldPos(Projectile, new Vector2(-7 * Projectile.spriteDirection, FrontBoardWorldY)); // 7 9
             Vector2 FrontBoardOrigin = new Vector2(FrontBoardTexture.Width / 2, FrontBoardTexture.Height / 2);
             Rectangle FrontBoardRect = MinionAIHelper.CalculateClipRect(new Rectangle(0, 0, FrontBoardTexture.Width, FrontBoardTexture.Height), FrontBoardWorldPos, FrontBoardOrigin, -1f, ClipThreshold);
             
@@ -309,11 +384,6 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 			return false;
 		}
 
-        // public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
-        // {
-        //     int bonusDamage = DEFENSE_TO_IGNORE / 2;
-        //     modifiers.FlatBonusDamage += bonusDamage;
-        // }
 
     }
 }

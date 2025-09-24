@@ -30,6 +30,8 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         private bool Inited = false;
         private bool FullyCharged = false;
 
+        private bool DEBUG = false;
+
         private List<int> DustIDs = new List<int> { 29, 41, 42, 45, 54, 59, 62, 65, 71, 86, 88, 109, 113, 164, 173 };
 
         private List<int> DarkDustIDs = new List<int> { 29, 41, 42, 65};
@@ -80,9 +82,10 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                     Dust.noGravity = true;
                     Dust.scale = MinionAIHelper.RandomFloat(2f, 3f);
                 }
+
+                if(DEBUG) Main.NewText("[" + DateTime.UtcNow.Ticks + "] Bullet Sphere: OnHitNPC");
             }
         }
-
 
         public override void AI()
         {
@@ -143,6 +146,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 
             if(FullyCharged)
             {
+                if(DEBUG) Main.NewText("[" + DateTime.UtcNow.Ticks + "] Bullet Sphere: FullyCharged checkpoint 1");
                 // emit dust
                 for(int i = 0; i < 3; i++)
                 {
@@ -154,8 +158,12 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                     BlueDust.scale = MinionAIHelper.RandomFloat(0.8f, 2.0f);
                 }
 
+                if(DEBUG) Main.NewText("[" + DateTime.UtcNow.Ticks + "] Bullet Sphere: FullyCharged checkpoint 2");
+
                 // find target
-                NPC Target = Main.npc[(int)Projectile.ai[0]];
+                int TargetID = (int)Projectile.ai[0];
+                NPC Target = Main.npc[TargetID];
+                if(DEBUG) Main.NewText("[" + DateTime.UtcNow.Ticks + "] Bullet Sphere: FullyCharged checkpoint 3");
                 if(!Target.active)
                 {
                     Target = MinionAIHelper.SearchForTargets(
@@ -165,16 +173,21 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                     true,
                     null).TargetNPC;
                 }
+                if(DEBUG) Main.NewText("[" + DateTime.UtcNow.Ticks + "] Bullet Sphere: FullyCharged checkpoint 4");
+
+
 
                 if(Target != null && Target.active)
                 {
                     float SpdCurrent = Projectile.velocity.Length();
                     SpdCurrent = Math.Min(SpdCurrent + ACCELERATION, MAX_SPEED_2);
                     MinionAIHelper.HomeinToTarget(Projectile, Target.Center, SpdCurrent, 2f);
+                    if(DEBUG) Main.NewText("[" + DateTime.UtcNow.Ticks + "] Bullet Sphere: FullyCharged checkpoint 5");
                 }
 
                 // reset damage
                 Projectile.damage = NewDamage;
+                if(DEBUG) Main.NewText("[" + DateTime.UtcNow.Ticks + "] Bullet Sphere: FullyCharged checkpoint 6");
             }
             else
             {

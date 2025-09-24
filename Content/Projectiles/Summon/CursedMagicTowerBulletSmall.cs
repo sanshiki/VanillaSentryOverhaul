@@ -82,7 +82,8 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             // int BlueDustID = DustIDs[BlueDustIDIdx];
             Dust BlueDust = Dust.NewDustDirect(Projectile.Center - Projectile.Size/2f, Projectile.width, Projectile.height, BlueDustID, Projectile.velocity.X, Projectile.velocity.Y);
             BlueDust.noGravity = true;
-            BlueDust.scale = MinionAIHelper.RandomFloat(0.8f, 2.0f);
+            BlueDust.scale = MinionAIHelper.RandomFloat(2.6f, 3.2f);
+            BlueDust.fadeIn = 1.4f;
 
             // Vector2 ShadowflameDustPos = Projectile.Center + new Vector2(0, -8f).RotatedBy(DustDir);
             // Dust ShadowflameDust = Dust.NewDustPerfect(ShadowflameDustPos, DustID.Shadowflame);

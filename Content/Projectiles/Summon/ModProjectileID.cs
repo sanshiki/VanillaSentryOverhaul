@@ -6,6 +6,9 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         public static int DarkMagicTower;
         public static int BunnySentry;
         public static int MachineGunSentry;
+        public static int RocketSentry;
+        public static int GatlingSentry;
+        public static int AutocannonSentry;
 
         // sentry projectiles
         public static int AntlionSentryBullet;
@@ -16,6 +19,8 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         public static int CursedMagicTowerBullet;
         public static int CursedMagicTowerBulletSmall;
         public static int CursedMagicTowerBulletSphere;
+        public static int RocketSentryBullet;
+        public static int AutocannonSentryBullet;
         // minion
         public static int SentryPlatform;
 

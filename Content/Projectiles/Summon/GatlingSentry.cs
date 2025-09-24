@@ -13,17 +13,18 @@ using SummonerExpansionMod.Content.Buffs.Summon;
 using SummonerExpansionMod.ModUtils;
 using SummonerExpansionMod.Initialization;
 using SummonerExpansionMod.Content.Dusts;
+
 namespace SummonerExpansionMod.Content.Projectiles.Summon
 {
-    public class MachineGunSentry : SentryWithSpawnAnime
+    public class GatlingSentry : SentryWithSpawnAnime
     {
         // timers
         private int shootTimer;
         private int spawnTimer;
 
         // textures
-        private const string BASE_TEXTURE_PATH = ModGlobal.MOD_TEXTURE_PATH + "Projectiles/MachineGunSentryV3Base";
-        private const string GUN_TEXTURE_PATH = ModGlobal.MOD_TEXTURE_PATH + "Projectiles/MachineGunSentryV3Gun";
+        private const string BASE_TEXTURE_PATH = ModGlobal.MOD_TEXTURE_PATH + "Projectiles/GatlingSentryBase";
+        private const string GUN_TEXTURE_PATH = ModGlobal.MOD_TEXTURE_PATH + "Projectiles/GatlingSentryGun";
         private const string FRONT_BOARD_TEXTURE_PATH = ModGlobal.MOD_TEXTURE_PATH + "Projectiles/SentryFrontBoard";
         private const string BACK_BOARD_TEXTURE_PATH = ModGlobal.MOD_TEXTURE_PATH + "Projectiles/SentryBackBoard";
         public override string Texture => BASE_TEXTURE_PATH;
@@ -33,13 +34,13 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         private const bool USE_PREDICTION = true;
 
         // sentry parameters
-        private const float REAL_BULLET_SPEED = 20f;
-        private const float PRED_BULLET_SPEED = 35f;
+        private const float REAL_BULLET_SPEED = 80f;
+        private const float PRED_BULLET_SPEED = 45f;
         private const float ACC_FACTOR = 0.05f;
         private const int FRAME_COUNT = 36;
-        private const float MAX_RANGE = 800f;
+        private const float MAX_RANGE = 1100f;
 
-        private const int SHOOT_INTERVAL = 10;
+        private const int SHOOT_INTERVAL = 5;
         private const int SPAWN_TIME = 2*26;
 
         // buff constants
@@ -53,6 +54,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         // damage
         private const int DEFENSE_TO_IGNORE = 20;
         private const float WHIP_DAGGER_DECAY = 0.5f;
+
 
         // direction
         private Vector2 direction = new Vector2(0, -1);
@@ -69,8 +71,8 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 
         public override void SetDefaults()
         {
-            Projectile.width = 54;
-            Projectile.height = 48;
+            Projectile.width = 58;
+            Projectile.height = 52;
             Projectile.friendly = false;
             Projectile.ignoreWater = true;
             Projectile.tileCollide = true;
@@ -79,7 +81,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             Projectile.aiStyle = -1;
             Projectile.timeLeft = Projectile.SentryLifeTime;
             Projectile.DamageType = DamageClass.Summon;
-            Projectile.ArmorPenetration = 5;
+            Projectile.ArmorPenetration = 25;
             
             BUFF_ID = ModBuffID.SentryEnhancement;
         }
@@ -124,11 +126,13 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                 {
                     // calculate prediction
                     Vector2 PredictedPos = target.Center;
+
+                    Vector2 ShootPos = Projectile.Center + new Vector2(0, -15f);
                     
                     if(USE_PREDICTION)
                     {
                         PredictedPos = MinionAIHelper.PredictTargetPosition(
-                            Projectile, target, PRED_BULLET_SPEED, 60, 1);
+                            ShootPos, target.Center, target.velocity, PRED_BULLET_SPEED, 60, 1);
                     }
 
                     // Whip add damage
@@ -142,47 +146,38 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                     }
                     int totalDamage = Projectile.damage + addDamage;
 
-                    // Main.NewText("projectile damage: " + Projectile.damage + " add damage: " + addDamage + " total damage: " + totalDamage);
-
-                    // if (Main.rand.NextFloat() < 0.29069766f)
-                    // {
-                    //     Dust dust;
-                    //     // You need to set position depending on what you are doing. You may need to subtract width/2 and height/2 as well to center the spawn rectangle.
-                    //     Vector2 position = Main.LocalPlayer.Center;
-                    //     dust = Main.dust[Terraria.Dust.NewDust(position, 0, 0, 325, -2.5581398f, -1.860465f, 0, new Color(255,255,255), 0.6395349f)];
-                    // }
-
-                    Vector2 BulletShellVelocity = direction.RotatedBy(-2f/3f*ModGlobal.PI_FLOAT*Projectile.spriteDirection) * 2f;
+                    Vector2 BulletShellVelocity = direction.RotatedBy(-2f/3f*ModGlobal.PI_FLOAT*Projectile.spriteDirection) * 3f;
                     Dust BulletShellDust = Dust.NewDustDirect(Projectile.Center + new Vector2(-5f*Projectile.spriteDirection, -18f), 1, 1, ModContent.DustType<SmallBulletShell>(), BulletShellVelocity.X, BulletShellVelocity.Y);
                     BulletShellDust.scale = 0.65f;
                     BulletShellDust.alpha = 0;
 
                     // Fire!
-                    direction = PredictedPos - Projectile.Center;
+                    direction = PredictedPos - ShootPos;
                     direction.Normalize();
                     Vector2 bulletVelocity = direction * REAL_BULLET_SPEED;
 
-                    Vector2 bulletOffset = new Vector2(15f, -5f) + direction * 27f;
+                    Vector2 bulletOffset = direction * 27f;
 
                     Projectile bullet = Projectile.NewProjectileDirect(
                         Projectile.GetSource_FromAI(),
-                        Projectile.Center + bulletOffset,
+                        ShootPos + bulletOffset,
                         bulletVelocity,
-                        // ModProjectileID.MachineGunSentryBullet,
+                        // ModProjectileID.GatlingSentryBullet,
+                        // ProjectileID.BulletHighVelocity,
                         ProjectileID.Bullet,
                         totalDamage,
                         0,
                         Projectile.owner);
 
                     bullet.DamageType = DamageClass.Summon;
-                    ProjectileID.Sets.MinionShot[bullet.type] = true;
                     bullet.friendly = true;
                     bullet.hostile = true;
+                    // bullet.penetrate = 1;
                     // Main.NewText("Damage: " + Projectile.damage + "Bullet Damage: " + bullet.damage);
 
                     shootTimer = 0; // Reset shoot animation
 
-                    SoundEngine.PlaySound(SoundID.Item11, Projectile.Center);
+                    SoundEngine.PlaySound(SoundID.Item41, Projectile.Center);
                 }
             }
             else
@@ -218,7 +213,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             // always draw base
             Vector2 BaseWorldPos = MinionAIHelper.ConvertToWorldPos(Projectile, new Vector2(0, 0));
             Vector2 BaseOrigin = new Vector2(BaseTexture.Width / 2, BaseTexture.Height / 2);
-            float ClipThreshold = BaseWorldPos.Y + 19f;
+            float ClipThreshold = BaseWorldPos.Y + 19f + 2f;
             MinionAIHelper.DrawPart(
                 Projectile,
                 BaseTexture,
@@ -230,7 +225,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             );
 
             // draw back board
-            float BackBoardWorldY = SpawnStartY-2f;
+            float BackBoardWorldY = SpawnStartY-2f+2f;
             Vector2 BackBoardWorldPos = MinionAIHelper.ConvertToWorldPos(Projectile, new Vector2(0, BackBoardWorldY)); // 1 3
             Vector2 BackBoardOrigin = new Vector2(BackBoardTexture.Width / 2, BackBoardTexture.Height / 2);
             Rectangle BackBoardRect = MinionAIHelper.CalculateClipRect(new Rectangle(0, 0, BackBoardTexture.Width, BackBoardTexture.Height), BackBoardWorldPos, BackBoardOrigin, -1f, ClipThreshold);
@@ -246,9 +241,9 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             );
 
             // draw gun
-            float GunWorldY = SpawnStartY-14f;
+            float GunWorldY = SpawnStartY-14f-3f;
             Vector2 GunWorldPos = MinionAIHelper.ConvertToWorldPos(Projectile, new Vector2(3 * Projectile.spriteDirection, GunWorldY));
-            Vector2 GunOrigin = new Vector2(GunTexture.Width / 2 - 6 * Projectile.spriteDirection, 7);
+            Vector2 GunOrigin = new Vector2(GunTexture.Width / 2 - 6 * Projectile.spriteDirection, 9);
             Vector2 GunWorldPosTemp = new Vector2(GunWorldPos.Y, GunWorldPos.X);
             Vector2 GunOriginTemp = new Vector2(GunOrigin.Y, GunOrigin.X);
             Rectangle GunRectClip = MinionAIHelper.CalculateClipRect(new Rectangle(0, 0, GunTexture.Width, GunTexture.Height), GunWorldPosTemp, GunOrigin, ClipThreshold, -1f);
@@ -266,7 +261,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             );
 
             // draw front board
-            float FrontBoardWorldY = SpawnStartY-8f;
+            float FrontBoardWorldY = SpawnStartY-8f+2f;
             Vector2 FrontBoardWorldPos = MinionAIHelper.ConvertToWorldPos(Projectile, new Vector2(-6 * Projectile.spriteDirection, FrontBoardWorldY)); // 7 9
             Vector2 FrontBoardOrigin = new Vector2(FrontBoardTexture.Width / 2, FrontBoardTexture.Height / 2);
             Rectangle FrontBoardRect = MinionAIHelper.CalculateClipRect(new Rectangle(0, 0, FrontBoardTexture.Width, FrontBoardTexture.Height), FrontBoardWorldPos, FrontBoardOrigin, -1f, ClipThreshold);

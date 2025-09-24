@@ -12,6 +12,7 @@ using Microsoft.Xna.Framework.Graphics;
 using SummonerExpansionMod.Content.Buffs.Summon;
 using SummonerExpansionMod.ModUtils;
 using SummonerExpansionMod.Initialization;
+using Terraria.Audio;
 
 namespace SummonerExpansionMod.Content.Projectiles.Summon
 {
@@ -22,9 +23,10 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         private const int NORMAL_FRAME_SPEED = 20;
         private const int SHOOT_FRAME_SPEED = 5;
 
-        private const int SHOOT_INTERVAL = 60*2;
-        private const int MAX_BEES_PER_SHOT = 10;
-        private const int MIN_BEES_PER_SHOT = 5;
+        private const int SHOOT_INTERVAL_1 = 60*2;
+        private const int SHOOT_INTERVAL_2 = (int)(60*1.5f);
+        private const int MAX_BEES_PER_SHOT = 6;
+        private const int MIN_BEES_PER_SHOT = 3;
         private const float ENHANCEMENT_FACTOR = 0.75f;
         private int BUFF_ID = -1;
 
@@ -43,8 +45,8 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 
         public override void SetDefaults()
         {
-            Projectile.width = 43;
-            Projectile.height = 31;
+            Projectile.width = 42;
+            Projectile.height = 34;
             Projectile.friendly = false;
             Projectile.ignoreWater = true;
             Projectile.tileCollide = true;
@@ -55,6 +57,19 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             Projectile.DamageType = DamageClass.Summon;
             
             BUFF_ID = ModBuffID.SentryEnhancement;
+        }
+
+        private bool CheckHiveBackpack(Player owner)
+        {
+            for(int idx = 3; idx <= 9; idx++)
+            {
+                Item accessory = owner.armor[idx];
+                if(accessory.type == ItemID.HiveBackpack && accessory.stack > 0)
+                {
+                    return true;
+                }
+            }
+            return false;
         }
 
         public override void AI()
@@ -76,26 +91,20 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                     true, 
                     null).TargetNPC;
 
+            bool hasHiveBackpack = CheckHiveBackpack(owner);
+            int shootInterval = hasHiveBackpack ? SHOOT_INTERVAL_2 : SHOOT_INTERVAL_1;
             if (target != null)
             {
-                shootTimer++;
-                if (shootTimer == 1)
-                {
-                    // Shooting animation
-                    Projectile.frame = 2; // Frame 3
-                }
-                else
-                {
-                    Projectile.frame = 0;
-                }
-
-                int shootInterval = SHOOT_INTERVAL;
-                if(owner.HasBuff(BUFF_ID))
-                {
-                    shootInterval = (int)(shootInterval * ENHANCEMENT_FACTOR);
-                }
+                // if(owner.HasBuff(BUFF_ID))
+                // {
+                //     shootInterval = (int)(shootInterval * ENHANCEMENT_FACTOR);
+                // }
 
                 if (shootTimer >= shootInterval)
+                {
+                    shootTimer = 0;
+                }
+                if (shootTimer == 0)
                 {
                     // Fire!
                     Vector2 direction = target.Center - Projectile.Center;
@@ -132,22 +141,51 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                             // Main.NewText(bee + " " + Main.projectile[bee].DamageType);
                             // Main.NewText("Damage: " + Projectile.damage + "Bee Damage: " + Main.projectile[bee].damage);
                         }
+
+                        SoundEngine.PlaySound(SoundID.Item109, Projectile.Center);
                     }
+
+                    // if player has hive backpack, may create gient bee
+                    if(hasHiveBackpack)
+                    {
+                        Random random = new Random();
+                        float random_seed = MinionAIHelper.RandomFloat(0f, 1f);
+                        if(random_seed < 0.5f)
+                        {
+                            int bee = Projectile.NewProjectile(
+                                Projectile.GetSource_FromAI(),
+                                Projectile.Center,
+                                BaseVel.RotatedBy(dir),
+                                ProjectileID.GiantBee,
+                                Projectile.damage,
+                                0.5f,
+                                Projectile.owner);
+
+                            if(bee != Main.maxProjectiles)
+                            {
+                                Main.projectile[bee].DamageType = DamageClass.Summon;
+                            }
+                        }
+                    }
+
+                    // create smoke dust
                     for(int i = 0;i < 5;i++)
                     {
                         Random random = new Random();
                         float random_seed = (float)random.NextDouble();
                         float scale = random_seed * 3f + 0.5f;
-                        int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.Smoke, 0f, 0f, 50, default, 1f);
+                        Vector2 DustVel = BaseVel.RotatedBy(dir);
+                        int dust = Dust.NewDust(Projectile.position - Projectile.Size/2f + new Vector2(-2f, 5f), Projectile.width, Projectile.height, DustID.Smoke, DustVel.X, DustVel.Y, 0, default, 1f);
                         Main.dust[dust].noGravity = true;
                         Main.dust[dust].scale = scale;
                     }
-                    shootTimer = 0;
                 }
             }
-            else
+
+            shootTimer++;
+            if (shootTimer >= shootInterval)
             {
-                shootTimer = 0; // Reset if no target
+                shootTimer = shootInterval;
             }
 
             // Animation
