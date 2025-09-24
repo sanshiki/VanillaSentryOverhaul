@@ -6,6 +6,8 @@ using SummonerExpansionMod.Content.Buffs.Summon;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria.GameContent;
 using System.Collections.Generic;
+using SummonerExpansionMod.Initialization;
+
 
 namespace SummonerExpansionMod.ModUtils
 {
@@ -322,22 +324,7 @@ namespace SummonerExpansionMod.ModUtils
 		/// <returns>预测位置</returns>
 		public static Vector2 PredictTargetPosition(Projectile projectile, NPC target, float bulletSpeed, int maxPredictionTicks = 60, int tickStep = 3)
 		{
-			Vector2 predictedPos = target.Center;
-			
-			for (int tick = 0; tick < maxPredictionTicks; tick += tickStep)
-			{
-				Vector2 targetPredictedPos = target.Center + target.velocity * tick;
-				predictedPos = targetPredictedPos;
-
-				float bulletFlyTime = Vector2.Distance(projectile.Center, targetPredictedPos) / bulletSpeed;
-
-				if (bulletFlyTime < tick)
-				{
-					break;
-				}
-			}
-
-			return predictedPos;
+			return PredictTargetPosition(projectile.Center, target.Center, target.velocity, bulletSpeed, maxPredictionTicks, tickStep);
 		}
 
 		public static Vector2 PredictTargetPosition(Vector2 projectileCenter, Vector2 targetCenter, Vector2 targetVelocity, float bulletSpeed, int maxPredictionTicks = 60, int tickStep = 3)
@@ -349,6 +336,8 @@ namespace SummonerExpansionMod.ModUtils
 				Vector2 targetPredictedPos = targetCenter + targetVelocity * tick;
 				predictedPos = targetPredictedPos;
 
+				if(Collision.SolidCollision(targetPredictedPos, 1, 1)) continue;
+
 				float bulletFlyTime = Vector2.Distance(projectileCenter, targetPredictedPos) / bulletSpeed;
 
 				if (bulletFlyTime < tick)
@@ -358,6 +347,96 @@ namespace SummonerExpansionMod.ModUtils
 			}
 
 			return predictedPos;
+		}
+
+		public static float PredictParabolaAngle(Projectile projectile, NPC target,float gravity, float bulletSpeed, int maxPredictionTicks = 60, int tickStep = 3)
+		{
+			float predictedAngle = (target.Center - projectile.Center).ToRotation();
+
+			for(int tick = 0; tick < maxPredictionTicks; tick += tickStep)
+			{
+				Vector2 targetPredictedPos = target.Center + target.velocity * tick;
+
+				ParabolaSolution bulletSolution = SolveParabola(bulletSpeed, gravity, targetPredictedPos);
+
+				if(bulletSolution.valid)
+				{
+					predictedAngle = bulletSolution.angle;
+					if(bulletSolution.time < tick)
+					{
+						Main.NewText("Find solution:" + bulletSolution.time + " " + bulletSolution.angle);
+						break;
+					}
+				}
+			}
+
+			return predictedAngle;
+		}
+
+		public struct ParabolaSolution
+		{
+			public float time;
+			public float angle;
+			public bool valid;
+
+			public ParabolaSolution(float time, float angle, bool valid)
+			{
+				this.time = time;
+				this.angle = angle;
+				this.valid = valid;
+			}
+		}
+
+		public static ParabolaSolution SolveParabola(float speed, float gravity, Vector2 goal)
+		{
+			float v = speed;
+			float g = gravity;
+			float x = goal.X;
+			float y = goal.Y;
+
+			float A = (g*g) / 4f;
+			float B = y * g - v * v;
+			float C = x * x + y * y;
+			float D = B * B - 4 * A * C;
+			if(D < 0)
+			{
+				return new ParabolaSolution(-1f, -1f, false);
+			}
+			
+			float sqrtD = (float)Math.Sqrt(D);
+			float[] t2Candidates = new float[]
+			{
+				(-B + sqrtD) / (2 * A),
+				(-B - sqrtD) / (2 * A)
+			};
+			float minTime = float.MaxValue;
+			float bestAngle = -1;
+
+			foreach(float t2 in t2Candidates)
+			{
+				if(t2 > 0)
+				{
+					float t = (float)Math.Sqrt(t2);
+					float cosTheta = x / (t * v);
+					float sinTheta = (y + g * t2 / 2) / (t * v);
+					float angle = (float)Math.Atan2(sinTheta, cosTheta);
+					if(cosTheta >= 0f && cosTheta <= 1f && (float)Math.Abs(sinTheta) <= 1f)
+					{
+						if(t < minTime)
+						{
+							minTime = t;
+							bestAngle = angle;
+						}
+					}
+				}
+			}
+
+			if(minTime == float.MaxValue)
+			{
+				return new ParabolaSolution(-1f, -1f, false);
+			}
+
+			return new ParabolaSolution(minTime, bestAngle, true);
 		}
 
 		/// <summary>
@@ -419,6 +498,12 @@ namespace SummonerExpansionMod.ModUtils
 		public static float GetHorizontalDistance(Vector2 point1, Vector2 point2)
 		{
 			return Math.Abs(point1.X - point2.X);
+		}
+
+
+		public static float NormalizeAngle(float angle)
+		{
+			return (angle + ModGlobal.PI_FLOAT) % ModGlobal.TWO_PI_FLOAT - ModGlobal.PI_FLOAT;
 		}
 		#endregion
 

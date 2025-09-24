@@ -31,10 +31,11 @@ namespace SummonerExpansionMod.Content.UI
                     panel.Append(slider);
                     y += 40;
                     cnt++;
-                    Main.NewText("param: " + dynamic_param.name + " value: " + dynamic_param.value + " lower_limit: " + dynamic_param.lower_limit + " upper_limit: " + dynamic_param.upper_limit);
+                    // Main.NewText("param: " + dynamic_param.name + " value: " + dynamic_param.value + " lower_limit: " + dynamic_param.lower_limit + " upper_limit: " + dynamic_param.upper_limit);
                 }
             }
-            Main.NewText("sliders in panel: " + cnt);
+            // Main.NewText("sliders in panel: " + cnt);
+            panel.Height.Set(50 * cnt, 0f);
         }
 
         public override void OnInitialize() {
