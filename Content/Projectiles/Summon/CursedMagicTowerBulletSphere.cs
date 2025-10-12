@@ -41,6 +41,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             Main.projFrames[Projectile.type] = FRAME_COUNT;
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 10; // 保存10帧历史位置
             ProjectileID.Sets.TrailingMode[Projectile.type] = 0; // 拖影模式（0 = 基础，1 = 平滑）
+            ProjectileID.Sets.SentryShot[Projectile.type] = true;
         }
 
         public override void SetDefaults()
@@ -67,7 +68,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             
         }
 
-        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
+        public override void Kill(int timeLeft)
         {
             if(FullyCharged)
             {
@@ -84,6 +85,8 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                 }
 
                 if(DEBUG) Main.NewText("[" + DateTime.UtcNow.Ticks + "] Bullet Sphere: OnHitNPC");
+
+                SoundEngine.PlaySound(SoundID.Item14, Projectile.position);
             }
         }
 

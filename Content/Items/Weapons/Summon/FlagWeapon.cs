@@ -38,12 +38,12 @@ namespace SummonerExpansionMod.Content.Items.Weapons.Summon
 
         public override void SetDefaults()
         {
-            MOD_PROJECTILE_ID = ModProjectileID.FlagPole;
+            MOD_PROJECTILE_ID = ModProjectileID.FlagProjectile;
             Item.useStyle = ItemUseStyleID.Swing;
             Item.useTime = WAVE_USE_TIME;
-            Item.damage = 25;
+            Item.damage = 40;
             Item.knockBack = 4f;
-            Item.DamageType = DamageClass.Summon;
+            Item.DamageType = DamageClass.SummonMeleeSpeed;
             Item.useAnimation = WAVE_USE_TIME;
             Item.noMelee = true;
             Item.noUseGraphic = true; // 不绘制物品本体
@@ -51,6 +51,10 @@ namespace SummonerExpansionMod.Content.Items.Weapons.Summon
             Item.shoot = MOD_PROJECTILE_ID;
             Item.shootSpeed = 0f;
         }
+
+        public override bool MeleePrefix() {
+			return true;
+		}
 
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
@@ -73,7 +77,7 @@ namespace SummonerExpansionMod.Content.Items.Weapons.Summon
                 LastShootTime = CurTime;
                 FlagProjectile = GenerateFlagProjectile(player, source, position, velocity, type, damage, knockback);
                 // Main.NewText(type);
-                if (FlagProjectile.ModProjectile is FlagPole flagPole)
+                if (FlagProjectile.ModProjectile is FlagProjectile flagPole)
                 {
                     flagPole.WaveDirection = (float)Direction;
                     flagPole.State = WAVE_STATE;
@@ -121,7 +125,7 @@ namespace SummonerExpansionMod.Content.Items.Weapons.Summon
                             }
                             
                             FlagProjectile = GenerateFlagProjectile(player, player.GetSource_ItemUse(Item), player.Center, Vector2.Zero, MOD_PROJECTILE_ID, Item.damage, Item.knockBack);
-                            if (FlagProjectile.ModProjectile is FlagPole flagPole)
+                            if (FlagProjectile.ModProjectile is FlagProjectile flagPole)
                             {
                                 flagPole.State = RAISE_STATE;
                                 State = RAISE_STATE;
@@ -147,7 +151,7 @@ namespace SummonerExpansionMod.Content.Items.Weapons.Summon
                         {
                             RaiseTimer = 0;
                             State = PLANT_STATE;
-                            if(FlagProjectile.ModProjectile is FlagPole flagPole)
+                            if(FlagProjectile.ModProjectile is FlagProjectile flagPole)
                             {
                                 flagPole.SwitchFlag = true;
                             }
@@ -155,7 +159,7 @@ namespace SummonerExpansionMod.Content.Items.Weapons.Summon
                     } break;
                     case PLANT_STATE:
                     {
-                        if(FlagProjectile.ModProjectile is FlagPole flagPole)
+                        if(FlagProjectile.ModProjectile is FlagProjectile flagPole)
                         {
                             if(flagPole.OnGroundCnt > ONGROUND_CNT_THRESHOLD)
                             {
@@ -166,7 +170,16 @@ namespace SummonerExpansionMod.Content.Items.Weapons.Summon
                     } break;
                     case RECALL_STATE:
                     {
-
+                        Item.useStyle = ItemUseStyleID.Swing;
+                        Item.useTime = WAVE_USE_TIME;
+                        Item.autoReuse = true;
+                        IsRightPressed = false;
+                        RaiseTimer = 0;
+                        if(FlagProjectile != null && !FlagProjectile.active)
+                        {
+                            FlagProjectile = null;
+                            State = IDLE_STATE;
+                        }
                     } break;
                     default:
                     {
@@ -186,7 +199,7 @@ namespace SummonerExpansionMod.Content.Items.Weapons.Summon
                     }
                     else if(State == PLANT_STATE)
                     {
-                        if(FlagProjectile.ModProjectile is FlagPole flagPole)
+                        if(FlagProjectile.ModProjectile is FlagProjectile flagPole)
                         {
                             if(flagPole.OnGroundCnt > ONGROUND_CNT_THRESHOLD)
                             {

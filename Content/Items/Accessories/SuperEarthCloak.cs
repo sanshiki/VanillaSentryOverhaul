@@ -45,7 +45,7 @@ namespace SummonerExpansionMod.Content.Items.Accessories
                     float dynamicDecayCoeff = (float)MathHelper.Clamp(t / (t + proj.damage), 0.005f, 0.8f);
                     modifiers.FinalDamage *= dynamicDecayCoeff;
                     modifiers.Knockback *= 0f;
-                    Main.NewText("dynamicDecayCoeff: " + dynamicDecayCoeff  + " SourceDamage: " + proj.damage);
+                    // Main.NewText("dynamicDecayCoeff: " + dynamicDecayCoeff  + " SourceDamage: " + proj.damage);
                 }
                 // Main.NewText("hasAccessory: " + hasAccessory + " proj.owner: " + proj.owner + " Player.whoAmI: " + Player.whoAmI);
             }
