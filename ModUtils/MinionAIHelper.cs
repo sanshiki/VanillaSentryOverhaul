@@ -213,6 +213,35 @@ namespace SummonerExpansionMod.ModUtils
 			return projectileIDs;
 		}
 
+		public static Vector2 SearchForValidPosition(Vector2 center, int width, int height, int searchRadius)
+		{
+			Point centerTile = center.ToTileCoordinates();
+			if(!Collision.SolidCollision(center, width, height))
+			{
+				return center;
+			}
+            for (int r = 0; r <= searchRadius; r++)
+            {
+                for (int x = -r; x <= r; x++)
+                {
+                    for (int y = -r; y <= r; y++)
+                    {
+						// only search edge
+						if(Math.Abs(x) != r && Math.Abs(y) != r) continue;
+                        int checkX = centerTile.X + x;
+                        int checkY = centerTile.Y + y;
+                        if (checkX < 0 || checkX >= Main.maxTilesX || checkY < 0 || checkY >= Main.maxTilesY) continue;
+                        Vector2 worldPos = new Vector2(checkX * 16, checkY * 16);
+                        if (!Collision.SolidCollision(worldPos, width, height))
+                        {
+                            return worldPos;
+                        }
+                    }
+                }
+            }
+            return center;
+		}
+
 		/// <summary>
 		/// 更新召唤物的友好状态
 		/// </summary>
@@ -651,6 +680,23 @@ namespace SummonerExpansionMod.ModUtils
 			direction.Normalize();
 			direction *= speed;
 			projectile.velocity = (projectile.velocity * (inertia - 1) + direction) / inertia;
+
+			// Main.NewText("Homein velocity: " + projectile.velocity + " direction: " + direction + " speed: " + speed + " inertia: " + inertia);
+		}
+		#endregion
+
+		#region Damage Methods
+		public static int AccumulateWhipDamage(NPC target)
+		{
+			int addDamage = 0;
+			foreach(var item in ModGlobal.WhipAddDamageDict)
+			{
+				if(target.HasBuff(item.Key))
+				{
+					addDamage += item.Value;
+				}
+			}
+			return addDamage;
 		}
 		#endregion
 	}

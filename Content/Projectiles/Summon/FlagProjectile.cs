@@ -73,8 +73,8 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 
 
         /* ------------------------- Flag Cloth Constants ------------------------- */
-        protected const int FLAG_WIDTH = 100;   // 128
-        protected const int FLAG_HEIGHT = 70;   // 80
+        protected const int FLAG_WIDTH = 128;
+        protected const int FLAG_HEIGHT = 80;
         protected const float ROT_DISPLACEMENT = 2.05f + 2.05f;  //  1.275f + 2.05f
         protected const float SLOW_WAVE_AMPLITUDE = 10f;
         protected const float SLOW_WAVE_SPEED_FACTOR = 7f;
@@ -82,22 +82,22 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         protected const float FAST_WAVE_AMPLITUDE = 10f;
         protected const float FAST_WAVE_SPEED_FACTOR = 1.5f;
         protected const int WAVE_SLICE_WIDTH = 4;
-        protected const string FLAG_CLOTH_TEXTURE_PATH = ModGlobal.MOD_TEXTURE_PATH + "Projectiles/PirateFlag";
-        protected const string FLAG_TAIL_TEXTURE_PATH = ModGlobal.MOD_TEXTURE_PATH + "Vertexes/SwordTail1";
+        protected const string FLAG_CLOTH_TEXTURE_PATH = ModGlobal.MOD_TEXTURE_PATH + "Projectiles/TestFlag";
 
         /* ------------------------- Tail Constants ------------------------- */
         public bool TailEnabled = true;
         protected const int TAIL_LENGTH = 6;
-        protected const float TAIL_OFFSET_X_1 = -123f;
-        protected const float TAIL_OFFSET_Y_1 = -213f;
-        protected const float TAIL_OFFSET_X_2 = -123f;
-        protected const float TAIL_OFFSET_Y_2 = -72f;
+        protected const float TAIL_OFFSET_X_1 = -100f;  // -123
+        protected const float TAIL_OFFSET_Y_1 = -135f;  // -213
+        protected const float TAIL_OFFSET_X_2 = -100f;  // -123
+        protected const float TAIL_OFFSET_Y_2 = -85f;   // -72
         protected const float TAIL_OFFSET_ROT_1 = 0f;
         protected const float TAIL_OFFSET_ROT_2 = 0f;
         protected Vector2 SPIN_CENTER_OFFSET = new Vector2(65f, 225f);
         protected float SPIN_CENTER_OFFSET_ROT = 0f;
         protected Color TAIL_COLOR = new Color(98, 0, 0, 95);
         protected const bool TAIL_DYNAMIC_DEBUG = true;
+        protected const string FLAG_TAIL_TEXTURE_PATH = ModGlobal.MOD_TEXTURE_PATH + "Vertexes/SwordTail4";
 
         /* ------------------------- Buff Constants ------------------------- */
         protected int ENHANCE_BUFF_ID = -1;
@@ -514,9 +514,9 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                 UseFastAnimation = false;
             }
 
-            if(State == RAISE_STATE)
+            if(State == RAISE_STATE || State == PLANT_STATE)
             {
-                // do not draw tail when recall
+                // do not draw tail when raise or plant
                 TailEnabled = false;
             }
             else
