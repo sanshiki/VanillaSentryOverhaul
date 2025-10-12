@@ -200,6 +200,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                 {
                     SignalEnable = true;
                     // Projectile.velocity = Vector2.Zero;
+                    Projectile.velocity.X = 0f;
                 }
                 else
                 {

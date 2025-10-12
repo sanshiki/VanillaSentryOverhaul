@@ -7,6 +7,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Audio;
 using Microsoft.Xna.Framework.Graphics;
+using Terraria.Graphics.CameraModifiers;
 
 using SummonerExpansionMod.Content.Buffs.Summon;
 using SummonerExpansionMod.ModUtils;
@@ -34,7 +35,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 
         // sentry parameters
         private const float REAL_BULLET_SPEED = 80f;
-        private const float PRED_BULLET_SPEED = 55f;
+        private const float PRED_BULLET_SPEED = 65f;
 
         // buff constants
         private const float ENHANCEMENT_FACTOR = 0.75f;
@@ -67,6 +68,12 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             Main.projFrames[Projectile.type] = 1;
             ProjectileID.Sets.MinionShot[Projectile.type] = true;
             ProjectileID.Sets.CultistIsResistantTo[Projectile.type] = true;
+        }
+
+        public override void OnSpawn(IEntitySource source)
+        {
+            PunchCameraModifier modifier = new PunchCameraModifier(Projectile.Center, (-MathHelper.PiOver2).ToRotationVector2(), 10f, 6f, 10, 1000f, "AutocannonSentry");
+            Main.instance.CameraModifiers.Add(modifier);
         }
 
         public override void SetDefaults()
@@ -139,14 +146,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                 if(shootTimer == 0 || shootTimer == INVERVAL_BETWEEN_SHOTS || shootTimer == INVERVAL_BETWEEN_SHOTS*2)
                 {
                     // Whip add damage
-                    int addDamage = 0;
-                    foreach(var item in ModGlobal.WhipAddDamageDict)
-                    {
-                        if(target.HasBuff(item.Key))
-                        {
-                            addDamage += item.Value;
-                        }
-                    }
+                    int addDamage = MinionAIHelper.AccumulateWhipDamage(target);
                     int totalDamage = Projectile.damage + addDamage;
 
                     Vector2 BulletShellVelocity = direction.RotatedBy(-2f/3f*ModGlobal.PI_FLOAT*Projectile.spriteDirection) * 3.5f;
@@ -168,7 +168,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                         // ProjectileID.ExplosiveBullet,
                         // ModProjectileID.AutocannonSentryBullet,
                         ProjectileID.BulletHighVelocity,
-                        Projectile.damage,
+                        totalDamage,
                         Projectile.knockBack,
                         Projectile.owner);
 
@@ -363,7 +363,8 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         public override bool OnTileCollide(Vector2 oldVelocity)
         {
             onGround = true;
-            Projectile.velocity = Vector2.Zero;
+            // Projectile.velocity = Vector2.Zero;
+            Projectile.velocity.X = 0f;
             return false;
         }
 

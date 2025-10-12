@@ -28,6 +28,16 @@ Buffs: {
 		DisplayName: Sentry Target Buff
 		Description: Mods.SummonerExpansionMod.Buffs.SentryTargetBuff.Description
 	}
+
+	ElectricShock: {
+		DisplayName: Electric Shock
+		Description: Mods.SummonerExpansionMod.Buffs.ElectricShock.Description
+	}
+
+	ElectricBoostBuff: {
+		DisplayName: Electric Boost Buff
+		Description: Mods.SummonerExpansionMod.Buffs.ElectricBoostBuff.Description
+	}
 }
 
 Items: {
@@ -76,7 +86,7 @@ Items: {
 		Tooltip: ""
 	}
 
-	FlagPoleWeapon: {
+	FlagProjectileWeapon: {
 		DisplayName: Flag Pole Weapon
 		Tooltip: ""
 	}
@@ -88,6 +98,51 @@ Items: {
 
 	MechEyeballTurretStaff: {
 		DisplayName: Mech Eyeball Turret Staff
+		Tooltip: ""
+	}
+
+	CursedMagicTowerStaff: {
+		DisplayName: Cursed Magic Tower Staff
+		Tooltip: ""
+	}
+
+	GatlingSentryStaff: {
+		DisplayName: Gatling Sentry Staff
+		Tooltip: ""
+	}
+
+	MachineGunSentrySummon: {
+		DisplayName: Machine Gun Sentry Summon
+		Tooltip: ""
+	}
+
+	RocketSentrySummon: {
+		DisplayName: Rocket Sentry Summon
+		Tooltip: ""
+	}
+
+	GatlingSentrySummon: {
+		DisplayName: Gatling Sentry Summon
+		Tooltip: ""
+	}
+
+	AutocannonSentrySummon: {
+		DisplayName: Autocannon Sentry Summon
+		Tooltip: ""
+	}
+
+	SelfDamagePreventer: {
+		DisplayName: Self Damage Preventer
+		Tooltip: ""
+	}
+
+	SuperEarthCloak: {
+		DisplayName: Super Earth Cloak
+		Tooltip: ""
+	}
+
+	VertexTest: {
+		DisplayName: Vertex Test
 		Tooltip: ""
 	}
 }
@@ -106,13 +161,27 @@ Projectiles: {
 	TowerOfDryadsBlessingProjectile.DisplayName: Tower Of Dryads Blessing Projectile
 	MachineGunSentryBullet.DisplayName: Machine Gun Sentry Bullet
 	FlagWeaponProjectile.DisplayName: Flag Weapon Projectile
-	FlagPole.DisplayName: Flag Pole
 	FlagProjectile.DisplayName: Flag Projectile
 	FlagWeaponProjectileV1.DisplayName: Flag Weapon Projectile V1
 	HoneyCombSentry.DisplayName: Honey Comb Sentry
 	HoneyCombSentryBullet.DisplayName: Honey Comb Sentry Bullet
 	DarkMagicTowerBullet.DisplayName: Dark Magic Tower Bullet
 	MechEyeballTurret.DisplayName: Mech Eyeball Turret
+	CursedMagicTower.DisplayName: Cursed Magic Tower
+	CursedMagicTowerBullet.DisplayName: Cursed Magic Tower Bullet
+	CursedMagicTowerV1.DisplayName: Cursed Magic Tower V1
+	CursedMagicTowerBulletSmall.DisplayName: Cursed Magic Tower Bullet Small
+	CursedMagicTowerBulletSphere.DisplayName: Cursed Magic Tower Bullet Sphere
+	CursedMagicTowerBulletLarge.DisplayName: Cursed Magic Tower Bullet Large
+	GatlingSentry.DisplayName: Gatling Sentry
+	Hellpod.DisplayName: Hellpod
+	HellpodSummonBall.DisplayName: Hellpod Summon Ball
+	HellpodSummonSignal.DisplayName: Hellpod Summon Signal
+	RocketSentryBullet.DisplayName: Rocket Sentry Bullet
+	AutocannonSentry.DisplayName: Autocannon Sentry
+	AutocannonSentryBullet.DisplayName: Autocannon Sentry Bullet
+	VertexTestProj.DisplayName: Vertex Test Proj
 }
 
 NPCs.CursorTargetDummy.DisplayName: Cursor Target Dummy
+"Keybinds.Toggle Dynamic Param Manager UI.DisplayName": Toggle  Dynamic  Param  Manager  U I

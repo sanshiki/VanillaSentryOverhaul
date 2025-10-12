@@ -83,17 +83,19 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 
             if (target != null)
             {
-                shootTimer++;
-
                 shootInterval = isOnSand ? SHOOT_INTERVAL_FAST : SHOOT_INTERVAL;
 
-                if(owner.HasBuff(BUFF_ID))
-                {
-                    shootInterval = (int)(shootInterval * ENHANCEMENT_FACTOR);
-                }
+                // if(owner.HasBuff(BUFF_ID))
+                // {
+                //     shootInterval = (int)(shootInterval * ENHANCEMENT_FACTOR);
+                // }
 
 
                 if (shootTimer >= shootInterval)
+                {
+                    shootTimer = 0;
+                }
+                if (shootTimer == 0)
                 {
                     // Fire!
                     Vector2 ShootOffset = new Vector2(0f, -15f);
@@ -128,9 +130,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                         vx = -max_vx;
                     }
 
-                    
-
-                    Projectile.NewProjectile(
+                    Projectile proj = Projectile.NewProjectileDirect(
                         Projectile.GetSource_FromAI(),
                         ShootCenter,
                         new Vector2(vx, -vy),
@@ -139,6 +139,8 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                         0,
                         Projectile.owner);
 
+                    ProjectileID.Sets.SentryShot[proj.type] = true;
+
                     shootTimer = 0; // Reset shoot animation
                     isOnSand = false;
 
@@ -146,10 +148,10 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                     SoundEngine.PlaySound(SoundID.Item5, Projectile.position);
                 }
             }
-            else
-            {
-                shootTimer = 0; // Reset if no target
-            }
+
+            shootTimer++;
+            if(shootTimer >= shootInterval)
+                shootTimer = shootInterval;
 
             // Animation
             UpdateAnimation(target, shootTimer);
@@ -222,7 +224,8 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             }
 
             // set velocity to 0
-            Projectile.velocity = Vector2.Zero;
+            // Projectile.velocity = Vector2.Zero;
+            Projectile.velocity.X = 0f;
 
             return false;
         }

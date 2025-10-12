@@ -125,7 +125,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                         // Main.NewText("random_seed: " + random_seed + " dir_offset: " + dir_offset);
                         Vector2 Velocity = (BaseVel * vel_offset).RotatedBy(dir + dir_offset);
 
-                        int bee = Projectile.NewProjectile(
+                        Projectile bee = Projectile.NewProjectileDirect(
                             Projectile.GetSource_FromAI(),
                             Projectile.Center,
                             Velocity,
@@ -135,12 +135,8 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                             0,
                             Projectile.owner);
 
-                        if(bee != Main.maxProjectiles)
-                        {
-                            Main.projectile[bee].DamageType = DamageClass.Summon;
-                            // Main.NewText(bee + " " + Main.projectile[bee].DamageType);
-                            // Main.NewText("Damage: " + Projectile.damage + "Bee Damage: " + Main.projectile[bee].damage);
-                        }
+                        bee.DamageType = DamageClass.Summon;
+                        ProjectileID.Sets.SentryShot[bee.type] = true;
 
                         SoundEngine.PlaySound(SoundID.Item109, Projectile.Center);
                     }
@@ -152,7 +148,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                         float random_seed = MinionAIHelper.RandomFloat(0f, 1f);
                         if(random_seed < 0.5f)
                         {
-                            int bee = Projectile.NewProjectile(
+                            Projectile bee = Projectile.NewProjectileDirect(
                                 Projectile.GetSource_FromAI(),
                                 Projectile.Center,
                                 BaseVel.RotatedBy(dir),
@@ -161,10 +157,8 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                                 0.5f,
                                 Projectile.owner);
 
-                            if(bee != Main.maxProjectiles)
-                            {
-                                Main.projectile[bee].DamageType = DamageClass.Summon;
-                            }
+                            bee.DamageType = DamageClass.Summon;
+                            ProjectileID.Sets.SentryShot[bee.type] = true;
                         }
                     }
 
@@ -218,7 +212,8 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 
         public override bool OnTileCollide(Vector2 oldVelocity)
         {
-            Projectile.velocity = Vector2.Zero;
+            // Projectile.velocity = Vector2.Zero;
+            Projectile.velocity.X = 0f;
             return false;
         }
 

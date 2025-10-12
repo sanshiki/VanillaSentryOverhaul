@@ -234,6 +234,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                 Projectile.frame = (Projectile.frame + 1) % FRAME_COUNT;
                 Projectile.frameCounter = 0;
             }
+            Projectile.rotation += 0.5f;
         }
 
         public override bool PreDraw(ref Color lightColor)

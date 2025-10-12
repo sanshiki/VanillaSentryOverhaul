@@ -6,6 +6,7 @@ using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Audio;
+using Terraria.Graphics.CameraModifiers;
 
 using Microsoft.Xna.Framework.Graphics;
 using Terraria.GameContent;
@@ -67,6 +68,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             Main.projFrames[Projectile.type] = FRAME_COUNT;
             ProjectileID.Sets.MinionShot[Projectile.type] = true;
             ProjectileID.Sets.CultistIsResistantTo[Projectile.type] = true;
+            ProjectileID.Sets.SummonTagDamageMultiplier[Projectile.type] = 0.5f;
         }
 
         public override void SetDefaults()
@@ -84,6 +86,12 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             Projectile.ArmorPenetration = 25;
             
             BUFF_ID = ModBuffID.SentryEnhancement;
+        }
+
+        public override void OnSpawn(IEntitySource source)
+        {
+            PunchCameraModifier modifier = new PunchCameraModifier(Projectile.Center, (-MathHelper.PiOver2).ToRotationVector2(), 10f, 6f, 10, 1000f, "GatlingSentry");
+            Main.instance.CameraModifiers.Add(modifier);
         }
 
         public override void AI()
@@ -135,16 +143,6 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                             ShootPos, target.Center, target.velocity, PRED_BULLET_SPEED, 60, 1);
                     }
 
-                    // Whip add damage
-                    int addDamage = 0;
-                    foreach(var item in ModGlobal.WhipAddDamageDict)
-                    {
-                        if(target.HasBuff(item.Key))
-                        {
-                            addDamage += (int)(item.Value * WHIP_DAGGER_DECAY);
-                        }
-                    }
-                    int totalDamage = Projectile.damage + addDamage;
 
                     Vector2 BulletShellVelocity = direction.RotatedBy(-2f/3f*ModGlobal.PI_FLOAT*Projectile.spriteDirection) * 3f;
                     Dust BulletShellDust = Dust.NewDustDirect(Projectile.Center + new Vector2(-5f*Projectile.spriteDirection, -18f), 1, 1, ModContent.DustType<SmallBulletShell>(), BulletShellVelocity.X, BulletShellVelocity.Y);
@@ -165,13 +163,14 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                         // ModProjectileID.GatlingSentryBullet,
                         // ProjectileID.BulletHighVelocity,
                         ProjectileID.Bullet,
-                        totalDamage,
+                        Projectile.damage,
                         0,
                         Projectile.owner);
 
                     bullet.DamageType = DamageClass.Summon;
                     bullet.friendly = true;
                     bullet.hostile = true;
+                    ProjectileID.Sets.SentryShot[bullet.type] = true;
                     // bullet.penetrate = 1;
                     // Main.NewText("Damage: " + Projectile.damage + "Bullet Damage: " + bullet.damage);
 
@@ -283,7 +282,8 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         public override bool OnTileCollide(Vector2 oldVelocity)
         {
             onGround = true;
-            Projectile.velocity = Vector2.Zero;
+            // Projectile.velocity = Vector2.Zero;
+            Projectile.velocity.X = 0f;
             return false;
         }
 

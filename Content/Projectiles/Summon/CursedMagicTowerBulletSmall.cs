@@ -18,8 +18,8 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 
         private const int DUST_INTERVAL = 10;
 
-        private const float MAX_SPEED = 15f;
-        private const float DEACC_DIST = 900f;
+        private const float MAX_SPEED = 30f;
+        private const float DEACC_DIST = 500f;
         private const float DEACC = MAX_SPEED * MAX_SPEED / (2 * DEACC_DIST);
 
         private float DustDir = 0f;
@@ -47,6 +47,12 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         private List<int> DustIDs = new List<int> { 29, 41, 42, 45, 54, 59, 62, 65, 71, 86, 88, 109, 113, 164, 173 };
 
         public Vector2 Target;
+
+
+        public override void SetStaticDefaults()
+        {
+            ProjectileID.Sets.SentryShot[Projectile.type] = true;
+        }
 
         public override void SetDefaults()
         {

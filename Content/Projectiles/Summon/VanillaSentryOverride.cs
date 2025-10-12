@@ -18,6 +18,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 		public virtual void SetDefaults(Projectile projectile) {}
 		public virtual bool PreAI(Projectile projectile) => true;
 		public virtual void AI(Projectile projectile) {}
+		public virtual void PostAI(Projectile projectile) {}
 		public virtual bool OnTileCollide(Projectile projectile, Vector2 oldVelocity) => true;
 		public virtual bool? Colliding(Projectile projectile, Rectangle myRect, Rectangle targetRect) => null;
 		public virtual void OnHitNPC(Projectile projectile, NPC target, NPC.HitInfo hit, int damageDone) {}
@@ -28,6 +29,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 			{ "SetDefaults", false },
 			{ "PreAI", false },
 			{ "AI", false },
+			{ "PostAI", false },
 			{ "OnTileCollide", false },
 			{ "Colliding", false },
 			{ "OnHitNPC", false },
@@ -96,6 +98,14 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 			}
 			else
 				base.AI(projectile);
+		}
+
+		public override void PostAI(Projectile projectile)
+		{
+			if (overrides.TryGetValue(projectile.type, out var handler))
+				handler.PostAI(projectile);
+			else
+				base.PostAI(projectile);
 		}
 
 		public override bool OnTileCollide(Projectile projectile, Vector2 oldVelocity)

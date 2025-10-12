@@ -25,8 +25,6 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         public static int SentryPlatform;
 
         // flag weapon
-        public static int FlagWeaponProjectileV1;
-        public static int FlagPole;
         public static int FlagProjectile;
     }
 }

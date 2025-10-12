@@ -162,6 +162,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                                 Projectile.owner);
 
                             seed.DamageType = DamageClass.Summon;
+                            ProjectileID.Sets.SentryShot[seed.type] = true;
                             shootTimer = 0; // Reset shoot animation
                         }
                     }
@@ -223,6 +224,8 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                             seed.friendly = true;
                             seed.penetrate = 4;
                             shootTimer = 0; // Reset shoot animation
+
+                            SoundEngine.PlaySound(SoundID.Item34, Projectile.position);
                         }
                     }
                     else
@@ -511,7 +514,8 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 
         public override bool OnTileCollide(Vector2 oldVelocity)
         {
-            Projectile.velocity = Vector2.Zero;
+            // Projectile.velocity = Vector2.Zero;
+            Projectile.velocity.X = 0f;
             return false;
         }
 

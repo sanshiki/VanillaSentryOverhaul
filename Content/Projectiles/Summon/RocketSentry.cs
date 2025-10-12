@@ -7,6 +7,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Audio;
 using Microsoft.Xna.Framework.Graphics;
+using Terraria.Graphics.CameraModifiers;
 
 using SummonerExpansionMod.Content.Buffs.Summon;
 using SummonerExpansionMod.ModUtils;
@@ -82,6 +83,12 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             BUFF_ID = ModBuffID.SentryEnhancement;
         }
 
+        public override void OnSpawn(IEntitySource source)
+        {
+            PunchCameraModifier modifier = new PunchCameraModifier(Projectile.Center, (-MathHelper.PiOver2).ToRotationVector2(), 10f, 6f, 10, 1000f, "RocketSentry");
+            Main.instance.CameraModifiers.Add(modifier);
+        }
+
         public override void AI()
         {
             Player owner = Main.player[Projectile.owner];
@@ -130,14 +137,8 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                 if(shootTimer == 0)
                 {
                     // Whip add damage
-                    int addDamage = 0;
-                    foreach(var item in ModGlobal.WhipAddDamageDict)
-                    {
-                        if(target.HasBuff(item.Key))
-                        {
-                            addDamage += item.Value;
-                        }
-                    }
+                    int addDamage = MinionAIHelper.AccumulateWhipDamage(target);
+                    addDamage = (int)(addDamage);
                     int totalDamage = Projectile.damage + addDamage;
 
                     // Fire!
@@ -151,7 +152,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                         bulletVelocity,
                         // ProjectileID.RocketI,
                         ModProjectileID.RocketSentryBullet,
-                        Projectile.damage,
+                        totalDamage,
                         0,
                         Projectile.owner);
 
@@ -327,7 +328,8 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         public override bool OnTileCollide(Vector2 oldVelocity)
         {
             onGround = true;
-            Projectile.velocity = Vector2.Zero;
+            // Projectile.velocity = Vector2.Zero;
+            Projectile.velocity.X = 0f;
             return false;
         }
 

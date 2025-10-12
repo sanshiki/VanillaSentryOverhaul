@@ -107,12 +107,22 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         protected virtual float CONTROL_P => 0.15f;
         protected virtual float CONTROL_D => 0.01f;
         protected virtual float MAX_TURN_SPEED => 0.02f;
+        protected virtual float HOMING_SPEED => 10f;
+        protected virtual float HOMING_INERTIA => 10f;
+
+        protected virtual int lvl => 1;
 
         protected float lastError = 0f;
+
+        private bool targetLost = false;
 
         public FlameburstShotOverride()
         {
             RegisterFlags["AI"] = true;
+
+            // DynamicParamManager.Register("InertiaT1", 10f, 0.1f, 100f);
+            // DynamicParamManager.Register("InertiaT2", 10f, 0.1f, 100f);
+            // DynamicParamManager.Register("InertiaT3", 10f, 0.1f, 100f);
         }
 
         public override void AI(Projectile projectile)
@@ -121,19 +131,27 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             int targetId = (int)projectile.ai[0];
             NPC target = targetId != -1 ? Main.npc[targetId] : null;
 
-            if(target == null || !target.active || (target.Center - projectile.Center).Length() > HOMING_RANGE)
+            if(targetLost || target == null || !target.active || (target.Center - projectile.Center).Length() > HOMING_RANGE)
             {
+                targetLost = true;
+                float spd = (float)Math.Min(projectile.velocity.Length() + 0.5f, HOMING_SPEED);
+                projectile.velocity = projectile.velocity.SafeNormalize(Vector2.Zero) * spd;
                 return;
             }
 
-            float direction = (target.Center - projectile.Center).ToRotation();
-            float dir_err = direction - projectile.velocity.ToRotation();
-            dir_err = (dir_err + ModGlobal.PI_FLOAT) % ModGlobal.TWO_PI_FLOAT - ModGlobal.PI_FLOAT;
-            float turn_speed = dir_err * CONTROL_P + (dir_err - lastError) * CONTROL_D;
-            lastError = dir_err;
-            turn_speed = MathHelper.Clamp(turn_speed, -MAX_TURN_SPEED, MAX_TURN_SPEED);
-            Vector2 velocity = projectile.velocity;
-            projectile.velocity = velocity.RotatedBy(turn_speed);
+            // float inertia = DynamicParamManager.Get("InertiaT" + lvl).value;
+            float inertia = HOMING_INERTIA;
+
+            // float direction = (target.Center - projectile.Center).ToRotation();
+            // float dir_err = direction - projectile.velocity.ToRotation();
+            // dir_err = (dir_err + ModGlobal.PI_FLOAT) % ModGlobal.TWO_PI_FLOAT - ModGlobal.PI_FLOAT;
+            // float turn_speed = dir_err * CONTROL_P + (dir_err - lastError) * CONTROL_D;
+            // lastError = dir_err;
+            // turn_speed = MathHelper.Clamp(turn_speed, -MAX_TURN_SPEED, MAX_TURN_SPEED);
+            // Vector2 velocity = projectile.velocity;
+            // projectile.velocity = velocity.RotatedBy(turn_speed);
+
+            MinionAIHelper.HomeinToTarget(projectile, target.Center, HOMING_SPEED, inertia);
         }
     }
 
@@ -143,6 +161,10 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         protected override float CONTROL_P => 0.15f;
         protected override float CONTROL_D => 0.01f;
         protected override float MAX_TURN_SPEED => 0.02f;
+        protected override float HOMING_SPEED => 10f;
+        protected override float HOMING_INERTIA => 50f;
+
+        protected override int lvl => 1;
     }
 
     public class FlameburstTowerT1Override : FlameburstTowerOverride
@@ -242,8 +264,11 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
     {
         protected override float HOMING_RANGE => 750f;
         protected override float CONTROL_P => 0.15f;
-        protected override float CONTROL_D => 0.02f;
+        protected override float CONTROL_D => 0.1f;
         protected override float MAX_TURN_SPEED => 0.08f;
+        protected override float HOMING_SPEED => 15f;
+        protected override float HOMING_INERTIA => 25f;
+        protected override int lvl => 2;
     }
 
     public class FlameburstTowerT2Override : FlameburstTowerOverride
@@ -341,9 +366,12 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
     public class FlameburstShotT3Override : FlameburstShotOverride
     {
         protected override float HOMING_RANGE => 1000f;
-        protected override float CONTROL_P => 2f;
-        protected override float CONTROL_D => 0.05f;
-        protected override float MAX_TURN_SPEED => 1.0f;
+        protected override float CONTROL_P => 3f;
+        protected override float CONTROL_D => 0.2f;
+        protected override float MAX_TURN_SPEED => 3.0f;
+        protected override float HOMING_SPEED => 25f;
+        protected override float HOMING_INERTIA => 5f;
+        protected override int lvl => 3;
     }
 
     public class FlameburstTowerT3Override : FlameburstTowerOverride
@@ -405,7 +433,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                     Projectile proj = Projectile.NewProjectileDirect(projectile.GetSource_FromThis(), 
                                             projectile.Center + bulletOffset, 
                                             BulletVelocity, 
-                                            ProjectileID.DD2FlameBurstTowerT2Shot, 
+                                            ProjectileID.DD2FlameBurstTowerT3Shot, 
                                             projectile.damage, 
                                             projectile.knockBack, 
                                             projectile.owner);

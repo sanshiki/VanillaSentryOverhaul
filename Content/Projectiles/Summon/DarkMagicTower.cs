@@ -87,10 +87,10 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             }
 
             int fireInterval = FIRE_INTERVAL;
-            if(owner.HasBuff(BUFF_ID))
-            {
-                fireInterval = (int)(fireInterval * ENHANCEMENT_FACTOR);
-            }
+            // if(owner.HasBuff(BUFF_ID))
+            // {
+            //     fireInterval = (int)(fireInterval * ENHANCEMENT_FACTOR);
+            // }
 
             // find target and fire, as well as cooldown control
             // NPC target = FindTarget();
@@ -107,6 +107,8 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             }
 
             fireTimer++;
+            if(fireTimer >= fireInterval)
+                fireTimer = fireInterval;
 
             UpdateAnimation(target);
         }
@@ -140,6 +142,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             proj.usesLocalNPCImmunity = true;
             proj.localNPCHitCooldown = 60;
             proj.DamageType = DamageClass.Summon;
+            ProjectileID.Sets.SentryShot[proj.type] = true;
 
             SoundEngine.PlaySound(SoundID.Item43, Projectile.Center);
         }

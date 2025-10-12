@@ -43,8 +43,6 @@ namespace SummonerExpansionMod.Initialization
 			ModProjectileID.SentryPlatform = ModContent.ProjectileType<SentryPlatform>();
 
 			// flag weapon
-			ModProjectileID.FlagWeaponProjectileV1 = ModContent.ProjectileType<FlagWeaponProjectileV1>();
-			ModProjectileID.FlagPole = ModContent.ProjectileType<FlagPole>();
 			ModProjectileID.FlagProjectile = ModContent.ProjectileType<FlagProjectile>();
 
 			/* ------------------------------- buffs ------------------------------- */

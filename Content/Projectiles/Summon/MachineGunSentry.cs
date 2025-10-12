@@ -6,6 +6,7 @@ using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Audio;
+using Terraria.Graphics.CameraModifiers;
 
 using Microsoft.Xna.Framework.Graphics;
 using Terraria.GameContent;
@@ -65,6 +66,13 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             Main.projFrames[Projectile.type] = FRAME_COUNT;
             ProjectileID.Sets.MinionShot[Projectile.type] = true;
             ProjectileID.Sets.CultistIsResistantTo[Projectile.type] = true;
+            ProjectileID.Sets.SummonTagDamageMultiplier[Projectile.type] = 0.5f;
+        }
+
+        public override void OnSpawn(IEntitySource source)
+        {
+            PunchCameraModifier modifier = new PunchCameraModifier(Projectile.Center, (-MathHelper.PiOver2).ToRotationVector2(), 10f, 6f, 10, 1000f, "MachineGunSentry");
+            Main.instance.CameraModifiers.Add(modifier);
         }
 
         public override void SetDefaults()
@@ -110,17 +118,19 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                 true, 
                 null).TargetNPC;
 
+            int shootInterval = SHOOT_INTERVAL;
             if (target != null && spawnTimer > SPAWN_TIME)
             {
-                shootTimer++;
-
-                int shootInterval = SHOOT_INTERVAL;
                 // if(owner.HasBuff(BUFF_ID))
                 // {
                 //     shootInterval = (int)(shootInterval * ENHANCEMENT_FACTOR);
                 // }
 
                 if (shootTimer >= shootInterval)
+                {
+                    shootTimer = 0;
+                }
+                if (shootTimer == 0)
                 {
                     // calculate prediction
                     Vector2 PredictedPos = target.Center;
@@ -130,17 +140,6 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                         PredictedPos = MinionAIHelper.PredictTargetPosition(
                             Projectile, target, PRED_BULLET_SPEED, 60, 1);
                     }
-
-                    // Whip add damage
-                    int addDamage = 0;
-                    foreach(var item in ModGlobal.WhipAddDamageDict)
-                    {
-                        if(target.HasBuff(item.Key))
-                        {
-                            addDamage += (int)(item.Value * WHIP_DAGGER_DECAY);
-                        }
-                    }
-                    int totalDamage = Projectile.damage + addDamage;
 
                     // Main.NewText("projectile damage: " + Projectile.damage + " add damage: " + addDamage + " total damage: " + totalDamage);
 
@@ -170,12 +169,12 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                         bulletVelocity,
                         // ModProjectileID.MachineGunSentryBullet,
                         ProjectileID.Bullet,
-                        totalDamage,
+                        Projectile.damage,
                         0,
                         Projectile.owner);
 
                     bullet.DamageType = DamageClass.Summon;
-                    ProjectileID.Sets.MinionShot[bullet.type] = true;
+                    ProjectileID.Sets.SentryShot[bullet.type] = true;
                     bullet.friendly = true;
                     bullet.hostile = true;
                     // Main.NewText("Damage: " + Projectile.damage + "Bullet Damage: " + bullet.damage);
@@ -185,10 +184,10 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                     SoundEngine.PlaySound(SoundID.Item11, Projectile.Center);
                 }
             }
-            else
-            {
-                shootTimer = 0; // Reset if no target
-            }
+
+            shootTimer++;
+            if(shootTimer >= shootInterval)
+                shootTimer = shootInterval;
 
             // Animation
             // UpdateAnimation(target);
@@ -288,7 +287,8 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         public override bool OnTileCollide(Vector2 oldVelocity)
         {
             onGround = true;
-            Projectile.velocity = Vector2.Zero;
+            // Projectile.velocity = Vector2.Zero;
+            Projectile.velocity.X = 0f;
             return false;
         }
 

@@ -16,7 +16,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 {
     public class BunnySentry : ModProjectile
     {
-        private int shootTimer;
+        private int shootTimer = 4;
 
         private const int NORMAL_FRAME_SPEED = 20;
         private const int SHOOT_FRAME_SPEED = 5;
@@ -71,26 +71,22 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                     true, 
                     null).TargetNPC;
 
+            // Animation
+            UpdateAnimation(target, shootTimer);
+
+            int shootInterval = SHOOT_INTERVAL;
             if (target != null)
             {
-                shootTimer++;
-                if (shootTimer >= 1 && shootTimer <= 4)
-                {
-                    // Shooting animation
-                    Projectile.frame = 1; // Frame 3
-                }
-                else
-                {
-                    Projectile.frame = 0;
-                }
-
-                int shootInterval = SHOOT_INTERVAL;
                 if(owner.HasBuff(BUFF_ID))
                 {
                     shootInterval = (int)(shootInterval * ENHANCEMENT_FACTOR);
                 }
 
                 if (shootTimer >= shootInterval)
+                {
+                    shootTimer = 0;
+                }
+                if (shootTimer == 0)
                 {
                     // Fire!
                     Vector2 direction = target.Center - Projectile.Center;
@@ -111,56 +107,34 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                         Projectile.owner);
 
                     seed.DamageType = DamageClass.Summon;
+                    ProjectileID.Sets.SentryShot[seed.type] = true;
                     // Main.NewText("Damage: " + Projectile.damage + "Seed Damage: " + seed.damage);
 
                     shootTimer = 0; // Reset shoot animation
                 }
             }
-            else
-            {
-                shootTimer = 0; // Reset if no target
-            }
 
-            // Animation
-            UpdateAnimation(target, shootTimer);
+                shootTimer++;
+                if(shootTimer >= shootInterval)
+                    shootTimer = shootInterval;
+            
+
         }
-
-        // private NPC FindTarget(float range)
-        // {
-        //     NPC closest = null;
-        //     float closestDist = range;
-
-        //     for (int i = 0; i < Main.maxNPCs; i++)
-        //     {
-        //         NPC npc = Main.npc[i];
-        //         if (npc.CanBeChasedBy(this) && Collision.CanHit(Projectile.Center, 1, 1, npc.Center, 1, 1))
-        //         {
-        //             float distance = Vector2.Distance(Projectile.Center, npc.Center);
-        //             if (distance < closestDist)
-        //             {
-        //                 closestDist = distance;
-        //                 closest = npc;
-        //             }
-        //         }
-        //     }
-
-        //     return closest;
-        // }
 
         private void UpdateAnimation(NPC target, int shootTimer)
         {
             // Projectile.frameCounter++;
             if (target != null)
             {
-                // if (shootTimer < SHOOT_FRAME_SPEED)
-                // {
-                //     Projectile.frame = 1;
-                // }
-                // else
-                // {
-                //     Projectile.frame = 0;
-                // }
-                // Projectile.frameCounter = 0;
+                if (shootTimer >= 0 && shootTimer <= 3)
+                {
+                    // Shooting animation
+                    Projectile.frame = 1; // Frame 3
+                }
+                else
+                {
+                    Projectile.frame = 0;
+                }
                 // face towards target
                 Vector2 direction = target.Center - Projectile.Center;
                 direction.Normalize();
@@ -178,7 +152,8 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 
         public override bool OnTileCollide(Vector2 oldVelocity)
         {
-            Projectile.velocity = Vector2.Zero;
+            // Projectile.velocity = Vector2.Zero;
+            Projectile.velocity.X = 0f;
             return false;
         }
 
