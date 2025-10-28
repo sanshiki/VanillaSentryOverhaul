@@ -50,7 +50,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 			{ ProjectileID.DD2FlameBurstTowerT1, new FlameburstTowerT1Override() },
 			{ ProjectileID.DD2FlameBurstTowerT2, new FlameburstTowerT2Override() },
 			{ ProjectileID.DD2FlameBurstTowerT3, new FlameburstTowerT3Override() },
-			{ ProjectileID.DD2FlameBurstTowerT1Shot, new FlameburstShotOverride() },
+			{ ProjectileID.DD2FlameBurstTowerT1Shot, new FlameburstShotT1Override() },
 			{ ProjectileID.DD2FlameBurstTowerT2Shot, new FlameburstShotT2Override() },
 			{ ProjectileID.DD2FlameBurstTowerT3Shot, new FlameburstShotT3Override() },
 			// { ProjectileID.DD2LightningAuraT1, new LightningAuraT1Override() },

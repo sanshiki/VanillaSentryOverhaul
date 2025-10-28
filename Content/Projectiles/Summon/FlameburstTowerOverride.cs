@@ -131,9 +131,16 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             int targetId = (int)projectile.ai[0];
             NPC target = targetId != -1 ? Main.npc[targetId] : null;
 
+            if(target == null)
+                Main.NewText("Target is null");
+            else
+                Main.NewText("Target: " + targetId);
+            if(targetLost)
+                Main.NewText("Target lost");
+
             if(targetLost || target == null || !target.active || (target.Center - projectile.Center).Length() > HOMING_RANGE)
             {
-                targetLost = true;
+                // targetLost = true;
                 float spd = (float)Math.Min(projectile.velocity.Length() + 0.5f, HOMING_SPEED);
                 projectile.velocity = projectile.velocity.SafeNormalize(Vector2.Zero) * spd;
                 return;
@@ -141,6 +148,8 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 
             // float inertia = DynamicParamManager.Get("InertiaT" + lvl).value;
             float inertia = HOMING_INERTIA;
+
+            Main.NewText("Inertia: " + inertia);
 
             // float direction = (target.Center - projectile.Center).ToRotation();
             // float dir_err = direction - projectile.velocity.ToRotation();
@@ -162,7 +171,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         protected override float CONTROL_D => 0.01f;
         protected override float MAX_TURN_SPEED => 0.02f;
         protected override float HOMING_SPEED => 10f;
-        protected override float HOMING_INERTIA => 50f;
+        protected override float HOMING_INERTIA => 80f;
 
         protected override int lvl => 1;
     }
@@ -267,7 +276,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         protected override float CONTROL_D => 0.1f;
         protected override float MAX_TURN_SPEED => 0.08f;
         protected override float HOMING_SPEED => 15f;
-        protected override float HOMING_INERTIA => 25f;
+        protected override float HOMING_INERTIA => 45f;
         protected override int lvl => 2;
     }
 
@@ -370,7 +379,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         protected override float CONTROL_D => 0.2f;
         protected override float MAX_TURN_SPEED => 3.0f;
         protected override float HOMING_SPEED => 25f;
-        protected override float HOMING_INERTIA => 5f;
+        protected override float HOMING_INERTIA => 10f;
         protected override int lvl => 3;
     }
 
