@@ -33,37 +33,38 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         protected const int MIN_POLE_PENGTH = 64; // minimum length of the pole
         protected const int TIP_HEIGHT = 30;  // height of the pole tip
         protected const int REPEAT_SLICE_HEIGHT = 2; // height of each repeat slice
-        protected const string FLAGPOLE_TEXTURE_PATH = ModGlobal.MOD_TEXTURE_PATH + "Projectiles/FlagProjectile";
+        protected virtual string FLAGPOLE_TEXTURE_PATH => ModGlobal.MOD_TEXTURE_PATH + "Projectiles/FlagProjectile";
         public override string Texture => FLAGPOLE_TEXTURE_PATH;
 
         // waving
-        protected const float ROT_ANGLE = 240f * ModGlobal.PI_FLOAT / 180f;   // waving range angle (150 degrees)
-        protected const int TIME_LEFT_WAVE = 24; // waving duration
-        protected const int HANDHELD_POINT_OFFSET = 60;   // offset of the point on the pole when held
-        protected const bool TILE_CUT_RANGE_DEBUG = false;
+        protected virtual float ROT_ANGLE => 240f * ModGlobal.PI_FLOAT / 180f;   // waving range angle (150 degrees)
+        protected virtual int TIME_LEFT_WAVE => 24; // waving duration
+        protected virtual int HANDHELD_POINT_OFFSET => 60;   // offset of the point on the pole when held
+        protected virtual bool TILE_CUT_RANGE_DEBUG => false;
 
         // raising
-        protected const float RAISE_MAX_HEIGHT = 16f * 4f + HANDHELD_POINT_OFFSET / 2f; // max height of the pole when raised
-        protected const int TIME_LEFT_RAISE = 60; // raising duration
-        protected const float RAISE_MAX_SPEED = 2f * RAISE_MAX_HEIGHT / (float)TIME_LEFT_RAISE;   // max speed of the pole when raised
-        protected const float RAISE_ACC = RAISE_MAX_SPEED / (float)TIME_LEFT_RAISE * 2f; // acceleration of the pole when raised
+        protected virtual float RAISE_MAX_HEIGHT => 16f * 4f + HANDHELD_POINT_OFFSET / 2f; // max height of the pole when raised
+        protected virtual int TIME_LEFT_RAISE => 60; // raising duration
+        protected virtual float RAISE_MAX_SPEED => 2f * RAISE_MAX_HEIGHT / (float)TIME_LEFT_RAISE;   // max speed of the pole when raised
+        protected virtual float RAISE_ACC => RAISE_MAX_SPEED / (float)TIME_LEFT_RAISE * 2f; // acceleration of the pole when raised
+        protected virtual int FULLY_CHARGED_DUST => DustID.CrimsonSpray;
 
         // planting and recalling sentries
-        protected const int PLANT_EXIST_DURATION = 60*60*10; // 10 min
-        protected const float GRAVITY = 0.8f;
-        protected const float MAX_FALL_SPEED = 16f;
-        protected const float SENTRY_RECALL_SPEED = 50f;
-        protected const float SENTRY_RECALL_THRESHOLD = 40f;
-        protected const float SENTRY_RECALL_DECAY_DIST = 1000f;
-        protected const float SENTRY_RECALL_MAX_DIST = 4000f;
-        protected const float SENTRY_RECALL_TARGET_OFFSET = 70f;
-        protected const float SENTRY_RANDOM_OFFSET = 20f;
+        protected virtual int PLANT_EXIST_DURATION => 60*60*10; // 10 min
+        protected virtual float GRAVITY => 0.8f;
+        protected virtual float MAX_FALL_SPEED => 16f;
+        protected virtual float SENTRY_RECALL_SPEED => 50f;
+        protected virtual float SENTRY_RECALL_THRESHOLD => 40f;
+        protected virtual float SENTRY_RECALL_DECAY_DIST => 1000f;
+        protected virtual float SENTRY_RECALL_MAX_DIST => 4000f;
+        protected virtual float SENTRY_RECALL_TARGET_OFFSET => 70f;
+        protected virtual float SENTRY_RANDOM_OFFSET => 20f;
 
         // recalling flag
-        protected const int TIME_LEFT_RECALL = 60*60; // 1 min
-        protected const float RECALL_SPEED = 30f;
-        protected const float RECALL_ROTATE_SPEED = 0.3f;
-        protected const int RECALL_SOUND_INTERVAL = 10;
+        protected virtual int TIME_LEFT_RECALL => 60*60; // 1 min
+        protected virtual float RECALL_SPEED => 30f;
+        protected virtual float RECALL_ROTATE_SPEED => 0.3f;
+        protected virtual int RECALL_SOUND_INTERVAL => 10;
 
         /* ------------------------- State Constants ------------------------- */
         public const int WAVE_STATE = 0; // left-click: wave
@@ -73,39 +74,39 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 
 
         /* ------------------------- Flag Cloth Constants ------------------------- */
-        protected const int FLAG_WIDTH = 128;
-        protected const int FLAG_HEIGHT = 80;
-        protected const float ROT_DISPLACEMENT = 2.05f + 2.05f;  //  1.275f + 2.05f
-        protected const float SLOW_WAVE_AMPLITUDE = 10f;
-        protected const float SLOW_WAVE_SPEED_FACTOR = 7f;
+        protected virtual int FLAG_WIDTH => 128;
+        protected virtual int FLAG_HEIGHT => 80;
+        protected virtual float ROT_DISPLACEMENT => 2.05f + 2.05f;  //  1.275f + 2.05f
+        protected virtual float SLOW_WAVE_AMPLITUDE => 10f;
+        protected virtual float SLOW_WAVE_SPEED_FACTOR => 7f;
 
-        protected const float FAST_WAVE_AMPLITUDE = 10f;
-        protected const float FAST_WAVE_SPEED_FACTOR = 1.5f;
-        protected const int WAVE_SLICE_WIDTH = 4;
-        protected const string FLAG_CLOTH_TEXTURE_PATH = ModGlobal.MOD_TEXTURE_PATH + "Projectiles/TestFlag";
+        protected virtual float FAST_WAVE_AMPLITUDE => 10f;
+        protected virtual float FAST_WAVE_SPEED_FACTOR => 1.5f;
+        protected virtual int WAVE_SLICE_WIDTH => 4;
+        protected virtual string FLAG_CLOTH_TEXTURE_PATH => ModGlobal.MOD_TEXTURE_PATH + "Projectiles/TestFlag";
 
         /* ------------------------- Tail Constants ------------------------- */
         public bool TailEnabled = true;
-        protected const int TAIL_LENGTH = 6;
-        protected const float TAIL_OFFSET_X_1 = -100f;  // -123
-        protected const float TAIL_OFFSET_Y_1 = -135f;  // -213
-        protected const float TAIL_OFFSET_X_2 = -100f;  // -123
-        protected const float TAIL_OFFSET_Y_2 = -85f;   // -72
-        protected const float TAIL_OFFSET_ROT_1 = 0f;
-        protected const float TAIL_OFFSET_ROT_2 = 0f;
-        protected Vector2 SPIN_CENTER_OFFSET = new Vector2(65f, 225f);
-        protected float SPIN_CENTER_OFFSET_ROT = 0f;
-        protected Color TAIL_COLOR = new Color(98, 0, 0, 95);
-        protected const bool TAIL_DYNAMIC_DEBUG = true;
-        protected const string FLAG_TAIL_TEXTURE_PATH = ModGlobal.MOD_TEXTURE_PATH + "Vertexes/SwordTail4";
+        protected virtual int TAIL_LENGTH => 6;
+        protected virtual float TAIL_OFFSET_X_1 => -100f;  // -123
+        protected virtual float TAIL_OFFSET_Y_1 => -135f;  // -213
+        protected virtual float TAIL_OFFSET_X_2 => -100f;  // -123
+        protected virtual float TAIL_OFFSET_Y_2 => -85f;   // -72
+        protected virtual float TAIL_OFFSET_ROT_1 => 0f;
+        protected virtual float TAIL_OFFSET_ROT_2 => 0f;
+        protected virtual Vector2 SPIN_CENTER_OFFSET => new Vector2(65f, 225f);
+        protected virtual float SPIN_CENTER_OFFSET_ROT => 0f;
+        protected virtual Color TAIL_COLOR => new Color(98, 0, 0, 95);
+        protected virtual bool TAIL_DYNAMIC_DEBUG => false;
+        protected virtual string FLAG_TAIL_TEXTURE_PATH => ModGlobal.MOD_TEXTURE_PATH + "Vertexes/SwordTail4";
 
         /* ------------------------- Buff Constants ------------------------- */
-        protected int ENHANCE_BUFF_ID = -1;
-        protected int NPC_DEBUFF_ID = -1;
-        protected const int BUFF_START_TIME = 25;
-        protected const int ENHANCE_BUFF_DURATION = 60*3; // 3s
-        protected const int NPC_DEBUFF_DURATION = 60*7; // 7s
-        protected const float DAMAGE_DECAY_FACTOR = 0.8f;
+        protected virtual int ENHANCE_BUFF_ID => ModBuffID.SentryEnhancement;
+        protected virtual int NPC_DEBUFF_ID => BuffID.SwordWhipNPCDebuff;
+        protected virtual int BUFF_START_TIME => 25;
+        protected virtual int ENHANCE_BUFF_DURATION => 60*3; // 3s
+        protected virtual int NPC_DEBUFF_DURATION => 60*7; // 7s
+        protected virtual float DAMAGE_DECAY_FACTOR => 0.8f;
 
         /* ------------------------- Public Attributes ------------------------- */
         public float WaveDirection = 1;
@@ -113,6 +114,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         public bool SwitchFlag = false;
         public int OnGroundCnt = 0;
         public int PoleLength = MIN_POLE_PENGTH;    // real pole length, can be modified in realtime
+        public float AttackSpeed = 1f;
 
         /* ------------------------- Private Variables ------------------------- */
         protected int FixedDirection = 1;   // record the fixed direction of the pole when raised
@@ -128,8 +130,8 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         protected int hitCount = 0;
         protected List<SentryRecallInfo> SentryRecallInfos = new List<SentryRecallInfo>();
         protected Vector2 STICK_OFFSET = new Vector2(0f, -MIN_POLE_PENGTH/2f+20f);
-        protected float FlagClothAmplitude = SLOW_WAVE_AMPLITUDE;
-        protected float FlagClothWaveSpeed = SLOW_WAVE_SPEED_FACTOR;
+        protected float FlagClothAmplitude = 0f;
+        protected float FlagClothWaveSpeed = 0f;
         protected bool UseFastAnimation = false;
 
         public override void SetStaticDefaults()//以下照抄
@@ -147,13 +149,11 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             Projectile.ownerHitCheck = true;
             Projectile.tileCollide = false;
             Projectile.penetrate = -1;
-            Projectile.timeLeft = TIME_LEFT_WAVE;
+            Projectile.timeLeft = (int)(TIME_LEFT_WAVE / AttackSpeed);
             Projectile.localNPCHitCooldown = Projectile.timeLeft;
             Projectile.usesLocalNPCImmunity = true;
             Projectile.aiStyle = 0;
             
-            ENHANCE_BUFF_ID = ModBuffID.SentryEnhancement;
-            NPC_DEBUFF_ID = BuffID.SwordWhipNPCDebuff;
             if(TAIL_DYNAMIC_DEBUG)
             {
                 DynamicParamManager.Register("PoleLength", 280, 80, 1000);
@@ -180,6 +180,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             PoleLength = (int)DynamicParamManager.Get("PoleLength").value;
             STICK_OFFSET = new Vector2(0f, -PoleLength/2f+60f);     // player handheld point: avoid holding the tip
             Projectile.height = PoleLength;
+            AttackSpeed = player.GetAttackSpeed(DamageClass.Melee);
 
             // basic flag state machine
             switch (State)
@@ -220,26 +221,29 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                 Initialized = true;
 
                 RotSpd =  0f;
+
+                Projectile.timeLeft = (int)(TIME_LEFT_WAVE / AttackSpeed);
             }
 
             float dir = WaveDirection/*  * FixedDirection */;
             Vector2 StickOffset = new Vector2(STICK_OFFSET.X * dir, STICK_OFFSET.Y);
             // float ItemRot = player.itemRotation;
             float RotRate = (ItemRot/*  * FixedDirection */ + ROT_DISPLACEMENT/2f) / ROT_DISPLACEMENT; // 0 to 1
+            float WaveUseTime = TIME_LEFT_WAVE / AttackSpeed;
 
             // rotate speed: accelerate then deaccelerate
-            // RotAcc = -2 * ROT_DISPLACEMENT / TIME_LEFT_WAVE / TIME_LEFT_WAVE;
+            // RotAcc = -2 * ROT_DISPLACEMENT / WaveUseTime / WaveUseTime;
             if(RotRate < 0.333f)
             {
-                RotAcc = 2*ROT_DISPLACEMENT / (float)TIME_LEFT_WAVE / (float)(TIME_LEFT_WAVE * 0.333f);
+                RotAcc = 2*ROT_DISPLACEMENT / (float)WaveUseTime / (float)(WaveUseTime * 0.333f);
             }
             else
             {
-                RotAcc = -2*ROT_DISPLACEMENT / (float)TIME_LEFT_WAVE / (float)(TIME_LEFT_WAVE * (1f-0.333f));
+                RotAcc = -2*ROT_DISPLACEMENT / (float)WaveUseTime / (float)(WaveUseTime * (1f-0.333f));
             }
             RotSpd += RotAcc;
 
-            // ItemRot += (1.275f + 2.05f) / (float)TIME_LEFT_WAVE;
+            // ItemRot += (1.275f + 2.05f) / (float)WaveUseTime;
             ItemRot += RotSpd;
 
             // Main.NewText("RotRate: "+RotRate + " RotAcc: "+RotAcc + " RotSpd: "+RotSpd + " ItemRot: "+ItemRot);
@@ -296,7 +300,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                     Dust dust;
                     Vector2 position = player.Center;
                     Vector2 DustVel = new Vector2(1, 0).RotatedBy(ang) * DustSpd;
-                    dust = Terraria.Dust.NewDustPerfect(position, DustID.CrimsonSpray, DustVel, 0, new Color(255,255,255), 1.3f);
+                    dust = Terraria.Dust.NewDustPerfect(position, FULLY_CHARGED_DUST, DustVel, 0, new Color(255,255,255), 1.3f);
                     dust.noGravity = true;
                     dust.fadeIn = 1f;
                 }
@@ -573,7 +577,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                 SpinCenter = player.Center;
 
 
-                int CurrentTime = TIME_LEFT_WAVE - Projectile.timeLeft;
+                int CurrentTime = (int)(TIME_LEFT_WAVE / AttackSpeed) - Projectile.timeLeft;
                 if(State == RECALL_STATE) CurrentTime = TIME_LEFT_RECALL - Projectile.timeLeft;
                 int OldPosSize = (int)Math.Min(CurrentTime, tailLength);
                 for(int i = 0; i < OldPosSize;i++)
@@ -611,6 +615,9 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             int height = flagTexture.Height;
             Vector2 origin = new Vector2(width / 2 * Projectile.spriteDirection, height / 2);
             Vector2 drawPos = ClothCenter - Main.screenPosition;
+            FlagClothAmplitude = UseFastAnimation ? FAST_WAVE_AMPLITUDE : SLOW_WAVE_AMPLITUDE;
+            FlagClothWaveSpeed = UseFastAnimation ? FAST_WAVE_SPEED_FACTOR : SLOW_WAVE_SPEED_FACTOR;
+
             float time = Main.GameUpdateCount / FlagClothWaveSpeed;
             int sliceWidth = WAVE_SLICE_WIDTH;
             int sliceCount = width / sliceWidth;
@@ -697,7 +704,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         protected void DamageGrassAlongBlade(Player player)
         {
             if((State == RAISE_STATE || State == PLANT_STATE) ||
-                (State == WAVE_STATE && Projectile.timeLeft >= TIME_LEFT_WAVE-1) ||
+                (State == WAVE_STATE && Projectile.timeLeft >= (int)(TIME_LEFT_WAVE / AttackSpeed)-1) ||
                 (State == RECALL_STATE && Projectile.timeLeft >= TIME_LEFT_RECALL-1)) return;
             Vector2 CurrentPoleTip = Projectile.Center + new Vector2(0, PoleLength / 2f).RotatedBy(Projectile.rotation+Math.PI);
             Vector2 OldPoleTip = Projectile.oldPos[1] + new Vector2(0, PoleLength / 2f).RotatedBy(Projectile.oldRot[0]+Math.PI) + new Vector2(0, PoleLength / 2f);
