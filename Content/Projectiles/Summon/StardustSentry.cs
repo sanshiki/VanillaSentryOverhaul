@@ -165,6 +165,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                         Projectile.knockBack,
                         Projectile.owner
                     );
+                    ProjectileID.Sets.SentryShot[proj.type] = true;
                     if(target != null)
                         proj.ai[0] = (float)(target.whoAmI);
 

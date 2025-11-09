@@ -15,19 +15,20 @@ using SummonerExpansionMod.ModUtils;
 
 namespace SummonerExpansionMod.Content.Projectiles.Summon
 {
-    public class PirateFlagProjectile : FlagProjectile
+    public class NormalFlagProjectile : FlagProjectile
     {
-        protected override string FLAG_CLOTH_TEXTURE_PATH => ModGlobal.MOD_TEXTURE_PATH + "Projectiles/PirateFlag";
-        protected override int FLAG_WIDTH => 100;
-        protected override int FLAG_HEIGHT => 70;
-        protected override float TAIL_OFFSET_X_1 => -70f;
-        protected override float TAIL_OFFSET_Y_1 => -138f;  
-        protected override float TAIL_OFFSET_X_2 => -75f;  
-        protected override float TAIL_OFFSET_Y_2 => -78f;   
+        protected override string FLAG_CLOTH_TEXTURE_PATH => ModGlobal.MOD_TEXTURE_PATH + "Projectiles/NormalFlag";
+        protected override int FLAG_WIDTH => 70;
+        protected override int FLAG_HEIGHT => 42;
+        protected override float TAIL_OFFSET_X_1 => -33f;
+        protected override float TAIL_OFFSET_Y_1 => -90f;  
+        protected override float TAIL_OFFSET_X_2 => -33f;  
+        protected override float TAIL_OFFSET_Y_2 => -63f;   
         protected override Color TAIL_COLOR => new Color(35, 45, 65, 100);
         protected override bool TAIL_DYNAMIC_DEBUG => false;
+        // protected override bool TAIL_ENABLE_GLOBAL => false;
         protected override int FULLY_CHARGED_DUST => DustID.MushroomSpray;
-        protected override int ENHANCE_BUFF_ID => ModBuffID.PirateFlagBuff;
-        protected override int NPC_DEBUFF_ID => ModBuffID.PirateFlagDebuff;
+        protected override int ENHANCE_BUFF_ID => ModBuffID.NormalFlagBuff;
+        protected override int NPC_DEBUFF_ID => BuffID.BlandWhipEnemyDebuff;
     }
 }

@@ -6,11 +6,13 @@ using Terraria.ID;
 using Terraria.ModLoader;
 
 using SummonerExpansionMod.Content.Projectiles.Summon;
+using SummonerExpansionMod.Initialization;
 
 namespace SummonerExpansionMod.Content.Buffs.Summon
 {
-    public class SentryEnhancementBuff : ModBuff
+    public class NormalFlagBuff : ModBuff
     {
+        public override string Texture => ModGlobal.MOD_TEXTURE_PATH + "Buffs/NormalFlagBuff";
         public override void SetStaticDefaults()
         {
             Main.buffNoSave[Type] = true; // This buff won't save when you exit the world
@@ -20,16 +22,7 @@ namespace SummonerExpansionMod.Content.Buffs.Summon
 
         public override void Update(Player player, ref int buffIndex)
         {
-            player.GetDamage(DamageClass.Summon) += 0.1f;
-            // if (player.ownedProjectileCounts[ModContent.ProjectileType<Sentry>()] > 0)
-            // {
-            //     player.buffTime[buffIndex] = 18000;
-            // }
-            // else
-            // {
-            //     player.DelBuff(buffIndex);
-            //     buffIndex--;
-            // }
+            player.GetDamage(DamageClass.Summon) += 0.05f;
         }
     }
 }

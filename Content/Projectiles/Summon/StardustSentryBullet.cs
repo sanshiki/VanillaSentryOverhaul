@@ -28,7 +28,10 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 
         public override void SetDefaults()
         {
-            Projectile.CloneDefaults(ProjectileID.StardustJellyfishSmall);
+            // Projectile.CloneDefaults(ProjectileID.StardustJellyfishSmall);
+
+            Projectile.width = 34;
+            Projectile.height = 90;
 
             Projectile.aiStyle = -1;
             Projectile.friendly = true;

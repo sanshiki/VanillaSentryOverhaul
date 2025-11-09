@@ -131,14 +131,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             int targetId = (int)projectile.ai[0];
             NPC target = targetId != -1 ? Main.npc[targetId] : null;
 
-            if(target == null)
-                Main.NewText("Target is null");
-            else
-                Main.NewText("Target: " + targetId);
-            if(targetLost)
-                Main.NewText("Target lost");
-
-            if(targetLost || target == null || !target.active || (target.Center - projectile.Center).Length() > HOMING_RANGE)
+                        if(targetLost || target == null || !target.active || (target.Center - projectile.Center).Length() > HOMING_RANGE)
             {
                 // targetLost = true;
                 float spd = (float)Math.Min(projectile.velocity.Length() + 0.5f, HOMING_SPEED);
@@ -148,8 +141,6 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 
             // float inertia = DynamicParamManager.Get("InertiaT" + lvl).value;
             float inertia = HOMING_INERTIA;
-
-            Main.NewText("Inertia: " + inertia);
 
             // float direction = (target.Center - projectile.Center).ToRotation();
             // float dir_err = direction - projectile.velocity.ToRotation();

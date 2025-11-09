@@ -9,16 +9,17 @@ using SummonerExpansionMod.Initialization;
 namespace SummonerExpansionMod.Content.Items.Weapons.Summon
 {
     
-    public class PirateFlag : FlagWeapon<PirateFlagProjectile>
+    public class NormalFlag : FlagWeapon<NormalFlagProjectile>
     {
-        public override string Texture => ModGlobal.MOD_TEXTURE_PATH + "Items/PirateFlagItem";
-        protected override int MOD_PROJECTILE_ID => ModProjectileID.PirateFlagProjectile;
-        protected override int POLE_LENGTH => 260;
+        public override string Texture => ModGlobal.MOD_TEXTURE_PATH + "Items/NormalFlagItem";
+        protected override int MOD_PROJECTILE_ID => ModProjectileID.NormalFlagProjectile;
+        protected override int POLE_LENGTH => 200;
 
         public override void SetDefaults()
         {
             base.SetDefaults();
-            Item.damage = 40;
+            Item.damage = 19;
+            Item.knockBack = 1;
         }
 
     }

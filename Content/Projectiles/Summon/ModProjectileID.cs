@@ -31,5 +31,15 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         // flag weapon
         public static int FlagProjectile;
         public static int PirateFlagProjectile;
+        public static int NormalFlagProjectile;
+        public static int GoblinFlagProjectile;
+        public static int HellFlagProjectile;
+        public static int HolyFlagProjectile;
+        public static int TikiFlagProjectile;
+        public static int TikiFlagBladeShot;
+        public static int SantaFlagProjectile;
+        public static int SantaFlagBladeShot;
+        public static int OneTrueFlagProjectile;
+        public static int OneTrueFlagBladeShot;
     }
 }

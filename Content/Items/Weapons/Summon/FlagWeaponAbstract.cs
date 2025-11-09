@@ -97,9 +97,9 @@ namespace SummonerExpansionMod.Content.Items.Weapons.Summon
 
         public static bool TryGet(Projectile proj, out T result)
         {
-            if (proj.ModProjectile is T t)
+            if (proj.ModProjectile is T t && proj.active)
             {
-                result = t;
+                result = t;                
                 return true;
             }
             result = null;
@@ -197,13 +197,17 @@ namespace SummonerExpansionMod.Content.Items.Weapons.Summon
                     case PLANT_STATE:   // switch from plant state to recall state when right key pressed
                     {
                         // if(FlagProjectile.ModProjectile is FlagProjectile flagPole)
-                        if(TryGet(FlagProjectile, out T flagPole))
+                        if (TryGet(FlagProjectile, out T flagPole))
                         {
-                            if(flagPole.OnGroundCnt > ONGROUND_CNT_THRESHOLD)
+                            if (flagPole.OnGroundCnt > ONGROUND_CNT_THRESHOLD)
                             {
                                 flagPole.SwitchFlag = true;
                                 State = RECALL_STATE;
                             }
+                        }
+                        else
+                        {
+                            State = IDLE_STATE;
                         }
                     } break;
                     case RECALL_STATE:  // reset params to idle state
@@ -238,13 +242,17 @@ namespace SummonerExpansionMod.Content.Items.Weapons.Summon
                     else if(State == PLANT_STATE)
                     {
                         // if(FlagProjectile.ModProjectile is FlagProjectile flagPole)
-                        if(TryGet(FlagProjectile, out T flagPole))
+                        if (TryGet(FlagProjectile, out T flagPole))
                         {
-                            if(flagPole.OnGroundCnt > ONGROUND_CNT_THRESHOLD)
+                            if (flagPole.OnGroundCnt > ONGROUND_CNT_THRESHOLD)
                             {
                                 flagPole.SwitchFlag = true;
                                 State = RECALL_STATE;
                             }
+                        }
+                        else
+                        {
+                            State = IDLE_STATE;
                         }
                     }
                 }

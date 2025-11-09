@@ -59,6 +59,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         protected virtual float SENTRY_RECALL_MAX_DIST => 4000f;
         protected virtual float SENTRY_RECALL_TARGET_OFFSET => 70f;
         protected virtual float SENTRY_RANDOM_OFFSET => 20f;
+        protected virtual bool USE_CUSTOM_SENTRY_RECALL => false;
 
         // recalling flag
         protected virtual int TIME_LEFT_RECALL => 60*60; // 1 min
@@ -87,6 +88,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 
         /* ------------------------- Tail Constants ------------------------- */
         public bool TailEnabled = true;
+        protected virtual bool TAIL_ENABLE_GLOBAL => true;
         protected virtual int TAIL_LENGTH => 6;
         protected virtual float TAIL_OFFSET_X_1 => -100f;  // -123
         protected virtual float TAIL_OFFSET_Y_1 => -135f;  // -213
@@ -129,7 +131,8 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         protected bool HasPlayedOnGroundSound = false;
         protected int hitCount = 0;
         protected List<SentryRecallInfo> SentryRecallInfos = new List<SentryRecallInfo>();
-        protected Vector2 STICK_OFFSET = new Vector2(0f, -MIN_POLE_PENGTH/2f+20f);
+        protected Vector2 STICK_OFFSET = new Vector2(0f, -MIN_POLE_PENGTH / 2f + 20f);
+        protected List<float> StickOffsetList = new List<float>();
         protected float FlagClothAmplitude = 0f;
         protected float FlagClothWaveSpeed = 0f;
         protected bool UseFastAnimation = false;
@@ -153,8 +156,9 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             Projectile.localNPCHitCooldown = Projectile.timeLeft;
             Projectile.usesLocalNPCImmunity = true;
             Projectile.aiStyle = 0;
-            
-            if(TAIL_DYNAMIC_DEBUG)
+            Projectile.DamageType = DamageClass.SummonMeleeSpeed;
+
+            if (TAIL_DYNAMIC_DEBUG)
             {
                 DynamicParamManager.Register("PoleLength", 280, 80, 1000);
                 DynamicParamManager.Register("TailLength", (float)TAIL_LENGTH, 3, 50);
@@ -177,10 +181,11 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         {
             Player player = Main.player[Projectile.owner];
 
-            PoleLength = (int)DynamicParamManager.Get("PoleLength").value;
-            STICK_OFFSET = new Vector2(0f, -PoleLength/2f+60f);     // player handheld point: avoid holding the tip
+            if(TAIL_DYNAMIC_DEBUG)
+                PoleLength = (int)DynamicParamManager.Get("PoleLength").value;
+            STICK_OFFSET = new Vector2(0f, -PoleLength/2f);     // player handheld point: avoid holding the tip
             Projectile.height = PoleLength;
-            AttackSpeed = player.GetAttackSpeed(DamageClass.Melee);
+            AttackSpeed = player.GetAttackSpeed(DamageClass.Melee);            
 
             // basic flag state machine
             switch (State)
@@ -204,6 +209,8 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             }
 
             DamageGrassAlongBlade(player);
+
+            CreateDustEffect(player);
         }
 
         protected void WaveAI(Player player)
@@ -220,13 +227,13 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                 SoundEngine.PlaySound(SoundID.Item102, Projectile.Center);
                 Initialized = true;
 
-                RotSpd =  0f;
+                RotSpd = 0f;
 
                 Projectile.timeLeft = (int)(TIME_LEFT_WAVE / AttackSpeed);
             }
 
             float dir = WaveDirection/*  * FixedDirection */;
-            Vector2 StickOffset = new Vector2(STICK_OFFSET.X * dir, STICK_OFFSET.Y);
+            
             // float ItemRot = player.itemRotation;
             float RotRate = (ItemRot/*  * FixedDirection */ + ROT_DISPLACEMENT/2f) / ROT_DISPLACEMENT; // 0 to 1
             float WaveUseTime = TIME_LEFT_WAVE / AttackSpeed;
@@ -243,6 +250,19 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             }
             RotSpd += RotAcc;
 
+            float offset_delta = 0f;
+            if (RotRate < 0.5f)
+            {
+                offset_delta = MathHelper.Lerp(0.5f, -0.1f, RotRate * 2f) * PoleLength;
+            }
+            else
+            {
+                offset_delta = MathHelper.Lerp(-0.1f, 0.5f, (RotRate - 0.5f) * 2f) * PoleLength;
+            }
+            STICK_OFFSET = new Vector2(0f, -PoleLength / 2f + offset_delta);
+            Vector2 StickOffset = new Vector2(STICK_OFFSET.X * dir, STICK_OFFSET.Y);
+            StickOffsetList.Add(-PoleLength / 2f + offset_delta);
+            
             // ItemRot += (1.275f + 2.05f) / (float)WaveUseTime;
             ItemRot += RotSpd;
 
@@ -335,49 +355,50 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             // Main.NewText("[+"+timestamp+"]"+"Add gravity");
             MinionAIHelper.ApplyGravity(Projectile, GRAVITY, MAX_FALL_SPEED);
 
-            if(OnGroundCnt == 1 && !HasPlayedOnGroundSound)
+            if (OnGroundCnt == 1 && !HasPlayedOnGroundSound)
             {
                 SoundEngine.PlaySound(SoundID.Dig, Projectile.Center);
                 HasPlayedOnGroundSound = true;
             }
 
-            if(OnGroundCnt >= 10)
+            if (OnGroundCnt >= 10)
             {
-                if(!SentryRecallInitialized)
+                if (!SentryRecallInitialized)
                 {
                     // find affected sentries
                     SentryRecallInfos.Clear();
-                    foreach(var proj in Main.projectile)
+                    foreach (var proj in Main.projectile)
                     {
-                        if(proj.active && proj.owner == Projectile.owner && proj.sentry && (proj.Center - Projectile.Center).Length() <= SENTRY_RECALL_MAX_DIST)
+                        if (proj.active && proj.owner == Projectile.owner && proj.sentry && (proj.Center - Projectile.Center).Length() <= SENTRY_RECALL_MAX_DIST)
                         {
-                            SentryRecallInfo info = new SentryRecallInfo() { 
-                                ID = proj.identity, 
-                                TileCollide = proj.tileCollide, 
+                            SentryRecallInfo info = new SentryRecallInfo()
+                            {
+                                ID = proj.identity,
+                                TileCollide = proj.tileCollide,
                                 TargetPos = proj.Center,
                                 Seed = Main.rand.NextFloat(-SENTRY_RANDOM_OFFSET, SENTRY_RANDOM_OFFSET)
                             };
                             SentryRecallInfos.Add(info);
                             // make sentry can go through tile
-                            proj.tileCollide = false;
+                            if(!USE_CUSTOM_SENTRY_RECALL) proj.tileCollide = false;
                         }
                     }
                     // set target pos
                     int SentryCount = SentryRecallInfos.Count;
-                    float TotalLength = SentryCount == 0 ? 0f : (float)Math.Sqrt(SentryCount-1) * 200f;
+                    float TotalLength = SentryCount == 0 ? 0f : (float)Math.Sqrt(SentryCount - 1) * 200f;
                     Random random = new Random();
                     int ranDir = random.Next(2) == 0 ? 1 : -1;
-                    for(int i = 0; i < SentryCount; i++)
+                    for (int i = 0; i < SentryCount; i++)
                     {
                         SentryRecallInfo info = SentryRecallInfos[i];
-                        float LocalX = SentryCount == 1 ? 0f : (float)i / (float)(SentryCount-1) * TotalLength - TotalLength / 2f;
+                        float LocalX = SentryCount == 1 ? 0f : (float)i / (float)(SentryCount - 1) * TotalLength - TotalLength / 2f;
                         float PreciseX = Projectile.Center.X + LocalX * ranDir;
                         float PreciseY = Projectile.Center.Y - SENTRY_RECALL_TARGET_OFFSET;
                         float X = PreciseX + info.Seed;
                         float Y = PreciseY + info.Seed;
                         int SentryWidth = Main.projectile[info.ID].width;
                         int SentryHeight = Main.projectile[info.ID].height;
-                        Vector2 PossiblePos = MinionAIHelper.SearchForValidPosition(new Vector2(X, Y), (int)(SentryWidth*1.5), (int)(SentryHeight*1.5), 10);
+                        Vector2 PossiblePos = MinionAIHelper.SearchForValidPosition(new Vector2(X, Y), (int)(SentryWidth * 1.5), (int)(SentryHeight * 1.5), 10);
                         SentryRecallInfos[i].TargetPos = PossiblePos;
 
                         // Main.NewText("Sentry "+i+" target pos: "+info.TargetPos);
@@ -388,49 +409,62 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 
                     SentryRecallInitialized = true;
                 }
-                foreach(var info in SentryRecallInfos)
+                foreach (var info in SentryRecallInfos)
                 {
-                    // move sentries
-                    var sentry = Main.projectile[info.ID];
-                    Vector2 ToTargetDist = info.TargetPos - sentry.Center;
-                    if(ToTargetDist.Length() >= SENTRY_RECALL_THRESHOLD && !info.IsRecalled)
+                    if (USE_CUSTOM_SENTRY_RECALL)
                     {
-                        Vector2 ToTargetDir = ToTargetDist.SafeNormalize(Vector2.UnitX);
-                        float DecayFactor = MathHelper.Clamp(ToTargetDist.Length() / SENTRY_RECALL_DECAY_DIST, 0.1f, 1f);
-                        // float DecayFactor = MathHelper.Clamp(2f-SENTRY_RECALL_DECAY_DIST/(ToTargetDist.Length()+0.0001f), 0f, 1f);
-                        sentry.velocity = ToTargetDir * SENTRY_RECALL_SPEED * DecayFactor;
-                        // sentry.velocity = Vector2.Zero;
-                        // sentry.Center += ToTargetDir * SENTRY_RECALL_SPEED * DecayFactor;
+                        CustomSentryRecall(info);
                     }
                     else
                     {
-                        // reset sentry tile collide
-                        sentry.tileCollide = info.TileCollide;
-                        info.IsRecalled = true;
+                        // move sentries
+                        var sentry = Main.projectile[info.ID];
+                        Vector2 ToTargetDist = info.TargetPos - sentry.Center;
+                        if (ToTargetDist.Length() >= SENTRY_RECALL_THRESHOLD && !info.IsRecalled)
+                        {
+                            Vector2 ToTargetDir = ToTargetDist.SafeNormalize(Vector2.UnitX);
+                            float DecayFactor = MathHelper.Clamp(ToTargetDist.Length() / SENTRY_RECALL_DECAY_DIST, 0.1f, 1f);
+                            // float DecayFactor = MathHelper.Clamp(2f-SENTRY_RECALL_DECAY_DIST/(ToTargetDist.Length()+0.0001f), 0f, 1f);
+                            sentry.velocity = ToTargetDir * SENTRY_RECALL_SPEED * DecayFactor;
+                            // sentry.velocity = Vector2.Zero;
+                            // sentry.Center += ToTargetDir * SENTRY_RECALL_SPEED * DecayFactor;
+                        }
+                        else
+                        {
+                            // reset sentry tile collide
+                            sentry.tileCollide = info.TileCollide;
+                            info.IsRecalled = true;
+                        }
                     }
                 }
             }
 
             // if the planted flag is too far away from player, kill self
             Vector2 ToOwnerDist = player.Center - Projectile.Center;
-            if(ToOwnerDist.Length() >= 4000f)
+            if (ToOwnerDist.Length() >= 4000f)
             {
                 Projectile.Kill();
             }
 
-            if(SwitchFlag)
+            if (SwitchFlag)
             {
                 State = RECALL_STATE;
                 SwitchFlag = false;
                 Initialized = false;
                 HasPlayedOnGroundSound = false;
 
-                foreach(var info in SentryRecallInfos)
+                foreach (var info in SentryRecallInfos)
                 {
                     Projectile sentry = Main.projectile[info.ID];
                     sentry.velocity /= 2f;
                 }
             }
+        }
+        
+        protected virtual void CustomSentryRecall(SentryRecallInfo info)
+        {
+            // raise error if not implemented
+            throw new NotImplementedException("CustomSentryRecall is not implemented");
         }
 
         protected void RecallAI(Player player)
@@ -507,7 +541,9 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         protected void PreDrawFlagCloth(ref Color lightColor)
         {
             Player player = Main.player[Projectile.owner];
-            Vector2 FlagOffset = new Vector2(-FLAG_WIDTH/2f * Projectile.spriteDirection, (FLAG_HEIGHT-Projectile.height)/2f);
+            Vector2 FlagOffset = new Vector2(-FLAG_WIDTH / 2f * Projectile.spriteDirection, (FLAG_HEIGHT - Projectile.height) / 2f);
+            Vector2 FlagOffsetEx = new Vector2(-2f + 1f * Projectile.spriteDirection, 0f);
+            FlagOffset += FlagOffsetEx;
             Vector2 ClothCenter = Projectile.Center + FlagOffset.RotatedBy(Projectile.rotation);
             if(State == WAVE_STATE || State == RECALL_STATE)
             {
@@ -527,7 +563,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             {
                 TailEnabled = true;
             }
-            if(TailEnabled)
+            if(TailEnabled && TAIL_ENABLE_GLOBAL)
             {
                 SpriteBatch sb = Main.spriteBatch;
                 GraphicsDevice gd = Main.graphics.GraphicsDevice;
@@ -586,12 +622,26 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                     float color_rate = MathHelper.Clamp(ratio*3, 0, 1);
                     Color b = tailColor;
 
-                    SpinCenter = Projectile.oldPos[i] + new Vector2(0, PoleLength/2);
+                    // SpinCenter = Projectile.oldPos[i] + new Vector2(0, PoleLength/2);
+                    Vector2 UpperVertexPffset, LowerVertexPffset;
+                    if (State == WAVE_STATE)
+                    {
+                        Vector2 StickOffset = new Vector2(0, StickOffsetList[Math.Max(0,StickOffsetList.Count - i - 5)]);
+                        SpinCenter = CenterMapping(Projectile.Center, StickOffset, Projectile.rotation + ModGlobal.PI_FLOAT);
+                        UpperVertexPffset = new Vector2(-FLAG_WIDTH * 0.9f * Projectile.spriteDirection, -(PoleLength / 2f) * 0.95f) + StickOffset;
+                        LowerVertexPffset = new Vector2(-FLAG_WIDTH * 0.9f * Projectile.spriteDirection, (-PoleLength / 2f + FLAG_HEIGHT) * 0.95f) + StickOffset;
+                    }
+                    else
+                    {
+                        SpinCenter = Projectile.Center;
+                        UpperVertexPffset = new Vector2(-FLAG_WIDTH * 0.9f * Projectile.spriteDirection, -PoleLength / 2f * 0.95f);
+                        LowerVertexPffset = new Vector2(-FLAG_WIDTH * 0.9f * Projectile.spriteDirection, (-PoleLength / 2f + FLAG_HEIGHT) * 0.95f);
+                    }
 
-                    ve.Add(new Vertex(SpinCenter - Main.screenPosition + new Vector2(offset_X_1, offset_Y_1).RotatedBy(Projectile.oldRot[i]+offset_rot_1),
+                    ve.Add(new Vertex(SpinCenter - Main.screenPosition + UpperVertexPffset.RotatedBy(Projectile.oldRot[i]+offset_rot_1),
                             new Vector3(ratio, 1, 1),
                             b));
-                    ve.Add(new Vertex(SpinCenter - Main.screenPosition + new Vector2(offset_X_2, offset_Y_2).RotatedBy(Projectile.oldRot[i]+offset_rot_2),
+                    ve.Add(new Vertex(SpinCenter - Main.screenPosition + LowerVertexPffset.RotatedBy(Projectile.oldRot[i]+offset_rot_2),
                             new Vector3(ratio, 0, 1),
                             b));
 
@@ -619,6 +669,8 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             FlagClothWaveSpeed = UseFastAnimation ? FAST_WAVE_SPEED_FACTOR : SLOW_WAVE_SPEED_FACTOR;
 
             float time = Main.GameUpdateCount / FlagClothWaveSpeed;
+            if (State == WAVE_STATE || State == RECALL_STATE)
+                time = 1.85f;
             int sliceWidth = WAVE_SLICE_WIDTH;
             int sliceCount = width / sliceWidth;
 
@@ -703,11 +755,11 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 
         protected void DamageGrassAlongBlade(Player player)
         {
-            if((State == RAISE_STATE || State == PLANT_STATE) ||
-                (State == WAVE_STATE && Projectile.timeLeft >= (int)(TIME_LEFT_WAVE / AttackSpeed)-1) ||
-                (State == RECALL_STATE && Projectile.timeLeft >= TIME_LEFT_RECALL-1)) return;
-            Vector2 CurrentPoleTip = Projectile.Center + new Vector2(0, PoleLength / 2f).RotatedBy(Projectile.rotation+Math.PI);
-            Vector2 OldPoleTip = Projectile.oldPos[1] + new Vector2(0, PoleLength / 2f).RotatedBy(Projectile.oldRot[0]+Math.PI) + new Vector2(0, PoleLength / 2f);
+            if ((State == RAISE_STATE || State == PLANT_STATE) ||
+                (State == WAVE_STATE && Projectile.timeLeft >= (int)(TIME_LEFT_WAVE / AttackSpeed) - 1) ||
+                (State == RECALL_STATE && Projectile.timeLeft >= TIME_LEFT_RECALL - 1)) return;
+            Vector2 CurrentPoleTip = Projectile.Center + new Vector2(0, PoleLength / 2f).RotatedBy(Projectile.rotation + Math.PI);
+            Vector2 OldPoleTip = Projectile.oldPos[1] + new Vector2(0, PoleLength / 2f).RotatedBy(Projectile.oldRot[0] + Math.PI) + new Vector2(0, PoleLength / 2f);
             float x1 = CurrentPoleTip.X, y1 = CurrentPoleTip.Y;
             float x2 = OldPoleTip.X, y2 = OldPoleTip.Y;
             float x3 = player.Center.X, y3 = player.Center.Y;
@@ -727,9 +779,9 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             }
 
             int cnt = 0;
-            for(float x = SearchMinX; x <= SearchMaxX; x += 16f)
+            for (float x = SearchMinX; x <= SearchMaxX; x += 16f)
             {
-                for(float y = SearchMinY; y <= SearchMaxY; y += 16f)
+                for (float y = SearchMinY; y <= SearchMaxY; y += 16f)
                 {
                     int tileX = (int)(x / 16f);
                     int tileY = (int)(y / 16f);
@@ -756,6 +808,32 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             // Main.NewText("DamageGrassAlongBlade: " + cnt);
         }
 
+        protected virtual void CreateDustEffect(Player player)
+        {
+            // create dust when using imbue flasks
+            if (State == WAVE_STATE || State == RECALL_STATE)
+            {
+                int dustType = -1;
+                if (MinionAIHelper.IsPartyImbue(player))
+                {
+                    dustType = Main.rand.Next(4) + 139;
+                }
+                else
+                {
+                    dustType = MinionAIHelper.GetImbueDust(player);
+                }
+                if (dustType != -1 && Main.rand.NextFloat() < 0.75f)
+                {
+                    Vector2 DustCenter = Projectile.Center + new Vector2(0, -(PoleLength - FLAG_HEIGHT) / 2f).RotatedBy(Projectile.rotation);
+                    Dust dust = Dust.NewDustDirect(DustCenter - new Vector2(FLAG_HEIGHT / 2f, FLAG_HEIGHT / 2f), FLAG_HEIGHT, FLAG_HEIGHT, dustType, 0f, 0f, 0, default, 2f);
+                    dust.noGravity = true;
+                    dust.velocity = (DustCenter - Projectile.Center).SafeNormalize(Vector2.Zero) * MinionAIHelper.RandomFloat(0f, 3f);
+                    dust.fadeIn = 1f;
+
+                }
+            }
+        }
+        
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             target.AddBuff(NPC_DEBUFF_ID, NPC_DEBUFF_DURATION);
@@ -763,6 +841,13 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             Player player = Main.player[Projectile.owner];
             player.MinionAttackTargetNPC = target.whoAmI;
             // player.HasMinionAttackTargetNPC = true;
+
+            int ImbueDeBuffID = MinionAIHelper.GetImbueDebuff(player);
+            if (ImbueDeBuffID != -1) target.AddBuff(ImbueDeBuffID, 3 * 60);
+            if(MinionAIHelper.IsPartyImbue(player))
+            {
+                Projectile.NewProjectile(new EntitySource_Misc("WeaponEnchantment_Confetti"), target.Center.X, target.Center.Y, target.velocity.X, target.velocity.Y, 289, 0, 0f, player.whoAmI);
+            }
         }
 
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)

@@ -49,11 +49,32 @@ namespace SummonerExpansionMod.Initialization
 			// flag weapon
 			ModProjectileID.FlagProjectile = ModContent.ProjectileType<FlagProjectile>();
 			ModProjectileID.PirateFlagProjectile = ModContent.ProjectileType<PirateFlagProjectile>();
+			ModProjectileID.NormalFlagProjectile = ModContent.ProjectileType<NormalFlagProjectile>();
+			ModProjectileID.GoblinFlagProjectile = ModContent.ProjectileType<GoblinFlagProjectile>();
+			ModProjectileID.HellFlagProjectile = ModContent.ProjectileType<HellFlagProjectile>();
+			ModProjectileID.HolyFlagProjectile = ModContent.ProjectileType<HolyFlagProjectile>();
+			ModProjectileID.TikiFlagProjectile = ModContent.ProjectileType<TikiFlagProjectile>();
+			ModProjectileID.TikiFlagBladeShot = ModContent.ProjectileType<TikiFlagBladeShot>();
+			ModProjectileID.SantaFlagProjectile = ModContent.ProjectileType<SantaFlagProjectile>();
+			ModProjectileID.SantaFlagBladeShot = ModContent.ProjectileType<SantaFlagBladeShot>();
+			ModProjectileID.OneTrueFlagProjectile = ModContent.ProjectileType<OneTrueFlagProjectile>();
+			ModProjectileID.OneTrueFlagBladeShot = ModContent.ProjectileType<OneTrueFlagBladeShot>();
 
 			/* ------------------------------- buffs ------------------------------- */
 			ModBuffID.SentryEnhancement = ModContent.BuffType<SentryEnhancementBuff>();
 			ModBuffID.SentryTarget = ModContent.BuffType<SentryTargetBuff>();
 			ModBuffID.ElectricShock = ModContent.BuffType<ElectricShock>();
+			ModBuffID.NormalFlagBuff = ModContent.BuffType<NormalFlagBuff>();
+			ModBuffID.GoblinFlagBuff = ModContent.BuffType<GoblinFlagBuff>();
+			ModBuffID.HellFlagBuff = ModContent.BuffType<HellFlagBuff>();
+			ModBuffID.PirateFlagBuff = ModContent.BuffType<PirateFlagBuff>();
+			ModBuffID.PirateFlagDebuff = ModContent.BuffType<PirateFlagDebuff>();
+			ModBuffID.HolyFlagBuff = ModContent.BuffType<HolyFlagBuff>();
+			ModBuffID.TikiFlagBuff = ModContent.BuffType<TikiFlagBuff>();
+			ModBuffID.TikiFlagDebuff = ModContent.BuffType<TikiFlagDebuff>();
+			ModBuffID.SantaFlagBuff = ModContent.BuffType<SantaFlagBuff>();
+			ModBuffID.OneTrueFlagBuff = ModContent.BuffType<OneTrueFlagBuff>();
+			ModBuffID.OneTrueFlagDebuff = ModContent.BuffType<OneTrueFlagDebuff>();
         }
 
 		

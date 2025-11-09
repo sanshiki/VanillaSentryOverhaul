@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria.GameContent;
 using System.Collections.Generic;
 using SummonerExpansionMod.Initialization;
+using Terraria.ID;
 
 
 namespace SummonerExpansionMod.ModUtils
@@ -689,15 +690,59 @@ namespace SummonerExpansionMod.ModUtils
 		public static int AccumulateWhipDamage(NPC target)
 		{
 			int addDamage = 0;
-			foreach(var item in ModGlobal.WhipAddDamageDict)
+			foreach (var item in ModGlobal.WhipAddDamageDict)
 			{
-				if(target.HasBuff(item.Key))
+				if (target.HasBuff(item.Key))
 				{
 					addDamage += item.Value;
 				}
 			}
 			return addDamage;
 		}
+		#endregion
+
+		#region Imbue Methods
+		public static Dictionary<byte, int> ImbueDeBuffDict = new()
+		{
+			{0, -1},
+			{1, BuffID.Venom},
+			{2, BuffID.CursedInferno},
+			{3, BuffID.OnFire},
+			{4, BuffID.Midas},
+			{5, BuffID.Ichor},
+			{6, BuffID.Confused},
+			{7, -1},
+			{8, BuffID.Poisoned}
+		};
+
+		public static Dictionary<byte, int> ImbueDustDict = new()
+		{
+			{0, -1},
+			{1, 171},
+			{2, 74},
+			{3, DustID.FlameBurst},
+			{4, DustID.GoldFlame},
+			{5, 169},
+			{6, DustID.IceTorch},
+			{7, -1},
+			{8, BuffID.Poisoned}
+		};
+
+		public static int GetImbueDebuff(Player player)
+		{
+			return ImbueDeBuffDict[player.meleeEnchant];
+		}
+
+		public static int GetImbueDust(Player player)
+		{
+			return ImbueDustDict[player.meleeEnchant];
+		}
+		
+		public static bool IsPartyImbue(Player player)
+        {
+			return player.meleeEnchant == 7;
+        }
+
 		#endregion
 	}
 } 
