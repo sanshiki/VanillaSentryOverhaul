@@ -24,6 +24,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         protected override float MIN_SCALE => 1.65f;
         protected override int TIME_LEFT => 30;
         protected override Color BladeColor => new Color(123, 62, 33, 100);
+        protected override int NPC_DEBUFF_ID => ModBuffID.TikiFlagDebuff;
 
         public override bool PreDraw(ref Color lightColor)
         {

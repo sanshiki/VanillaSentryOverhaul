@@ -17,13 +17,14 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 {
     public class SantaFlagBladeShot : FlagBladeShot
     {
-        protected override float RadiusBig => 200;
-        protected override float RadiusSmall => 135f;
+        protected override float RadiusBig => 200f;
+        protected override float RadiusSmall => 100f;
         protected override float Angle => MathHelper.ToRadians(150f);
         protected override float MAX_SCALE => 2.2f;
         protected override float MIN_SCALE => 1.9f;
         protected override int TIME_LEFT => 30;
         protected override Color BladeColor => new Color(123, 62, 33, 100);
+        protected override int NPC_DEBUFF_ID => BuffID.MaceWhipNPCDebuff;
 
         public override bool PreAI()
         {

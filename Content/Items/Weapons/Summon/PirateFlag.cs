@@ -14,6 +14,7 @@ namespace SummonerExpansionMod.Content.Items.Weapons.Summon
         public override string Texture => ModGlobal.MOD_TEXTURE_PATH + "Items/PirateFlagItem";
         protected override int MOD_PROJECTILE_ID => ModProjectileID.PirateFlagProjectile;
         protected override int POLE_LENGTH => 260;
+        protected override int RAISE_USE_TIME => 45;
 
         public override void SetDefaults()
         {

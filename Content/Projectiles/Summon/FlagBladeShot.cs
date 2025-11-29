@@ -28,7 +28,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         protected virtual float DAMAGE_DECAY_FACTOR => 0.5f;
         protected int hitCount = 0;
         protected virtual int NPC_DEBUFF_ID => ModContent.BuffType<NormalFlagBuff>();
-        protected virtual int NPC_DEBUFF_DURATION => 60 * 2;
+        protected virtual int NPC_DEBUFF_DURATION => 60*7;
 
         public override void SetStaticDefaults()
         {

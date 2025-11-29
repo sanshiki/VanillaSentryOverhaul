@@ -59,6 +59,7 @@ namespace SummonerExpansionMod.Initialization
 			ModProjectileID.SantaFlagBladeShot = ModContent.ProjectileType<SantaFlagBladeShot>();
 			ModProjectileID.OneTrueFlagProjectile = ModContent.ProjectileType<OneTrueFlagProjectile>();
 			ModProjectileID.OneTrueFlagBladeShot = ModContent.ProjectileType<OneTrueFlagBladeShot>();
+			ModProjectileID.OneTrueFlagAnchor = ModContent.ProjectileType<OneTrueFlagAnchor>();
 
 			/* ------------------------------- buffs ------------------------------- */
 			ModBuffID.SentryEnhancement = ModContent.BuffType<SentryEnhancementBuff>();

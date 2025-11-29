@@ -23,8 +23,10 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         protected override float TAIL_OFFSET_X_1 => -33f;
         protected override float TAIL_OFFSET_Y_1 => -90f;  
         protected override float TAIL_OFFSET_X_2 => -33f;  
-        protected override float TAIL_OFFSET_Y_2 => -63f;   
+        protected override float TAIL_OFFSET_Y_2 => -63f;
         protected override Color TAIL_COLOR => new Color(118, 49, 48, 100);
+        protected override float GRAVITY => 1.5f;
+        protected override float RECALL_SPEED => 40f;
         protected override bool TAIL_DYNAMIC_DEBUG => false;
         // protected override bool TAIL_ENABLE_GLOBAL => false;
         protected override int FULLY_CHARGED_DUST => DustID.FrostHydra;

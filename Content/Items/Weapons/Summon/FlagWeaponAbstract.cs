@@ -138,6 +138,10 @@ namespace SummonerExpansionMod.Content.Items.Weapons.Summon
                         break;
                 }
                 Main.NewText("State: " + StateStr);
+                if(FlagProjectile != null)
+                {
+                    Main.NewText("FlagProjectile: " + FlagProjectile.identity + " " + FlagProjectile.active + "Position: " + FlagProjectile.Center);
+                }
             }
             if (player.controlUseTile) // right-click
             {
@@ -166,6 +170,7 @@ namespace SummonerExpansionMod.Content.Items.Weapons.Summon
                                 flagPole.State = RAISE_STATE;
                                 State = RAISE_STATE;
                                 flagPole.PoleLength = POLE_LENGTH;
+                                flagPole.TimeLeftRaise = (int)(RAISE_USE_TIME);
                             }
                             IsRightPressed = true;
                         }
@@ -183,7 +188,7 @@ namespace SummonerExpansionMod.Content.Items.Weapons.Summon
                     case RAISE_STATE:   // raise state maintains to MAX_RAISE_TIME
                     {
                         RaiseTimer++;
-                        if(RaiseTimer > MAX_RAISE_TIME)
+                        if(RaiseTimer > RAISE_USE_TIME * 0.88f)
                         {
                             RaiseTimer = 0;
                             State = PLANT_STATE;
@@ -217,7 +222,7 @@ namespace SummonerExpansionMod.Content.Items.Weapons.Summon
                         Item.autoReuse = true;
                         IsRightPressed = false;
                         RaiseTimer = 0;
-                        if(FlagProjectile != null && !FlagProjectile.active)
+                        if (FlagProjectile == null || (FlagProjectile != null && !FlagProjectile.active))
                         {
                             FlagProjectile = null;
                             State = IDLE_STATE;
@@ -275,7 +280,7 @@ namespace SummonerExpansionMod.Content.Items.Weapons.Summon
                 Item.autoReuse = true;
                 IsRightPressed = false;
                 RaiseTimer = 0;
-                if(FlagProjectile != null && !FlagProjectile.active)
+                if (FlagProjectile == null || (FlagProjectile != null && !FlagProjectile.active))
                 {
                     FlagProjectile = null;
                     State = IDLE_STATE;

@@ -41,5 +41,6 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         public static int SantaFlagBladeShot;
         public static int OneTrueFlagProjectile;
         public static int OneTrueFlagBladeShot;
+        public static int OneTrueFlagAnchor;
     }
 }

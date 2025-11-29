@@ -24,6 +24,23 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         protected override float MIN_SCALE => 2.2f;
         protected override int TIME_LEFT => 30;
         protected override Color BladeColor => new Color(123, 62, 33, 100);
+        protected override int NPC_DEBUFF_ID => ModBuffID.OneTrueFlagDebuff;
+
+        public override bool PreAI()
+        {
+            // generate dust
+            for (float theta = -Angle / 2f; theta < Angle / 2f; theta += Angle / 10f)
+            {
+                float radius = (RadiusBig + RadiusSmall) / 2f;
+                if (Main.rand.NextFloat() < 0.05f)
+                {
+                    Dust d = Dust.NewDustDirect(Projectile.Center + new Vector2(radius, 0).RotatedBy(theta + Projectile.rotation), 4, 4, 91, 0, 0, 0, Color.White, 1.0f);
+                    d.noGravity = true;
+                }
+            }
+
+            return true;
+        }
 
         public override bool PreDraw(ref Color lightColor)
         {

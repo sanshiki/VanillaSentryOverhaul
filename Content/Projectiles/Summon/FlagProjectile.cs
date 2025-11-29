@@ -23,6 +23,8 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         public bool IsRecalled;
         public Vector2 TargetPos;
         public float Seed;
+        public int Anchor_ID;
+        public bool AnchorInited;
     }
 
     public class FlagProjectile : ModProjectile
@@ -43,10 +45,10 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         protected virtual bool TILE_CUT_RANGE_DEBUG => false;
 
         // raising
-        protected virtual float RAISE_MAX_HEIGHT => 16f * 4f + HANDHELD_POINT_OFFSET / 2f; // max height of the pole when raised
-        protected virtual int TIME_LEFT_RAISE => 60; // raising duration
-        protected virtual float RAISE_MAX_SPEED => 2f * RAISE_MAX_HEIGHT / (float)TIME_LEFT_RAISE;   // max speed of the pole when raised
-        protected virtual float RAISE_ACC => RAISE_MAX_SPEED / (float)TIME_LEFT_RAISE * 2f; // acceleration of the pole when raised
+        protected float RAISE_MAX_HEIGHT => 16f * 4f + HANDHELD_POINT_OFFSET / 2f; // max height of the pole when raised
+        // protected int TIME_LEFT_RAISE = 60; // raising duration
+        // protected float RAISE_MAX_SPEED => 2f * RAISE_MAX_HEIGHT / (float)TIME_LEFT_RAISE;   // max speed of the pole when raised
+        // protected float RAISE_ACC => RAISE_MAX_SPEED / (float)TIME_LEFT_RAISE * 2f; // acceleration of the pole when raised
         protected virtual int FULLY_CHARGED_DUST => DustID.CrimsonSpray;
 
         // planting and recalling sentries
@@ -116,6 +118,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         public bool SwitchFlag = false;
         public int OnGroundCnt = 0;
         public int PoleLength = MIN_POLE_PENGTH;    // real pole length, can be modified in realtime
+        public int TimeLeftRaise = 60;
         public float AttackSpeed = 1f;
 
         /* ------------------------- Private Variables ------------------------- */
@@ -283,32 +286,35 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             if (!Initialized)
             {
                 // initialize
-                Projectile.timeLeft = TIME_LEFT_RAISE;
+                Projectile.timeLeft = TimeLeftRaise;
                 FixedDirection = player.direction;
                 Projectile.friendly = false;
                 // Main.NewText("RaiseAI:"+Projectile.identity);
                 Initialized = true;
             }
+            float RaiseMaxHeight = 16f * 4f + HANDHELD_POINT_OFFSET / 2f;
+            float RaiseMaxSpeed = 2f * RaiseMaxHeight / (float)TimeLeftRaise;
+            float RaiseAcc = RaiseMaxSpeed / (float)TimeLeftRaise * 2f;
 
             float RaiseHeight = 0f;
-            if(RaiseTime < TIME_LEFT_RAISE / 2)
+            if(RaiseTime < TimeLeftRaise / 2)
             {
-                RaiseHeight = RAISE_ACC * (float)RaiseTime * (float)RaiseTime / 2f;
+                RaiseHeight = RaiseAcc * (float)RaiseTime * (float)RaiseTime / 2f;
             }
             else
             {
-                RaiseHeight = RAISE_MAX_HEIGHT - RAISE_ACC * (float)(TIME_LEFT_RAISE - RaiseTime) * (float)(TIME_LEFT_RAISE - RaiseTime) / 2f;
+                RaiseHeight = RaiseMaxHeight - RaiseAcc * (float)(TimeLeftRaise - RaiseTime) * (float)(TimeLeftRaise - RaiseTime) / 2f;
             }
             RaiseTime++;
-
-            if(RaiseTime >= BUFF_START_TIME)
+ 
+            if(RaiseTime >= TimeLeftRaise * 0.42f)
             {
                 player.AddBuff(ENHANCE_BUFF_ID, ENHANCE_BUFF_DURATION);
             }
 
             // Vector2 StickOffset = new Vector2(STICK_OFFSET.X * FixedDirection, STICK_OFFSET.Y);
             Vector2 StickOffset = new Vector2(0f, -PoleLength/2f+40f);
-            Projectile.Center = CenterMapping(player.MountedCenter, StickOffset, 0) + new Vector2(0, RAISE_MAX_HEIGHT/2f-RaiseHeight);
+            Projectile.Center = CenterMapping(player.MountedCenter, StickOffset, 0) + new Vector2(0, RaiseMaxHeight/2f-RaiseHeight);
             Projectile.spriteDirection = FixedDirection;
             // Projectile.velocity = player.velocity;
             
@@ -484,8 +490,8 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 
             Vector2 RecallDist = player.Center - Projectile.Center;
             Vector2 RecallDirection = RecallDist.SafeNormalize(Vector2.UnitX);
-            // Projectile.velocity = RecallDirection * RECALL_SPEED;
-            Projectile.Center += RecallDirection * RECALL_SPEED;
+            Projectile.velocity = RecallDirection * RECALL_SPEED;
+            // Projectile.Center += RecallDirection * RECALL_SPEED;
             Projectile.rotation += RECALL_ROTATE_SPEED * Projectile.spriteDirection;
 
             RecallTime++;
@@ -533,18 +539,18 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             DrawPart(flagTexture, baseWorldPos, baseRect, lightColor, origin);
 
             // draw flag cloth
-            PreDrawFlagCloth(ref lightColor);
-
-            return false;
-        }
-
-        protected void PreDrawFlagCloth(ref Color lightColor)
-        {
-            Player player = Main.player[Projectile.owner];
             Vector2 FlagOffset = new Vector2(-FLAG_WIDTH / 2f * Projectile.spriteDirection, (FLAG_HEIGHT - Projectile.height) / 2f);
             Vector2 FlagOffsetEx = new Vector2(-2f + 1f * Projectile.spriteDirection, 0f);
             FlagOffset += FlagOffsetEx;
             Vector2 ClothCenter = Projectile.Center + FlagOffset.RotatedBy(Projectile.rotation);
+            PreDrawFlagCloth(ref lightColor, ClothCenter);
+
+            return false;
+        }
+
+        protected void PreDrawFlagCloth(ref Color lightColor, Vector2 ClothCenter)
+        {
+            Player player = Main.player[Projectile.owner];
             if(State == WAVE_STATE || State == RECALL_STATE)
             {
                 UseFastAnimation = true;

@@ -14,6 +14,7 @@ namespace SummonerExpansionMod.Content.Items.Weapons.Summon
         public override string Texture => ModGlobal.MOD_TEXTURE_PATH + "Items/GoblinFlagItem";
         protected override int MOD_PROJECTILE_ID => ModProjectileID.GoblinFlagProjectile;
         protected override int POLE_LENGTH => 220;
+        protected override int RAISE_USE_TIME => 55;
 
         public override void SetDefaults()
         {

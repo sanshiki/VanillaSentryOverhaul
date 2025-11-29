@@ -14,6 +14,7 @@ namespace SummonerExpansionMod.Content.Items.Weapons.Summon
         public override string Texture => ModGlobal.MOD_TEXTURE_PATH + "Items/TikiFlagItem";
         protected override int MOD_PROJECTILE_ID => ModProjectileID.TikiFlagProjectile;
         protected override int POLE_LENGTH => 280;
+        protected override int RAISE_USE_TIME => 40;
 
         public override void SetDefaults()
         {

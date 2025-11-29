@@ -14,6 +14,7 @@ namespace SummonerExpansionMod.Content.Items.Weapons.Summon
         public override string Texture => ModGlobal.MOD_TEXTURE_PATH + "Items/HellFlagItem";
         protected override int MOD_PROJECTILE_ID => ModProjectileID.HellFlagProjectile;
         protected override int POLE_LENGTH => 240;
+        protected override int RAISE_USE_TIME => 50;
 
         public override void SetDefaults()
         {
