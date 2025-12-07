@@ -27,7 +27,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         protected override Color TAIL_COLOR => new Color(123, 62, 33, 100);
         protected override float GRAVITY => 1.3f;
         protected override float RECALL_SPEED => 40f;
-        protected override bool TAIL_DYNAMIC_DEBUG => true;
+        protected override bool TAIL_DYNAMIC_DEBUG => false;
         // protected override bool TAIL_ENABLE_GLOBAL => false;
         protected override int FULLY_CHARGED_DUST => 9;
         protected override int ENHANCE_BUFF_ID => ModBuffID.TikiFlagBuff;

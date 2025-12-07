@@ -8,6 +8,7 @@ using Terraria.GameContent;
 using System.Collections.Generic;
 using SummonerExpansionMod.Initialization;
 using Terraria.ID;
+using System.Linq;
 
 
 namespace SummonerExpansionMod.ModUtils
@@ -217,31 +218,98 @@ namespace SummonerExpansionMod.ModUtils
 		public static Vector2 SearchForValidPosition(Vector2 center, int width, int height, int searchRadius)
 		{
 			Point centerTile = center.ToTileCoordinates();
-			if(!Collision.SolidCollision(center, width, height))
+			if (!Collision.SolidCollision(center, width, height))
 			{
 				return center;
 			}
-            for (int r = 0; r <= searchRadius; r++)
-            {
-                for (int x = -r; x <= r; x++)
-                {
-                    for (int y = -r; y <= r; y++)
-                    {
+			for (int r = 0; r <= searchRadius; r++)
+			{
+				for (int x = -r; x <= r; x++)
+				{
+					for (int y = -r; y <= r; y++)
+					{
 						// only search edge
-						if(Math.Abs(x) != r && Math.Abs(y) != r) continue;
-                        int checkX = centerTile.X + x;
-                        int checkY = centerTile.Y + y;
-                        if (checkX < 0 || checkX >= Main.maxTilesX || checkY < 0 || checkY >= Main.maxTilesY) continue;
-                        Vector2 worldPos = new Vector2(checkX * 16, checkY * 16);
-                        if (!Collision.SolidCollision(worldPos, width, height))
-                        {
-                            return worldPos;
-                        }
-                    }
-                }
-            }
-            return center;
+						if (Math.Abs(x) != r && Math.Abs(y) != r) continue;
+						int checkX = centerTile.X + x;
+						int checkY = centerTile.Y + y;
+						if (checkX < 0 || checkX >= Main.maxTilesX || checkY < 0 || checkY >= Main.maxTilesY) continue;
+						Vector2 worldPos = new Vector2(checkX * 16, checkY * 16);
+						if (!Collision.SolidCollision(worldPos, width, height))
+						{
+							return worldPos;
+						}
+					}
+				}
+			}
+			return center;
 		}
+		
+		public static Vector2 SearchForGround(Vector2 center, int searchRadius, int width, int height)
+		{
+			bool debug = false;
+			Point centerTile = center.ToTileCoordinates();
+			for (int r = 0; r <= searchRadius; r++)
+			{
+				for (int x = -r; x <= r; x++)
+				{
+					for (int y = -r; y <= r; y++)
+					{
+						// 只检查正方形的边缘，减少无效搜索
+						if (Math.Abs(x) != r && Math.Abs(y) != r)
+							continue;
+
+						int checkX = centerTile.X + x;
+						int checkY = centerTile.Y + y;
+
+						if (!WorldGen.InWorld(checkX, checkY, 10))
+							continue;
+
+						Tile tile = Main.tile[checkX, checkY];
+						Tile tileBelow = Main.tile[checkX, checkY + 1];
+
+						// 必须是“能站立的地面”：当前为空气，下面有实心或平台
+						if (!tile.HasTile &&
+							tileBelow.HasTile &&
+							(Main.tileSolid[tileBelow.TileType] || Main.tileSolidTop[tileBelow.TileType]))
+						{
+							Vector2 worldPos = new Vector2(checkX * 16, checkY * 16)/*  + new Vector2(0, 16f) */;
+
+							// 检查实体是否能在此处存在（无方块阻挡）
+							if (!Collision.SolidCollision(worldPos + new Vector2(-width / 2f, -height), width, height))
+							{
+								// // 确保上方有头部空间
+								// bool hasHeadroom = true;
+								// for (int i = 1; i <= height / 16; i++)
+								// {
+								// 	if (Main.tile[checkX, checkY - i].HasTile)
+								// 	{
+								// 		hasHeadroom = false;
+								// 		break;
+								// 	}
+								// }
+
+								// if (!hasHeadroom)
+								// 	continue;
+
+								// ✅ 找到最近的合格表面
+								return worldPos;
+							}
+							else if (debug)
+                            {
+								Main.NewText("Collision invalid.");
+                            }
+						}
+						else if (debug)
+                        {
+							if (tile.HasTile) Dust.QuickDust(new Point(checkX, checkY), Color.Red);
+							if (!tile.HasTile && !tileBelow.HasTile) Dust.QuickDust(new Point(checkX, checkY), Color.Green);
+							if (!tile.HasTile && tileBelow.HasTile && !(Main.tileSolid[tileBelow.TileType] || Main.tileSolidTop[tileBelow.TileType])) Dust.QuickDust(new Point(checkX, checkY), Color.Blue);
+                        }
+					}
+				}
+			}
+			return center;
+        }
 
 		/// <summary>
 		/// 更新召唤物的友好状态
@@ -535,6 +603,88 @@ namespace SummonerExpansionMod.ModUtils
 		{
 			return (angle + ModGlobal.PI_FLOAT) % ModGlobal.TWO_PI_FLOAT - ModGlobal.PI_FLOAT;
 		}
+		
+
+		public static class PolarCurveFitter
+		{
+			public struct Polar {
+				public double r, theta;
+				public Polar(double r, double theta) { this.r = r; this.theta = theta; }
+			}
+
+			public struct Vec2 {
+				public double x, y;
+				public Vec2(double x, double y) { this.x = x; this.y = y; }
+				public static Vec2 operator +(Vec2 a, Vec2 b) => new Vec2(a.x + b.x, a.y + b.y);
+				public static Vec2 operator -(Vec2 a, Vec2 b) => new Vec2(a.x - b.x, a.y - b.y);
+				public static Vec2 operator *(Vec2 a, double f) => new Vec2(a.x * f, a.y * f);
+			}
+
+			// Catmull-Rom Spline (uniform)
+			static Vec2 CatmullRom(Vec2 p0, Vec2 p1, Vec2 p2, Vec2 p3, double t)
+			{
+				double t2 = t * t;
+				double t3 = t2 * t;
+
+				double x =
+					0.5 * ((2 * p1.x) +
+					(-p0.x + p2.x) * t +
+					(2*p0.x - 5*p1.x + 4*p2.x - p3.x) * t2 +
+					(-p0.x + 3*p1.x - 3*p2.x + p3.x) * t3);
+
+				double y =
+					0.5 * ((2 * p1.y) +
+					(-p0.y + p2.y) * t +
+					(2*p0.y - 5*p1.y + 4*p2.y - p3.y) * t2 +
+					(-p0.y + 3*p1.y - 3*p2.y + p3.y) * t3);
+
+				return new Vec2(x, y);
+			}
+
+			public static List<Polar> FitAndInsert(List<Polar> pts, int nInsert)
+			{
+				// Step 1: Convert to Cartesian
+				List<Vec2> xy = pts.Select(p =>
+					new Vec2(p.r * Math.Cos(p.theta), p.r * Math.Sin(p.theta))
+				).ToList();
+
+				int N = xy.Count;
+				List<Polar> result = new List<Polar>();
+
+				for (int i = 0; i < N - 1; i++)
+				{
+					// control points
+					Vec2 p0 = xy[Math.Max(0, i - 1)];
+					Vec2 p1 = xy[i];
+					Vec2 p2 = xy[i + 1];
+					Vec2 p3 = xy[Math.Min(N - 1, i + 2)];
+
+					// add original point
+					result.Add(ToPolar(p1));
+
+					// insert n points between p1 and p2
+					for (int k = 1; k <= nInsert; k++)
+					{
+						double t = (double)k / (nInsert + 1);
+						Vec2 c = CatmullRom(p0, p1, p2, p3, t);
+						result.Add(ToPolar(c));
+					}
+				}
+
+				// add last point
+				// result.Add(ToPolar(xy.Last()));
+
+				return result;
+			}
+
+			static Polar ToPolar(Vec2 v)
+			{
+				double r = Math.Sqrt(v.x * v.x + v.y * v.y);
+				double th = Math.Atan2(v.y, v.x);
+				if (th < 0) th += 2 * Math.PI;
+				return new Polar(r, th);
+			}
+		}
 		#endregion
 
 		#region Texture Methods
@@ -573,6 +723,10 @@ namespace SummonerExpansionMod.ModUtils
         {
             return projectile.Center + localPos.RotatedBy(projectile.rotation) - Main.screenPosition;
         }
+		public static Vector2 ConvertToWorldPos(Vector2 center, float rotation, Vector2 localPos)
+		{
+			return center + localPos.RotatedBy(rotation) - Main.screenPosition;
+		}
 
 		public static Vector2 CenterMapping(Vector2 center, Vector2 offset, float rotation)
 		{
@@ -698,6 +852,29 @@ namespace SummonerExpansionMod.ModUtils
 				}
 			}
 			return addDamage;
+		}
+		#endregion
+
+		#region Defense Methods
+		public static int DefenseCompensate(int def_orig, int def_max, float max_rate=0.5f, float k=20, float B=20)
+		{
+			if(def_orig >= def_max)
+			{
+				return 0;
+			}
+			else
+			{
+				int bonus = (int)(B * (1 - (float)Math.Exp(-(def_max - def_orig) / k)));
+				if(max_rate >= 0 && bonus > def_orig * max_rate)
+				{
+					bonus = (int)(def_orig * max_rate);
+				}
+				else if(bonus < 0)
+				{
+					bonus = 0;
+				}
+				return bonus;
+			}
 		}
 		#endregion
 

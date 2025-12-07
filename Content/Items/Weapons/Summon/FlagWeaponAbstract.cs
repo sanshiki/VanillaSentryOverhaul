@@ -138,10 +138,6 @@ namespace SummonerExpansionMod.Content.Items.Weapons.Summon
                         break;
                 }
                 Main.NewText("State: " + StateStr);
-                if(FlagProjectile != null)
-                {
-                    Main.NewText("FlagProjectile: " + FlagProjectile.identity + " " + FlagProjectile.active + "Position: " + FlagProjectile.Center);
-                }
             }
             if (player.controlUseTile) // right-click
             {

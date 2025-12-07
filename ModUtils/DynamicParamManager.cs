@@ -46,6 +46,12 @@ namespace SummonerExpansionMod.ModUtils
             return dynamicParams.TryGetValue(name, out var param) ? param : null;
         }
 
+        public static IDynamicParam QuickGet(string name, float value, float lower_limit, float upper_limit, Action<float> onChange = null)
+        {
+            Register(name, value, lower_limit, upper_limit, onChange);
+            return Get(name);
+        }
+
         public static IEnumerable<IDynamicParam> GetAll() => dynamicParams.Values;
     }
 }

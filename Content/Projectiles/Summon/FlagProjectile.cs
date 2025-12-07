@@ -92,6 +92,9 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         public bool TailEnabled = true;
         protected virtual bool TAIL_ENABLE_GLOBAL => true;
         protected virtual int TAIL_LENGTH => 6;
+        protected virtual int FLAG_CLOTH_LENGTH => 4;
+        protected virtual int TAIL_OVERLAP_SIZE => 3;
+        protected virtual int TAIL_FIT_INSERT_SIZE => 1;
         protected virtual float TAIL_OFFSET_X_1 => -100f;  // -123
         protected virtual float TAIL_OFFSET_Y_1 => -135f;  // -213
         protected virtual float TAIL_OFFSET_X_2 => -100f;  // -123
@@ -101,8 +104,10 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         protected virtual Vector2 SPIN_CENTER_OFFSET => new Vector2(65f, 225f);
         protected virtual float SPIN_CENTER_OFFSET_ROT => 0f;
         protected virtual Color TAIL_COLOR => new Color(98, 0, 0, 95);
-        protected virtual bool TAIL_DYNAMIC_DEBUG => false;
+        protected virtual bool TAIL_DYNAMIC_DEBUG => true;
         protected virtual string FLAG_TAIL_TEXTURE_PATH => ModGlobal.MOD_TEXTURE_PATH + "Vertexes/SwordTail4";
+        protected virtual bool ENABLE_VERTEX_FLAG => true;
+        protected virtual bool VERTEX_DEBUG => false;
 
         /* ------------------------- Buff Constants ------------------------- */
         protected virtual int ENHANCE_BUFF_ID => ModBuffID.SentryEnhancement;
@@ -140,7 +145,10 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         protected float FlagClothWaveSpeed = 0f;
         protected bool UseFastAnimation = false;
 
-        public override void SetStaticDefaults()//以下照抄
+
+        /* -------------------------- Setting Defaults -------------------------- */
+
+        public override void SetStaticDefaults()
         {
             ProjectileID.Sets.TrailingMode[Type] = 2;//这一项赋值2可以记录运动轨迹和方向（用于制作拖尾）
             ProjectileID.Sets.TrailCacheLength[Type] = 50;//这一项代表记录的轨迹最多能追溯到多少帧以前
@@ -165,21 +173,26 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             {
                 DynamicParamManager.Register("PoleLength", 280, 80, 1000);
                 DynamicParamManager.Register("TailLength", (float)TAIL_LENGTH, 3, 50);
-                DynamicParamManager.Register("Offset_X.1", TAIL_OFFSET_X_1, -300, 300);
-                DynamicParamManager.Register("Offset_Y.1", TAIL_OFFSET_Y_1, -300, 300);
-                DynamicParamManager.Register("Offset_X.2", TAIL_OFFSET_X_2, -300, 300);
-                DynamicParamManager.Register("Offset_Y.2", TAIL_OFFSET_Y_2, -300, 300);
-                DynamicParamManager.Register("Offset_rot.1", TAIL_OFFSET_ROT_1, -3.14f, 3.14f);
-                DynamicParamManager.Register("Offset_rot.2", TAIL_OFFSET_ROT_2, -3.14f, 3.14f);
-                DynamicParamManager.Register("SpinCenterOffset.X", SPIN_CENTER_OFFSET.X, -300, 300);
-                DynamicParamManager.Register("SpinCenterOffset.Y", SPIN_CENTER_OFFSET.Y, -300, 300);
-                DynamicParamManager.Register("SpinCenterOffset.Rot", SPIN_CENTER_OFFSET_ROT, -3.14f, 3.14f);
+                // DynamicParamManager.Register("Offset_X.1", TAIL_OFFSET_X_1, -300, 300);
+                // DynamicParamManager.Register("Offset_Y.1", TAIL_OFFSET_Y_1, -300, 300);
+                // DynamicParamManager.Register("Offset_X.2", TAIL_OFFSET_X_2, -300, 300);
+                // DynamicParamManager.Register("Offset_Y.2", TAIL_OFFSET_Y_2, -300, 300);
+                // DynamicParamManager.Register("Offset_rot.1", TAIL_OFFSET_ROT_1, -3.14f, 3.14f);
+                // DynamicParamManager.Register("Offset_rot.2", TAIL_OFFSET_ROT_2, -3.14f, 3.14f);
+                // DynamicParamManager.Register("SpinCenterOffset.X", SPIN_CENTER_OFFSET.X, -300, 300);
+                // DynamicParamManager.Register("SpinCenterOffset.Y", SPIN_CENTER_OFFSET.Y, -300, 300);
+                // DynamicParamManager.Register("SpinCenterOffset.Rot", SPIN_CENTER_OFFSET_ROT, -3.14f, 3.14f);
                 DynamicParamManager.Register("TailColor.R", TAIL_COLOR.R, 0, 255);
                 DynamicParamManager.Register("TailColor.G", TAIL_COLOR.G, 0, 255);
                 DynamicParamManager.Register("TailColor.B", TAIL_COLOR.B, 0, 255);
                 DynamicParamManager.Register("TailColor.A", TAIL_COLOR.A, 0, 255);
             }
+            
+            DynamicParamManager.Register("StickOffsetList.extra", 0, -30, 30);
         }
+
+
+        /* -------------------------- AI -------------------------- */
         public override void AI()
         {
             Player player = Main.player[Projectile.owner];
@@ -507,6 +520,8 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             }
         }
 
+        /* -------------------------- Drawing -------------------------- */
+
         public override bool PreDraw(ref Color lightColor)
         {
             Player player = Main.player[Projectile.owner];
@@ -543,7 +558,18 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             Vector2 FlagOffsetEx = new Vector2(-2f + 1f * Projectile.spriteDirection, 0f);
             FlagOffset += FlagOffsetEx;
             Vector2 ClothCenter = Projectile.Center + FlagOffset.RotatedBy(Projectile.rotation);
-            PreDrawFlagCloth(ref lightColor, ClothCenter);
+            if(ENABLE_VERTEX_FLAG)
+            {
+                if (State == WAVE_STATE)
+                    PredrawFlagClothDynamicVertices(ref lightColor, ClothCenter);   // draw dynamic vertices
+                else
+                    // PreDrawFlagClothVertices(ref lightColor, ClothCenter);   // draw static vertices
+                    PreDrawFlagCloth(ref lightColor, ClothCenter);
+            }
+            else
+            {
+                PreDrawFlagCloth(ref lightColor, ClothCenter);   // legacy draw flag cloth (now abandoned)
+            }
 
             return false;
         }
@@ -591,14 +617,21 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                 if(TAIL_DYNAMIC_DEBUG)
                 {
                     tailLength = (int)DynamicParamManager.Get("TailLength").value;
-                    offset_X_1 = (float)DynamicParamManager.Get("Offset_X.1").value;
-                    offset_Y_1 = (float)DynamicParamManager.Get("Offset_Y.1").value;
-                    offset_X_2 = (float)DynamicParamManager.Get("Offset_X.2").value;
-                    offset_Y_2 = (float)DynamicParamManager.Get("Offset_Y.2").value;
-                    offset_rot_1 = (float)DynamicParamManager.Get("Offset_rot.1").value;
-                    offset_rot_2 = (float)DynamicParamManager.Get("Offset_rot.2").value;
+                    // offset_X_1 = (float)DynamicParamManager.Get("Offset_X.1").value;
+                    // offset_Y_1 = (float)DynamicParamManager.Get("Offset_Y.1").value;
+                    // offset_X_2 = (float)DynamicParamManager.Get("Offset_X.2").value;
+                    // offset_Y_2 = (float)DynamicParamManager.Get("Offset_Y.2").value;
+                    // offset_rot_1 = (float)DynamicParamManager.Get("Offset_rot.1").value;
+                    // offset_rot_2 = (float)DynamicParamManager.Get("Offset_rot.2").value;
+                    offset_X_1 = TAIL_OFFSET_X_1;
+                    offset_Y_1 = TAIL_OFFSET_Y_1;
+                    offset_X_2 = TAIL_OFFSET_X_2;
+                    offset_Y_2 = TAIL_OFFSET_Y_2;
+                    offset_rot_1 = TAIL_OFFSET_ROT_1;
+                    offset_rot_2 = TAIL_OFFSET_ROT_2;
+                    tailColor = TAIL_COLOR;
                     tailColor = new Color((int)DynamicParamManager.Get("TailColor.R").value, (int)DynamicParamManager.Get("TailColor.G").value, (int)DynamicParamManager.Get("TailColor.B").value, (int)DynamicParamManager.Get("TailColor.A").value);
-                    SpinCenter = ClothCenter + new Vector2(DynamicParamManager.Get("SpinCenterOffset.X").value*Projectile.spriteDirection, DynamicParamManager.Get("SpinCenterOffset.Y").value).RotatedBy(Projectile.rotation + DynamicParamManager.Get("SpinCenterOffset.Rot").value);
+                    // SpinCenter = ClothCenter + new Vector2(DynamicParamManager.Get("SpinCenterOffset.X").value*Projectile.spriteDirection, DynamicParamManager.Get("SpinCenterOffset.Y").value).RotatedBy(Projectile.rotation + DynamicParamManager.Get("SpinCenterOffset.Rot").value);
                 }
                 else
                 {
@@ -704,6 +737,183 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             }
         }
 
+
+        protected Vector2 ConvertToWorldPos(Vector2 localPos)
+        {
+            return Projectile.Center + localPos.RotatedBy(Projectile.rotation) - Main.screenPosition;
+        }
+
+        protected Vector2 CenterMapping(Vector2 center, Vector2 offset, float rotation)
+        {
+            return center + offset.RotatedBy(rotation);
+        }
+
+        protected void PredrawFlagClothDynamicVertices(ref Color lightColor, Vector2 ClothCenter)
+        {
+            Player player = Main.player[Projectile.owner];
+            SpriteBatch sb = Main.spriteBatch;
+            GraphicsDevice gd = Main.graphics.GraphicsDevice;
+
+            List<Vertex> FlagClothVerteces = new List<Vertex>();
+            List<Vertex> FlagTailVerteces = new List<Vertex>();
+            Vector2 SpinCenter = player.Center;
+            int CurrentTime = (int)(TIME_LEFT_WAVE / AttackSpeed) - Projectile.timeLeft;
+            int OverlapSize = TAIL_OVERLAP_SIZE;
+            if(State == RECALL_STATE) CurrentTime = TIME_LEFT_RECALL - Projectile.timeLeft;
+            int OldPosSize = (int)Math.Min(CurrentTime, TAIL_LENGTH+FLAG_CLOTH_LENGTH-OverlapSize);
+
+            // construct polar points
+            List<float> StickOffsetListInvert = new List<float>(StickOffsetList);
+            StickOffsetListInvert.Reverse();
+            List<MinionAIHelper.PolarCurveFitter.Polar> PolarPoints = new List<MinionAIHelper.PolarCurveFitter.Polar>();
+            for(int i = 0; i < OldPosSize;i++)
+            {
+                PolarPoints.Add(new MinionAIHelper.PolarCurveFitter.Polar(StickOffsetListInvert[i] + PoleLength, Projectile.oldRot[i]));
+            }
+            
+            bool VertexDebug = DynamicParamManager.QuickGet("VertexDebug", 0f, 0f, 1f).value > 0.5f;
+            if(VertexDebug)
+            {
+                string polarPointsString = "";
+                foreach(var point in PolarPoints)
+                {
+                    polarPointsString += Math.Round(point.r, 2) + " " + Math.Round(point.theta, 2) + "\n";
+                }
+                Main.NewText("Before fit: "+ polarPointsString);
+            }
+            PolarPoints = MinionAIHelper.PolarCurveFitter.FitAndInsert(PolarPoints, TAIL_FIT_INSERT_SIZE);
+            if(VertexDebug)
+            {
+                string polarPointsString = "";
+                foreach(var point in PolarPoints)
+                {
+                    polarPointsString += Math.Round(point.r, 2) + " " + Math.Round(point.theta, 2) + "\n";
+                }
+                Main.NewText("After fit: "+ polarPointsString);
+            }
+
+            float FlagClothLength = FLAG_CLOTH_LENGTH * (TAIL_FIT_INSERT_SIZE+1) - 1;
+            float TailLength = TAIL_LENGTH * (TAIL_FIT_INSERT_SIZE+1) - 1;
+
+            // Main.NewText("FlagClothLength: "+FlagClothLength + " TailLength: "+TailLength + " Count: "+PolarPoints.Count);
+            for(int i = 0; i < PolarPoints.Count;i++)
+            {
+                // float ratio = (i) / (float)(OldPosSize-1);
+                float FlagClothRatio = (i) / (float)(FlagClothLength-1);
+                float FlagTailRatio = (i - FlagClothLength + OverlapSize - 1) / (float)(TailLength-OverlapSize);
+                // float color_rate = MathHelper.Clamp(ratio*3, 0, 1);
+                // 根据ratio插值alpha值，越靠后的点越透明
+                // byte alpha = (byte)MathHelper.Clamp(MathHelper.Lerp(500, 0, ratio), 0, 255);
+
+                if(PolarPoints.Count <= 1) break;
+
+                // Main.NewText("FlagClothRatio: "+FlagClothRatio + " FlagTailRatio: "+FlagTailRatio);
+
+                Vector2 UpperVertexPffset, LowerVertexPffset;
+                if (State == WAVE_STATE)
+                {
+                    int extra = (int)DynamicParamManager.Get("StickOffsetList.extra").value;
+                    // Vector2 StickOffset = new Vector2(0, StickOffsetList[(int)MathHelper.Clamp(StickOffsetList.Count - (i + extra), 0, StickOffsetList.Count - 1)]);
+                    Vector2 StickOffset = new Vector2(0, (float)PolarPoints[i].r - PoleLength);
+                    SpinCenter = CenterMapping(Projectile.Center, StickOffset, Projectile.rotation + ModGlobal.PI_FLOAT);
+                    UpperVertexPffset = new Vector2(-4f * Projectile.spriteDirection, -(PoleLength / 2f)) + StickOffset;
+                    LowerVertexPffset = new Vector2(-4f * Projectile.spriteDirection, (-PoleLength / 2f + FLAG_HEIGHT)) + StickOffset;
+                }
+                else
+                {
+                    SpinCenter = Projectile.Center;
+                    UpperVertexPffset = new Vector2(-4f * Projectile.spriteDirection, -PoleLength / 2f);
+                    LowerVertexPffset = new Vector2(-4f * Projectile.spriteDirection, (-PoleLength / 2f + FLAG_HEIGHT));
+                }
+
+                float OldRot = (float)PolarPoints[i].theta;
+
+                if (i < FlagClothLength)  // add flag cloth verteces
+                {
+                    Color b = new Color(255, 255, 255, 225);
+                    FlagClothVerteces.Add(new Vertex(SpinCenter - Main.screenPosition + UpperVertexPffset.RotatedBy(OldRot),
+                            new Vector3(1-FlagClothRatio, 0, 1),
+                            b));
+                    FlagClothVerteces.Add(new Vertex(SpinCenter - Main.screenPosition + LowerVertexPffset.RotatedBy(OldRot),
+                            new Vector3(1-FlagClothRatio, 1, 1),
+                            b));
+                }
+                if (i >= FlagClothLength - OverlapSize && i < FlagClothLength + TailLength - OverlapSize)  // add flag tail verteces
+                {
+                    byte alpha = (byte)(MathHelper.Clamp(FlagTailRatio * 255, 0, 255));
+                    Color b = new Color(TAIL_COLOR.R, TAIL_COLOR.G, TAIL_COLOR.B, alpha);
+                    FlagTailVerteces.Add(new Vertex(SpinCenter - Main.screenPosition + UpperVertexPffset.RotatedBy(OldRot),
+                            new Vector3(FlagTailRatio, 1, 1),
+                            b));
+                    FlagTailVerteces.Add(new Vertex(SpinCenter - Main.screenPosition + LowerVertexPffset.RotatedBy(OldRot),
+                            new Vector3(FlagTailRatio, 0, 1),
+                            b));
+                }
+
+            }
+
+
+            // draw flag cloth
+            sb.End();
+            sb.Begin(SpriteSortMode.Immediate, 
+                                    BlendState.AlphaBlend, //NonPremultiplied 
+                                    SamplerState.AnisotropicClamp, 
+                                    DepthStencilState.None, 
+                                    RasterizerState.CullNone, 
+                                    null, 
+                                    Main.GameViewMatrix.
+                                    TransformationMatrix);
+            if(FlagClothVerteces.Count >= 3) // verteces should be at least 3 to form a triangle
+            {
+                gd.Textures[0] = ModContent.Request<Texture2D>(FLAG_CLOTH_TEXTURE_PATH).Value;
+                gd.DrawUserPrimitives(PrimitiveType.TriangleStrip, FlagClothVerteces.ToArray(), 0, FlagClothVerteces.Count - 2);
+            }
+
+            sb.End();
+            sb.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.AnisotropicClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+
+            if(FlagTailVerteces.Count >= 3) // verteces should be at least 3 to form a triangle
+            {
+                gd.Textures[0] = ModContent.Request<Texture2D>(FLAG_TAIL_TEXTURE_PATH).Value;
+                gd.DrawUserPrimitives(PrimitiveType.TriangleStrip, FlagTailVerteces.ToArray(), 0, FlagTailVerteces.Count - 2);
+            }
+
+            sb.End();
+            sb.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.AnisotropicClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+
+        }
+
+        protected void PreDrawFlagClothVertices(ref Color lightColor, Vector2 ClothCenter)
+        {
+            Player player = Main.player[Projectile.owner];
+            SpriteBatch sb = Main.spriteBatch;
+            GraphicsDevice gd = Main.graphics.GraphicsDevice;
+
+            List<Vertex> FlagClothVerteces = new List<Vertex>();
+
+            float VertexStartX = Projectile.Center.X - 4 * Projectile.spriteDirection;
+            float FlagTipY = Projectile.Center.Y - PoleLength/2f;
+            Vector2 VertexStart = new Vector2(VertexStartX, FlagTipY);
+
+            int resolution = 10;
+            for(int i = 0; i <= FLAG_WIDTH + FLAG_WIDTH % resolution; i += resolution)
+            {
+                if(i > FLAG_WIDTH) i = FLAG_WIDTH;
+                float ratio = (i) / (float)(FLAG_WIDTH);
+                Vector2 UpperVerTexPos = VertexStart + new Vector2(-i * Projectile.spriteDirection, 0);
+                Vector2 LowerVerTexPos = VertexStart + new Vector2(-i * Projectile.spriteDirection, FLAG_HEIGHT);
+                FlagClothVerteces.Add(new Vertex(UpperVerTexPos - Main.screenPosition, new Vector3(1-ratio, 0, 1), lightColor));
+                FlagClothVerteces.Add(new Vertex(LowerVerTexPos - Main.screenPosition, new Vector3(1-ratio, 1, 1), lightColor));
+            }
+
+            sb.End();
+            sb.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.AnisotropicClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+            gd.Textures[0] = ModContent.Request<Texture2D>(FLAG_CLOTH_TEXTURE_PATH).Value;
+            gd.DrawUserPrimitives(PrimitiveType.TriangleStrip, FlagClothVerteces.ToArray(), 0, FlagClothVerteces.Count - 2);
+            sb.End();
+            sb.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.AnisotropicClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+        }
+
         protected void DrawPart(Texture2D texture, Vector2 worldPos, Rectangle rect, Color color, Vector2 origin)
         {
             Main.spriteBatch.Draw(
@@ -718,6 +928,8 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                 0f
             );
         }
+
+        /* -------------------------- Other -------------------------- */
 
         public override bool OnTileCollide(Vector2 oldVelocity)
         {
@@ -868,14 +1080,6 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             hitCount++;
         }
 
-        protected Vector2 ConvertToWorldPos(Vector2 localPos)
-        {
-            return Projectile.Center + localPos.RotatedBy(Projectile.rotation) - Main.screenPosition;
-        }
 
-        protected Vector2 CenterMapping(Vector2 center, Vector2 offset, float rotation)
-        {
-            return center + offset.RotatedBy(rotation);
-        }
     }
 }
