@@ -24,6 +24,8 @@ namespace SummonerExpansionMod.Initialization
             // sentries
 			ModProjectileID.DarkMagicTower = ModContent.ProjectileType<DarkMagicTower>();
 			ModProjectileID.BunnySentry = ModContent.ProjectileType<BunnySentry>();
+			ModProjectileID.HoneyCombSentry = ModContent.ProjectileType<HoneyCombSentry>();
+			ModProjectileID.IchorPressorSentry = ModContent.ProjectileType<IchorPressorSentry>();
 			ModProjectileID.MachineGunSentry = ModContent.ProjectileType<MachineGunSentry>();
 			ModProjectileID.RocketSentry = ModContent.ProjectileType<RocketSentry>();
 			ModProjectileID.GatlingSentry = ModContent.ProjectileType<GatlingSentry>();

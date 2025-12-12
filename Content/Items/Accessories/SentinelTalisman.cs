@@ -4,6 +4,7 @@ using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Microsoft.Xna.Framework.Graphics;
 
 using SummonerExpansionMod.Content.Projectiles.Summon;
 using SummonerExpansionMod.Initialization;
@@ -13,11 +14,12 @@ namespace SummonerExpansionMod.Content.Items.Accessories
 {
     public class SentinelTalisman : ModItem
     {
-        public override string Texture => ModGlobal.MOD_TEXTURE_PATH + "Items/DummyStaff";
+        public override string Texture => ModGlobal.MOD_TEXTURE_PATH + "Items/SentinelTalisman-lv3";
         public override void SetDefaults()
         {
-			Item.width = 26;
-			Item.height = 30;
+            Texture2D texture = ModContent.Request<Texture2D>(Texture).Value;
+			Item.width = texture.Width;
+			Item.height = texture.Height;
 			Item.maxStack = 1;
 			Item.value = Item.sellPrice(gold: 5);
 			Item.accessory = true;

@@ -1,0 +1,285 @@
+using Microsoft.Xna.Framework;
+using System;
+using System.Collections.Generic;
+using Terraria;
+using Terraria.DataStructures;
+using Terraria.ID;
+using Terraria.ModLoader;
+using Terraria.Audio;
+
+using Microsoft.Xna.Framework.Graphics;
+using SummonerExpansionMod.Content.Buffs.Summon;
+using SummonerExpansionMod.ModUtils;
+using SummonerExpansionMod.Initialization;
+
+namespace SummonerExpansionMod.Content.Projectiles.Summon
+{
+    public class IchorPressorSentry : ModProjectile
+    {
+
+        private const int IDLE_STATE = 0;
+        private const int PRESS_STATE = 1;
+        private const int SHOOT_STATE = 2;
+        private const int RELEASE_STATE = 3;
+
+        private int shootTimer = 0;
+        private int shootAnimationTimer = -1;
+        private int PressorState = IDLE_STATE;
+
+        private bool isShooting = false;
+        private bool isOnSand = false;
+
+        private const int SHOOT_INTERVAL = 120;
+        private const int PRESS_TIME = 5;
+        private const int SHOOT_TIME = 6;
+        private const int RELEASE_TIME = 5;
+        private const int NORMAL_FRAME_SPEED = 20;
+        private const int SHOOT_FRAME_SPEED = 2;
+        private const int MAX_BULLET_NUM = 3;
+        private int shootInterval = SHOOT_INTERVAL;
+
+        public static float Gravity = ModGlobal.SENTRY_GRAVITY;
+        public static float MaxGravity = 20f;
+        private const float BULLET_SPEED = 30;
+        private const int FRAME_COUNT = 13;
+
+        private float direction = 0f;
+        private Vector2 lastTargetPos = Vector2.Zero;
+
+        public override string Texture => "SummonerExpansionMod/Assets/Textures/Projectiles/IchorPressorSentry";
+
+        public override void SetStaticDefaults()
+        {
+            ProjectileID.Sets.MinionSacrificable[Projectile.type] = true;
+            ProjectileID.Sets.MinionTargettingFeature[Projectile.type] = true;
+            Main.projFrames[Projectile.type] = FRAME_COUNT;
+        }
+
+        public override void SetDefaults()
+        {
+            Projectile.width = 60;
+            Projectile.height = 68;
+            Projectile.friendly = false;
+            Projectile.ignoreWater = true;
+            Projectile.tileCollide = true;
+            Projectile.penetrate = -1;
+            Projectile.sentry = true;
+            Projectile.aiStyle = -1;
+            Projectile.timeLeft = Projectile.SentryLifeTime;
+            Projectile.DamageType = DamageClass.Summon;
+            
+        }
+
+        public override void AI()
+        {
+            Player owner = Main.player[Projectile.owner];
+            
+            // apply gravity
+            Projectile.velocity.Y += Gravity;
+            if (Projectile.velocity.Y > MaxGravity)
+            {
+                Projectile.velocity.Y = MaxGravity;
+            }
+
+            // Targeting
+            NPC target = MinionAIHelper.SearchForTargets(
+                owner, 
+                Projectile, 
+                600f, 
+                false, 
+                null).TargetNPC;
+
+
+            Vector2 BulletOffset = new Vector2(23f, -25f);
+            if(target != null)
+            {
+                Vector2 PredictedPos = MinionAIHelper.PredictTargetPosition(Projectile.Center + BulletOffset, target.Center, target.velocity, BULLET_SPEED, 60, 3);
+                lastTargetPos = PredictedPos;
+            }
+            
+            direction = (lastTargetPos - Projectile.Center - BulletOffset).ToRotation();
+
+            switch (PressorState)
+            {
+                case IDLE_STATE:
+                {
+                    if(target != null && shootTimer == SHOOT_INTERVAL)
+                    {
+                        PressorState = PRESS_STATE;
+                        shootAnimationTimer = 0;
+                    }
+                } break;
+                case PRESS_STATE:
+                {
+                    if(shootAnimationTimer != -1)
+                    {
+                        shootAnimationTimer++;
+                    }
+                    if(shootAnimationTimer >= PRESS_TIME * SHOOT_FRAME_SPEED)
+                    {
+                        PressorState = SHOOT_STATE;
+                        shootAnimationTimer = 0;
+                    }
+                } break;
+                case SHOOT_STATE:
+                {
+                    if(shootAnimationTimer != -1)
+                    {
+                        shootAnimationTimer++;
+                    }
+                    if(shootAnimationTimer % (SHOOT_TIME * SHOOT_FRAME_SPEED / MAX_BULLET_NUM) == 0)
+                    {
+                        Projectile bullet = Projectile.NewProjectileDirect(
+                            Projectile.GetSource_FromThis(),
+                            Projectile.Center + BulletOffset,
+                            direction.ToRotationVector2() * BULLET_SPEED,
+                            ProjectileID.GoldenShowerFriendly,
+                            Projectile.damage,
+                            Projectile.knockBack,
+                            Projectile.owner);
+                        bullet.usesLocalNPCImmunity = true;
+                        bullet.localNPCHitCooldown = 10;
+                        ProjectileID.Sets.SentryShot[bullet.type] = true;
+                        // Projectile.usesIDStaticNPCImmunity = true;
+                        // Projectile.idStaticNPCHitCooldown = 20;
+                    }
+                    if(shootAnimationTimer >= SHOOT_TIME * SHOOT_FRAME_SPEED)
+                    {
+                        PressorState = RELEASE_STATE;
+                        shootAnimationTimer = 0;
+                    }
+                } break;
+                case RELEASE_STATE:
+                {
+                    if(shootAnimationTimer != -1)
+                    {
+                        shootAnimationTimer++;
+                    }
+                    if(shootAnimationTimer >= RELEASE_TIME * SHOOT_FRAME_SPEED)
+                    {
+                        PressorState = IDLE_STATE;
+                        shootAnimationTimer = -1;
+                        shootTimer = 0;
+                    }
+                } break;
+            }
+
+            // Main.NewText("PressorState: " + PressorState);
+
+            shootTimer++;
+            if(shootTimer >= shootInterval)
+                shootTimer = shootInterval;
+
+            // Animation
+            UpdateAnimation(target);
+        }
+
+        private void UpdateAnimation(NPC target)
+        {
+            Projectile.frameCounter++;
+            switch (PressorState)
+            {
+                case IDLE_STATE:
+                {
+                    if (Projectile.frameCounter > NORMAL_FRAME_SPEED)
+                    {
+                        Projectile.frameCounter = 0;
+                    }
+                    Projectile.frame += (int)(Projectile.frameCounter / NORMAL_FRAME_SPEED);
+                    if (Projectile.frame >= 2)
+                    {
+                        Projectile.frame = 0;
+                    }
+                } break;
+                case PRESS_STATE:
+                {
+                    if (Projectile.frameCounter > SHOOT_FRAME_SPEED)
+                    {
+                        Projectile.frameCounter = 0;
+                    }
+                    Projectile.frame += (int)(Projectile.frameCounter / SHOOT_FRAME_SPEED);
+                    Projectile.frame = (int)MathHelper.Clamp(Projectile.frame, 1, 6);
+                } break;
+                case SHOOT_STATE:
+                {
+                    Projectile.frame = 7;
+                } break;
+                case RELEASE_STATE:
+                {
+                    if (Projectile.frameCounter > SHOOT_FRAME_SPEED)
+                    {
+                        Projectile.frameCounter = 0;
+                    }
+                    Projectile.frame += (int)(Projectile.frameCounter / SHOOT_FRAME_SPEED);
+                    Projectile.frame = (int)MathHelper.Clamp(Projectile.frame, 7, 11);
+                } break;
+            }
+
+            // Main.NewText("frame: " + Projectile.frame + " frameCounter: " + Projectile.frameCounter);
+
+        }
+
+        public override bool PreDraw(ref Color lightColor)
+        {
+            Texture2D texture = ModContent.Request<Texture2D>(Texture).Value;
+            int width = texture.Width;
+            int FrameHeight = Projectile.height;
+            int CurrentFrameHeight = texture.Height / FRAME_COUNT * Projectile.frame;
+
+            // draw the base part
+            Rectangle BaseRect = new Rectangle(0, CurrentFrameHeight, width, FrameHeight);
+            Vector2 BaseWorldPos = MinionAIHelper.ConvertToWorldPos(Projectile, new Vector2(0f, CurrentFrameHeight));
+            Vector2 BaseOrigin = new Vector2(width / 2f, CurrentFrameHeight + FrameHeight / 2f);
+            MinionAIHelper.DrawPart(
+                Projectile,
+                texture,
+                BaseWorldPos,
+                BaseRect,
+                lightColor,
+                Projectile.rotation,
+                BaseOrigin
+            );
+
+            // draw the tip part
+            int TipTextureHeight = texture.Height / FRAME_COUNT * (FRAME_COUNT - 1);
+            int TipWidth = 6;
+            int TipHeight = 10;
+            Rectangle TipRect = new Rectangle(0, TipTextureHeight, TipWidth, TipHeight);
+            Vector2 TipWorldPos = MinionAIHelper.ConvertToWorldPos(Projectile, new Vector2(23f, -25f));
+            Vector2 TipOrigin = new Vector2(3f, 3f);
+            MinionAIHelper.DrawPart(
+                Projectile,
+                texture,
+                TipWorldPos,
+                TipRect,
+                lightColor,
+                direction - ModGlobal.PI_FLOAT/2f,
+                TipOrigin
+            );
+
+            return false;
+        }
+
+        public override bool OnTileCollide(Vector2 oldVelocity)
+        {
+            // set velocity to 0
+            // Projectile.velocity = Vector2.Zero;
+            Projectile.velocity.X = 0f;
+
+            return false;
+        }
+
+        public override bool TileCollideStyle(ref int width, ref int height, ref bool fallThrough, ref Vector2 hitboxCenterFrac)
+        {
+            fallThrough = false;
+            return true;
+        }
+
+        public override bool MinionContactDamage()
+		{
+			return false;
+		}
+
+
+    }
+}

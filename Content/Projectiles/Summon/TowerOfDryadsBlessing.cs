@@ -48,8 +48,8 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 
         public override void SetDefaults()
         {
-            Projectile.width = 45;
-            Projectile.height = 43;
+            Projectile.width = 34;
+            Projectile.height = 46;
             Projectile.friendly = false;
             Projectile.sentry = true;
             Projectile.penetrate = -1;

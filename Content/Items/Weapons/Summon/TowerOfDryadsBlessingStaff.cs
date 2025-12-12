@@ -12,7 +12,7 @@ namespace SummonerExpansionMod.Content.Items.Weapons.Summon
 {
     public class TowerOfDryadsBlessingStaff : ModItem
     {
-        public override string Texture => ModGlobal.MOD_TEXTURE_PATH + "Items/DummyStaff";
+        public override string Texture => ModGlobal.MOD_TEXTURE_PATH + "Items/TowerOfDryadsBlessingStaff";
         public override void SetStaticDefaults()
         {
             ItemID.Sets.GamepadWholeScreenUseRange[Item.type] = true; // This lets the player target anywhere on the whole screen while using a controller
