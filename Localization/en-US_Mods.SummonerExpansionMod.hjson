@@ -326,6 +326,14 @@ Projectiles: {
 	OneTrueFlagDrone.DisplayName: One True Flag Drone
 	OneTrueFlagAnchor.DisplayName: One True Flag Anchor
 	IchorPressorSentry.DisplayName: Ichor Pressor Sentry
+	BunnySentryBullet.DisplayName: Bunny Sentry Bullet
+	HoneyCombSentryGiantBullet.DisplayName: Honey Comb Sentry Giant Bullet
+	AutocannonSentryBulletClone.DisplayName: Autocannon Sentry Bullet Clone
+	BunnySentryBulletClone.DisplayName: Bunny Sentry Bullet Clone
+	HoneyCombSentryBulletClone.DisplayName: Honey Comb Sentry Bullet Clone
+	MachineGunSentryBulletClone.DisplayName: Machine Gun Sentry Bullet Clone
+	TempleSentryEyeBeamBullet.DisplayName: Temple Sentry Eye Beam Bullet
+	IchorPressorSentryBullet.DisplayName: Ichor Pressor Sentry Bullet
 }
 
 NPCs.CursorTargetDummy.DisplayName: Cursor Target Dummy

@@ -129,14 +129,14 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                             Projectile.GetSource_FromAI(),
                             Projectile.Center,
                             Velocity,
-                            // ModProjectileID.HoneyCombSentryBullet,
-                            ProjectileID.Bee,
+                            ModProjectileID.HoneyCombSentryBullet,
+                            // ProjectileID.Bee,
                             Projectile.damage,
                             0,
                             Projectile.owner);
 
-                        bee.DamageType = DamageClass.Summon;
-                        ProjectileID.Sets.SentryShot[bee.type] = true;
+                        // bee.DamageType = DamageClass.Summon;
+                        // ProjectileID.Sets.SentryShot[bee.type] = true;
 
                         SoundEngine.PlaySound(SoundID.Item109, Projectile.Center);
                     }
@@ -152,13 +152,13 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                                 Projectile.GetSource_FromAI(),
                                 Projectile.Center,
                                 BaseVel.RotatedBy(dir),
-                                ProjectileID.GiantBee,
+                                ModProjectileID.HoneyCombSentryGiantBullet,
                                 Projectile.damage,
                                 0.5f,
                                 Projectile.owner);
 
-                            bee.DamageType = DamageClass.Summon;
-                            ProjectileID.Sets.SentryShot[bee.type] = true;
+                            // bee.DamageType = DamageClass.Summon;
+                            // ProjectileID.Sets.SentryShot[bee.type] = true;
                         }
                     }
 

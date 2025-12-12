@@ -101,13 +101,13 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                         Projectile.GetSource_FromAI(),
                         Projectile.Center + bulletOffset,
                         direction,
-                        ProjectileID.Seed,
+                        ModProjectileID.BunnySentryBullet,
                         Projectile.damage,
                         0,
                         Projectile.owner);
 
-                    seed.DamageType = DamageClass.Summon;
-                    ProjectileID.Sets.SentryShot[seed.type] = true;
+                    // seed.DamageType = DamageClass.Summon;
+                    // ProjectileID.Sets.SentryShot[seed.type] = true;
                     // Main.NewText("Damage: " + Projectile.damage + "Seed Damage: " + seed.damage);
 
                     shootTimer = 0; // Reset shoot animation

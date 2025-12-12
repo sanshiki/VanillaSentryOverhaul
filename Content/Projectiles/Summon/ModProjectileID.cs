@@ -14,17 +14,21 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         public static int TempleSentry;
 
         // sentry projectiles
+        public static int BunnySentryBullet;
         public static int AntlionSentryBullet;
         public static int TowerOfDryadsBlessingProjectile;
         public static int MachineGunSentryBullet;
         public static int HoneyCombSentryBullet;
+        public static int HoneyCombSentryGiantBullet;
         public static int DarkMagicTowerBullet;
+        public static int IchorPressorSentryBullet;
         public static int CursedMagicTowerBullet;
         public static int CursedMagicTowerBulletSmall;
         public static int CursedMagicTowerBulletSphere;
         public static int RocketSentryBullet;
         public static int AutocannonSentryBullet;
         public static int TempleSentryHeatRay;
+        public static int TempleSentryEyeBeamBullet;
         public static int StardustSentrySignal;
         public static int StardustSentryBullet;
         // minion

@@ -232,18 +232,19 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                 Projectile.GetSource_FromAI(),
                 ShootCenter,
                 direction,
-                ProjectileID.EyeBeam,
+                ModProjectileID.TempleSentryEyeBeamBullet,
+                // ProjectileID.EyeBeam,
                 Projectile.damage,
                 Projectile.knockBack,
                 Projectile.owner);
 
-            beam.DamageType = DamageClass.Summon;
-            beam.friendly = true;
-            beam.hostile = false;
-            beam.tileCollide = true;
-            beam.usesLocalNPCImmunity = true;
-            beam.localNPCHitCooldown = 20;
-            ProjectileID.Sets.SentryShot[beam.type] = true;
+            // beam.DamageType = DamageClass.Summon;
+            // beam.friendly = true;
+            // beam.hostile = false;
+            // beam.tileCollide = true;
+            // beam.usesLocalNPCImmunity = true;
+            // beam.localNPCHitCooldown = 20;
+            // ProjectileID.Sets.SentryShot[beam.type] = true;
         }
 
         private void ShootHeatRay(NPC target, Vector2 ShootCenter)

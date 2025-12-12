@@ -167,8 +167,8 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                         Projectile.GetSource_FromAI(),
                         Projectile.Center + bulletOffset,
                         bulletVelocity,
-                        // ModProjectileID.MachineGunSentryBullet,
-                        ProjectileID.Bullet,
+                        ModProjectileID.MachineGunSentryBullet,
+                        // ProjectileID.Bullet,
                         Projectile.damage,
                         0,
                         Projectile.owner);

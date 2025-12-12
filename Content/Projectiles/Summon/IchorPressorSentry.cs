@@ -133,13 +133,14 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                             Projectile.GetSource_FromThis(),
                             Projectile.Center + BulletOffset,
                             direction.ToRotationVector2() * BULLET_SPEED,
-                            ProjectileID.GoldenShowerFriendly,
+                            ModProjectileID.IchorPressorSentryBullet,
+                            // ProjectileID.GoldenShowerFriendly,
                             Projectile.damage,
                             Projectile.knockBack,
                             Projectile.owner);
-                        bullet.usesLocalNPCImmunity = true;
-                        bullet.localNPCHitCooldown = 10;
-                        ProjectileID.Sets.SentryShot[bullet.type] = true;
+                        // bullet.usesLocalNPCImmunity = true;
+                        // bullet.localNPCHitCooldown = 10;
+                        // ProjectileID.Sets.SentryShot[bullet.type] = true;
                         // Projectile.usesIDStaticNPCImmunity = true;
                         // Projectile.idStaticNPCHitCooldown = 20;
                     }
