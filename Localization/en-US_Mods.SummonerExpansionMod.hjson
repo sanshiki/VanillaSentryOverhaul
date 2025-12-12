@@ -38,6 +38,66 @@ Buffs: {
 		DisplayName: Electric Boost Buff
 		Description: Mods.SummonerExpansionMod.Buffs.ElectricBoostBuff.Description
 	}
+
+	GoblinFlagBuff: {
+		DisplayName: Goblin Flag Buff
+		Description: Mods.SummonerExpansionMod.Buffs.GoblinFlagBuff.Description
+	}
+
+	HellFlagBuff: {
+		DisplayName: Hell Flag Buff
+		Description: Mods.SummonerExpansionMod.Buffs.HellFlagBuff.Description
+	}
+
+	HolyFlagBuff: {
+		DisplayName: Holy Flag Buff
+		Description: Mods.SummonerExpansionMod.Buffs.HolyFlagBuff.Description
+	}
+
+	NormalFlagBuff: {
+		DisplayName: Normal Flag Buff
+		Description: Mods.SummonerExpansionMod.Buffs.NormalFlagBuff.Description
+	}
+
+	PirateFlagBuff: {
+		DisplayName: Pirate Flag Buff
+		Description: Mods.SummonerExpansionMod.Buffs.PirateFlagBuff.Description
+	}
+
+	PirateFlagDebuff: {
+		DisplayName: Pirate Flag Debuff
+		Description: Mods.SummonerExpansionMod.Buffs.PirateFlagDebuff.Description
+	}
+
+	OneTrueFlagBuff: {
+		DisplayName: One True Flag Buff
+		Description: Mods.SummonerExpansionMod.Buffs.OneTrueFlagBuff.Description
+	}
+
+	SantaFlagBuff: {
+		DisplayName: Santa Flag Buff
+		Description: Mods.SummonerExpansionMod.Buffs.SantaFlagBuff.Description
+	}
+
+	TikiFlagBuff: {
+		DisplayName: Tiki Flag Buff
+		Description: Mods.SummonerExpansionMod.Buffs.TikiFlagBuff.Description
+	}
+
+	SantaFlagDebuff: {
+		DisplayName: Santa Flag Debuff
+		Description: Mods.SummonerExpansionMod.Buffs.SantaFlagDebuff.Description
+	}
+
+	TikiFlagDebuff: {
+		DisplayName: Tiki Flag Debuff
+		Description: Mods.SummonerExpansionMod.Buffs.TikiFlagDebuff.Description
+	}
+
+	OneTrueFlagDebuff: {
+		DisplayName: One True Flag Debuff
+		Description: Mods.SummonerExpansionMod.Buffs.OneTrueFlagDebuff.Description
+	}
 }
 
 Items: {
@@ -145,6 +205,71 @@ Items: {
 		DisplayName: Vertex Test
 		Tooltip: ""
 	}
+
+	PirateFlag: {
+		DisplayName: Pirate Flag
+		Tooltip: ""
+	}
+
+	TempleSentryStaff: {
+		DisplayName: Temple Sentry Staff
+		Tooltip: ""
+	}
+
+	StardustSentryStaff: {
+		DisplayName: Stardust Sentry Staff
+		Tooltip: ""
+	}
+
+	NormalFlag: {
+		DisplayName: Normal Flag
+		Tooltip: ""
+	}
+
+	GoblinFlag: {
+		DisplayName: Goblin Flag
+		Tooltip: ""
+	}
+
+	HellFlag: {
+		DisplayName: Hell Flag
+		Tooltip: ""
+	}
+
+	HolyFlag: {
+		DisplayName: Holy Flag
+		Tooltip: ""
+	}
+
+	ExampleSword: {
+		DisplayName: Example Sword
+		Tooltip: ""
+	}
+
+	OneTrueFlag: {
+		DisplayName: One True Flag
+		Tooltip: ""
+	}
+
+	SantaFlag: {
+		DisplayName: Santa Flag
+		Tooltip: ""
+	}
+
+	TikiFlag: {
+		DisplayName: Tiki Flag
+		Tooltip: ""
+	}
+
+	SentinelTalisman: {
+		DisplayName: Sentinel Talisman
+		Tooltip: ""
+	}
+
+	IchorPressorStaff: {
+		DisplayName: Ichor Pressor Staff
+		Tooltip: ""
+	}
 }
 
 Projectiles: {
@@ -181,6 +306,26 @@ Projectiles: {
 	AutocannonSentry.DisplayName: Autocannon Sentry
 	AutocannonSentryBullet.DisplayName: Autocannon Sentry Bullet
 	VertexTestProj.DisplayName: Vertex Test Proj
+	PirateFlagProjectile.DisplayName: Pirate Flag Projectile
+	TempleSentry.DisplayName: Temple Sentry
+	TempleSentryHeatRay.DisplayName: Temple Sentry Heat Ray
+	StardustSentry.DisplayName: Stardust Sentry
+	StardustSentrySignal.DisplayName: Stardust Sentry Signal
+	StardustSentryBullet.DisplayName: Stardust Sentry Bullet
+	NormalFlagProjectile.DisplayName: Normal Flag Projectile
+	GoblinFlagProjectile.DisplayName: Goblin Flag Projectile
+	HellFlagProjectile.DisplayName: Hell Flag Projectile
+	HolyFlagProjectile.DisplayName: Holy Flag Projectile
+	OneTrueFlagProjectile.DisplayName: One True Flag Projectile
+	SantaFlagProjectile.DisplayName: Santa Flag Projectile
+	TikiFlagProjectile.DisplayName: Tiki Flag Projectile
+	FlagBladeShot.DisplayName: Flag Blade Shot
+	TikiFlagBladeShot.DisplayName: Tiki Flag Blade Shot
+	SantaFlagBladeShot.DisplayName: Santa Flag Blade Shot
+	OneTrueFlagBladeShot.DisplayName: One True Flag Blade Shot
+	OneTrueFlagDrone.DisplayName: One True Flag Drone
+	OneTrueFlagAnchor.DisplayName: One True Flag Anchor
+	IchorPressorSentry.DisplayName: Ichor Pressor Sentry
 }
 
 NPCs.CursorTargetDummy.DisplayName: Cursor Target Dummy
