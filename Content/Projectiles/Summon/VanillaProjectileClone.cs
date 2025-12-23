@@ -134,6 +134,28 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         }
     }
 
+    public class CursedFireExtractorSentryBullet : ClonedSentryProjectile
+    {
+        public override int BaseProjectileID => ProjectileID.CursedFlameFriendly;
+
+        public override string TexturePath => "Terraria/Images/Projectile_" + ProjectileID.CursedFlameFriendly;
+
+        public override void SetDefaults()
+        {
+            base.SetDefaults();
+            Projectile.usesLocalNPCImmunity = true;
+            Projectile.localNPCHitCooldown = 10;
+            Projectile.penetrate = 3;
+            // Projectile.tileCollide = true;
+        }
+
+        public override bool OnTileCollide(Vector2 oldVelocity)
+        {
+            Projectile.Kill();
+            return false;
+        }
+    }
+
     public class TempleSentryEyeBeamBullet : ClonedSentryProjectile
     {
         public override int BaseProjectileID => ProjectileID.EyeBeam;
