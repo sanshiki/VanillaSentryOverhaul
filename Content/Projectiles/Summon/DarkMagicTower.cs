@@ -138,11 +138,6 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                 Projectile.knockBack,
                 Projectile.owner
             );
-            proj.penetrate = 10; 
-            proj.usesLocalNPCImmunity = true;
-            proj.localNPCHitCooldown = 60;
-            proj.DamageType = DamageClass.Summon;
-            ProjectileID.Sets.SentryShot[proj.type] = true;
 
             SoundEngine.PlaySound(SoundID.Item43, Projectile.Center);
         }

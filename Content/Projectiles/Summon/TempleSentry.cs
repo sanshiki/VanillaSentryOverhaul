@@ -49,6 +49,10 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 
         private const string HEATRAY_TEXTURE = ModGlobal.MOD_TEXTURE_PATH + "Projectiles/TempleSentryHeatRay";
 
+        private const string CORE_TEXTURE = ModGlobal.MOD_TEXTURE_PATH + "Projectiles/TempleSentryCore";
+
+        private int CoreLightCnt = 30;
+
         public override void SetStaticDefaults()
         {
             ProjectileID.Sets.MinionSacrificable[Projectile.type] = true;
@@ -293,17 +297,47 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             return false;
         }
 
-        // public override bool PreDraw(ref Color lightColor)
-        // {
-        //     // draw heatray
-        //     if(hasTarget && State == HEATRAY_STATE)
-        //     {
-                
-        //     }
+        public override bool PreDraw(ref Color lightColor)
+        {
+            // draw sentry
+            Texture2D texture = ModContent.Request<Texture2D>(Texture).Value;
+            int width = texture.Width;
+            int height = texture.Height;
+            Rectangle rect = new Rectangle(0, 0, width, height);
+            Vector2 worldPos = MinionAIHelper.ConvertToWorldPos(Projectile, new Vector2(0, 0));
+            Vector2 origin = new Vector2(width / 2, height / 2);
+            MinionAIHelper.DrawPart(Projectile, texture, worldPos, rect, lightColor, Projectile.rotation, origin);
 
+            // draw core
+            Texture2D coreTexture = ModContent.Request<Texture2D>(CORE_TEXTURE).Value;
+            int coreWidth = coreTexture.Width;
+            int coreHeight = coreTexture.Height;
+            Rectangle coreRect = new Rectangle(0, 0, coreWidth, coreHeight);
+            Vector2 coreWorldPos = MinionAIHelper.ConvertToWorldPos(Projectile, new Vector2(0, 0));
+            Vector2 coreOrigin = new Vector2(coreWidth / 2, coreHeight / 2);
+            Color coreColor = lightColor;
+            if(State == EYEBEAM_STATE)
+            {
+                coreColor = Color.Lerp(lightColor, Color.White, (float)chargeCnt / EYEBEAM_MAX_CHARGE_NUM);
+            }
+            else if(State == HEATRAY_STATE)
+            {
+                coreColor = Color.White;
+                CoreLightCnt = 30;
+            }
+            else if(State == REST_STATE)
+            {
+                coreColor = Color.Lerp(lightColor, Color.White, (float)CoreLightCnt / 30f);
+                CoreLightCnt--;
+                if(CoreLightCnt <= 0)
+                {
+                    CoreLightCnt = 0;
+                }
+            }
+            MinionAIHelper.DrawPart(Projectile, coreTexture, coreWorldPos, coreRect, coreColor, Projectile.rotation, coreOrigin);
 
-        //     return true;
-        // }
+            return false;
+        }
 
 
     }

@@ -12,9 +12,9 @@ using SummonerExpansionMod.ModUtils;
 
 namespace SummonerExpansionMod.Content.Items.Accessories
 {
-    public class SentinelTalisman : ModItem
+    public class SentinelTalismanLv2 : ModItem
     {
-        public override string Texture => ModGlobal.MOD_TEXTURE_PATH + "Items/SentinelTalisman-lv3";
+        public override string Texture => ModGlobal.MOD_TEXTURE_PATH + "Items/SentinelTalismanLv2";
         public override void SetDefaults()
         {
             Texture2D texture = ModContent.Request<Texture2D>(Texture).Value;
@@ -49,11 +49,11 @@ namespace SummonerExpansionMod.Content.Items.Accessories
 
             //     player.statDefense += bonusDefense;
             // }
-            player.GetModPlayer<SentinelTalismanPlayer>().hasAccessory = true;
+            player.GetModPlayer<SentinelTalismanLv2Player>().hasAccessory = true;
         }
     }
 
-    public class SentinelTalismanPlayer : ModPlayer
+    public class SentinelTalismanLv2Player : ModPlayer
     {
         public bool hasAccessory = false;
 
@@ -76,7 +76,7 @@ namespace SummonerExpansionMod.Content.Items.Accessories
                     }
                 }
 
-                int bonusDefense = MinionAIHelper.DefenseCompensate(armorDefense, 100, 0.5f, 26f, 15f);
+                int bonusDefense = MinionAIHelper.DefenseCompensate(armorDefense, 45, 0.5f, 40f, 40f);
 
                 Player.statDefense += bonusDefense;
             }

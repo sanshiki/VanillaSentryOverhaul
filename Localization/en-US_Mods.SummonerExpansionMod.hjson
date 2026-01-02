@@ -270,6 +270,36 @@ Items: {
 		DisplayName: Ichor Pressor Staff
 		Tooltip: ""
 	}
+
+	CursedFireExtractorStaff: {
+		DisplayName: Cursed Fire Extractor Staff
+		Tooltip: ""
+	}
+
+	MothronQueenTurretStaffStaff: {
+		DisplayName: Mothron Queen Turret Staff Staff
+		Tooltip: ""
+	}
+
+	SandustSentryStaff: {
+		DisplayName: Sandust Sentry Staff
+		Tooltip: ""
+	}
+
+	SentinelTalismanLv1: {
+		DisplayName: Sentinel Talisman Lv1
+		Tooltip: ""
+	}
+
+	SentinelTalismanLv2: {
+		DisplayName: Sentinel Talisman Lv2
+		Tooltip: ""
+	}
+
+	SentinelTalismanLv3: {
+		DisplayName: Sentinel Talisman Lv3
+		Tooltip: ""
+	}
 }
 
 Projectiles: {
@@ -334,6 +364,15 @@ Projectiles: {
 	MachineGunSentryBulletClone.DisplayName: Machine Gun Sentry Bullet Clone
 	TempleSentryEyeBeamBullet.DisplayName: Temple Sentry Eye Beam Bullet
 	IchorPressorSentryBullet.DisplayName: Ichor Pressor Sentry Bullet
+	CursedFireExtractorSentry.DisplayName: Cursed Fire Extractor Sentry
+	CursedFireExtractorSentryBullet.DisplayName: Cursed Fire Extractor Sentry Bullet
+	MothronQueenTurret.DisplayName: Mothron Queen Turret
+	MothronQueenTurretBullet.DisplayName: Mothron Queen Turret Bullet
+	MothronBabyFriendly.DisplayName: Mothron Baby Friendly
+	SandustSentry.DisplayName: Sandust Sentry
+	SandustSentryBullet.DisplayName: Sandust Sentry Bullet
+	SandustSentrySandadoFriendly.DisplayName: Sandust Sentry Sandado Friendly
+	SandustSentrySandnadoFriendly.DisplayName: Sandust Sentry Sandnado Friendly
 }
 
 NPCs.CursorTargetDummy.DisplayName: Cursor Target Dummy

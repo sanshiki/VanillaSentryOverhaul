@@ -113,6 +113,15 @@ namespace SummonerExpansionMod.Content.Items.Weapons.Summon
             return projectile;
         }
 
+        protected void ResetFlagProjectile()
+        {
+            if(FlagProjectile != null && FlagProjectile.active && FlagProjectile.type == MOD_PROJECTILE_ID)
+            {
+                FlagProjectile.Kill();
+                FlagProjectile = null;
+            }
+        }
+
         public override void HoldItem(Player player)
         {
             bool state_debug = DynamicParamManager.Get("State Debug").value > 0.5f;
@@ -137,7 +146,12 @@ namespace SummonerExpansionMod.Content.Items.Weapons.Summon
                         StateStr = "RECALL";
                         break;
                 }
-                Main.NewText("State: " + StateStr);
+                float distance = FlagProjectile != null && FlagProjectile.active ? Vector2.Distance(player.Center, FlagProjectile.Center) : 0f;
+                Main.NewText("State: " + StateStr + " Distance: " + distance);
+                if(FlagProjectile != null && FlagProjectile.active)
+                {
+                    Dust.QuickDustLine(player.Center, FlagProjectile.Center, 10f, Color.White);
+                }
             }
             if (player.controlUseTile) // right-click
             {
@@ -153,11 +167,7 @@ namespace SummonerExpansionMod.Content.Items.Weapons.Summon
                         if(!IsRightPressed)
                         {
                             // Main.NewText("Raising");
-                            if(FlagProjectile != null && FlagProjectile.active)
-                            {
-                                FlagProjectile.Kill();
-                                FlagProjectile = null;
-                            }
+                            ResetFlagProjectile();
                             
                             FlagProjectile = GenerateFlagProjectile(player, player.GetSource_ItemUse(Item), player.Center, Vector2.Zero, MOD_PROJECTILE_ID, Item.damage, Item.knockBack);
                             // if (FlagProjectile.ModProjectile is FlagProjectile flagPole)
@@ -173,11 +183,7 @@ namespace SummonerExpansionMod.Content.Items.Weapons.Summon
                     } break;
                     case WAVE_STATE:    // kill flag projectile in waving state when right key pressed
                     {
-                        if (FlagProjectile != null && FlagProjectile.active)
-                        {
-                            FlagProjectile.Kill();
-                            FlagProjectile = null;
-                        }
+                        ResetFlagProjectile();
 
                         goto case IDLE_STATE;
                     }
@@ -218,7 +224,7 @@ namespace SummonerExpansionMod.Content.Items.Weapons.Summon
                         Item.autoReuse = true;
                         IsRightPressed = false;
                         RaiseTimer = 0;
-                        if (FlagProjectile == null || (FlagProjectile != null && !FlagProjectile.active))
+                        if (FlagProjectile == null || (FlagProjectile != null && !FlagProjectile.active) || FlagProjectile.type != MOD_PROJECTILE_ID)
                         {
                             FlagProjectile = null;
                             State = IDLE_STATE;
@@ -263,11 +269,7 @@ namespace SummonerExpansionMod.Content.Items.Weapons.Summon
                     if (State != PLANT_STATE && State != RECALL_STATE && State != WAVE_STATE)
                     {
                         State = IDLE_STATE;
-                        if(FlagProjectile != null && FlagProjectile.active)
-                        {
-                            FlagProjectile.Kill();
-                            FlagProjectile = null;
-                        }
+                        ResetFlagProjectile();
                     }
                 }
                 
@@ -276,7 +278,7 @@ namespace SummonerExpansionMod.Content.Items.Weapons.Summon
                 Item.autoReuse = true;
                 IsRightPressed = false;
                 RaiseTimer = 0;
-                if (FlagProjectile == null || (FlagProjectile != null && !FlagProjectile.active))
+                if (FlagProjectile == null || (FlagProjectile != null && !FlagProjectile.active) || FlagProjectile.type != MOD_PROJECTILE_ID)
                 {
                     FlagProjectile = null;
                     State = IDLE_STATE;

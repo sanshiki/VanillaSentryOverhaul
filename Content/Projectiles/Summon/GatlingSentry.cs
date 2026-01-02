@@ -162,15 +162,16 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                         bulletVelocity,
                         // ModProjectileID.GatlingSentryBullet,
                         // ProjectileID.BulletHighVelocity,
-                        ProjectileID.Bullet,
+                        // ProjectileID.Bullet,
+                        ModProjectileID.MachineGunSentryBullet,
                         Projectile.damage,
                         0,
                         Projectile.owner);
 
-                    bullet.DamageType = DamageClass.Summon;
-                    bullet.friendly = true;
-                    bullet.hostile = true;
-                    ProjectileID.Sets.SentryShot[bullet.type] = true;
+                    // bullet.DamageType = DamageClass.Summon;
+                    // bullet.friendly = true;
+                    // bullet.hostile = true;
+                    // ProjectileID.Sets.SentryShot[bullet.type] = true;
                     // bullet.penetrate = 1;
                     // Main.NewText("Damage: " + Projectile.damage + "Bullet Damage: " + bullet.damage);
 

@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using SummonerExpansionMod.Initialization;
 using Terraria.ID;
 using System.Linq;
+using Terraria.WorldBuilding;
 
 
 namespace SummonerExpansionMod.ModUtils
@@ -144,7 +145,8 @@ namespace SummonerExpansionMod.ModUtils
 		public static TargetSearchResult SearchForTargets(Player owner, Projectile minion, 
 			float searchRange = DEFAULT_TARGET_SEARCH_RANGE, 
 			bool checkCanHit = true,
-			Func<NPC, bool> otherCondition = null)
+			Func<NPC, bool> otherCondition = null,
+			bool checkAttackTarget = true)
 		{
 			float distanceFromTarget = searchRange;
 			Vector2 targetCenter = minion.position;
@@ -152,7 +154,7 @@ namespace SummonerExpansionMod.ModUtils
 			NPC targetNPC = null;
 
 			// 检查玩家指定的目标
-			if (owner.HasMinionAttackTargetNPC)
+			if (checkAttackTarget && owner.HasMinionAttackTargetNPC)
 			{
 				NPC npc = Main.npc[owner.MinionAttackTargetNPC];
 				float distance = Vector2.Distance(npc.Center, minion.Center);
@@ -311,6 +313,13 @@ namespace SummonerExpansionMod.ModUtils
 			return center;
         }
 
+		public static Vector2? SearchSpawnPoint(Vector2 start, int projectileWidth, int projectileHeight)
+		{
+			// 使用 GenSearch 向下搜索地面
+			Point? found = Searches.Chain(new Searches.Down(100), new Conditions.NotNull(), new Conditions.IsSolid()).Find(start.ToTileCoordinates());
+			return found.HasValue ? found.Value.ToWorldCoordinates(0f, 0f) - new Vector2(projectileWidth / 2f, projectileHeight / 2f) : null;
+		}
+
 		/// <summary>
 		/// 更新召唤物的友好状态
 		/// </summary>
@@ -445,6 +454,38 @@ namespace SummonerExpansionMod.ModUtils
 			}
 
 			return predictedPos;
+		}
+
+		public static Vector2 PredictVelocityWithGravity(Vector2 projectileCenter, Vector2 targetCenter, Vector2 targetVelocity, float bulletSpeedY, float gravity = 0.4f, int maxPredictionTicks = 60, int tickStep = 3)
+		{
+			Vector2 predictedVel = new Vector2(0, -bulletSpeedY);
+			for (int tick = 0; tick < maxPredictionTicks; tick += tickStep)
+			{
+				Vector2 targetPredictedPos = targetCenter + targetVelocity * tick;
+
+				Vector2 direction = targetPredictedPos - projectileCenter;
+
+				if(Collision.SolidCollision(targetPredictedPos, 1, 1)) continue;
+
+				float vy = bulletSpeedY;
+				float bullet_gravity = gravity;
+				float delta = Math.Max(0, vy * vy + 2 * bullet_gravity * direction.Y);
+				float pred_t1 = (vy + (float)Math.Sqrt(delta)) / bullet_gravity;
+				float pred_t2 = (vy - (float)Math.Sqrt(delta)) / bullet_gravity;
+				float bulletFlyTime = Math.Max(pred_t1, pred_t2);
+
+				// Main.NewText("Tick:" + tick.ToString() + " bulletFlyTime:" + bulletFlyTime.ToString());
+
+				float vx = direction.X / bulletFlyTime;
+				predictedVel = new Vector2(vx, -vy);
+
+				if (bulletFlyTime < tick)
+				{
+					break;
+				}
+			}
+
+			return predictedVel;
 		}
 
 		public static float PredictParabolaAngle(Projectile projectile, NPC target,float gravity, float bulletSpeed, int maxPredictionTicks = 60, int tickStep = 3)
@@ -801,6 +842,10 @@ namespace SummonerExpansionMod.ModUtils
 		public static float RandomSign()
 		{
 			return Main.rand.Next(2) == 1 ? 1 : -1;
+		}
+		public static int RandomInt(int min, int max)
+		{
+			return Main.rand.Next(min, max);
 		}
 		#endregion
 

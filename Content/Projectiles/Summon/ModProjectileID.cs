@@ -7,11 +7,14 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         public static int BunnySentry;
         public static int HoneyCombSentry;
         public static int IchorPressorSentry;
+        public static int CursedFireExtractorSentry;
+        public static int SandustSentry;
         public static int MachineGunSentry;
         public static int RocketSentry;
         public static int GatlingSentry;
         public static int AutocannonSentry;
         public static int TempleSentry;
+        public static int MothronQueenTurret;
 
         // sentry projectiles
         public static int BunnySentryBullet;
@@ -22,6 +25,9 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         public static int HoneyCombSentryGiantBullet;
         public static int DarkMagicTowerBullet;
         public static int IchorPressorSentryBullet;
+        public static int CursedFireExtractorSentryBullet;
+        public static int SandustSentryBullet;
+        public static int SandustSentrySandnadoFriendly;
         public static int CursedMagicTowerBullet;
         public static int CursedMagicTowerBulletSmall;
         public static int CursedMagicTowerBulletSphere;
@@ -29,6 +35,8 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         public static int AutocannonSentryBullet;
         public static int TempleSentryHeatRay;
         public static int TempleSentryEyeBeamBullet;
+        public static int MothronQueenTurretBullet;
+        public static int MothronBabyFriendly;
         public static int StardustSentrySignal;
         public static int StardustSentryBullet;
         // minion

@@ -26,12 +26,14 @@ namespace SummonerExpansionMod.Initialization
 			ModProjectileID.BunnySentry = ModContent.ProjectileType<BunnySentry>();
 			ModProjectileID.HoneyCombSentry = ModContent.ProjectileType<HoneyCombSentry>();
 			ModProjectileID.IchorPressorSentry = ModContent.ProjectileType<IchorPressorSentry>();
+			ModProjectileID.CursedFireExtractorSentry = ModContent.ProjectileType<CursedFireExtractorSentry>();
+			ModProjectileID.SandustSentry = ModContent.ProjectileType<SandustSentry>();
 			ModProjectileID.MachineGunSentry = ModContent.ProjectileType<MachineGunSentry>();
 			ModProjectileID.RocketSentry = ModContent.ProjectileType<RocketSentry>();
 			ModProjectileID.GatlingSentry = ModContent.ProjectileType<GatlingSentry>();
 			ModProjectileID.AutocannonSentry = ModContent.ProjectileType<AutocannonSentry>();
 			ModProjectileID.TempleSentry = ModContent.ProjectileType<TempleSentry>();
-
+			ModProjectileID.MothronQueenTurret = ModContent.ProjectileType<MothronQueenTurret>();
 			// sentry projectiles
 			ModProjectileID.BunnySentryBullet = ModContent.ProjectileType<BunnySentryBullet>();
 			ModProjectileID.AntlionSentryBullet = ModContent.ProjectileType<AntlionSentryBullet>();
@@ -41,6 +43,9 @@ namespace SummonerExpansionMod.Initialization
 			ModProjectileID.HoneyCombSentryGiantBullet = ModContent.ProjectileType<HoneyCombSentryGiantBullet>();
 			ModProjectileID.DarkMagicTowerBullet = ModContent.ProjectileType<DarkMagicTowerBullet>();
 			ModProjectileID.IchorPressorSentryBullet = ModContent.ProjectileType<IchorPressorSentryBullet>();
+			ModProjectileID.CursedFireExtractorSentryBullet = ModContent.ProjectileType<CursedFireExtractorSentryBullet>();
+			ModProjectileID.SandustSentryBullet = ModContent.ProjectileType<SandustSentryBullet>();
+			ModProjectileID.SandustSentrySandnadoFriendly = ModContent.ProjectileType<SandustSentrySandnadoFriendly>();
 			ModProjectileID.CursedMagicTowerBulletSmall = ModContent.ProjectileType<CursedMagicTowerBulletSmall>();
 			ModProjectileID.CursedMagicTowerBulletSphere = ModContent.ProjectileType<CursedMagicTowerBulletSphere>();
 			ModProjectileID.RocketSentryBullet = ModContent.ProjectileType<RocketSentryBullet>();
@@ -49,6 +54,8 @@ namespace SummonerExpansionMod.Initialization
 			ModProjectileID.StardustSentrySignal = ModContent.ProjectileType<StardustSentrySignal>();
 			ModProjectileID.StardustSentryBullet = ModContent.ProjectileType<StardustSentryBullet>();
 			ModProjectileID.TempleSentryEyeBeamBullet = ModContent.ProjectileType<TempleSentryEyeBeamBullet>();
+			ModProjectileID.MothronQueenTurretBullet = ModContent.ProjectileType<MothronQueenTurretBullet>();
+			ModProjectileID.MothronBabyFriendly = ModContent.ProjectileType<MothronBabyFriendly>();
 			// minion
 			ModProjectileID.SentryPlatform = ModContent.ProjectileType<SentryPlatform>();
 

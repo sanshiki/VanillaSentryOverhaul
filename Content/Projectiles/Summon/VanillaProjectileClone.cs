@@ -68,6 +68,12 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 
         public override string TexturePath => "Terraria/Images/Projectile_" + ProjectileID.Bullet;
 
+        public override void SetStaticDefaults()
+        {
+            base.SetStaticDefaults();
+            ProjectileID.Sets.SummonTagDamageMultiplier[Type] = 0.5f;
+        }
+
         public override void SetDefaults()
         {
             base.SetDefaults();
@@ -131,6 +137,11 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = 10;
             // Projectile.tileCollide = true;
+        }
+
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
+        {
+            target.AddBuff(BuffID.Ichor, 2*60);
         }
     }
 

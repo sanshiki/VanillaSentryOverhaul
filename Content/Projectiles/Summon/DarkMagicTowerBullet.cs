@@ -18,6 +18,11 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 
         private const int DUST_INTERVAL = 10;
 
+        public override void SetStaticDefaults()
+        {
+            ProjectileID.Sets.SentryShot[Projectile.type] = true;
+        }
+
         public override void SetDefaults()
         {
             Projectile.CloneDefaults(ProjectileID.SapphireBolt);
@@ -30,6 +35,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 
             Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = 60;
+            Projectile.penetrate = 3;
         }
 
         public override bool OnTileCollide(Vector2 oldVelocity)
@@ -51,6 +57,12 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             Vector2 position = Projectile.Center - Projectile.Size/2f;
             float ang_offset = MinionAIHelper.RandomFloat(-ModGlobal.PI_FLOAT/32f, ModGlobal.PI_FLOAT/32f);
             dust = Main.dust[Terraria.Dust.NewDust(position, Projectile.width, Projectile.height, 109, Projectile.velocity.X*0.3f, Projectile.velocity.Y*0.3f, 0, new Color(255,255,255), 1.4534883f)];
+            dust.noGravity = true;
+            dust.fadeIn = 1.4f;
+            dust.velocity = Projectile.velocity.RotatedBy(ang_offset) * 0.7f;
+
+            ang_offset = MinionAIHelper.RandomFloat(-ModGlobal.PI_FLOAT/32f, ModGlobal.PI_FLOAT/32f);
+            dust = Main.dust[Terraria.Dust.NewDust(position, Projectile.width, Projectile.height, 172, Projectile.velocity.X*0.3f, Projectile.velocity.Y*0.3f, 0, new Color(255,255,255), 1.0f)];
             dust.noGravity = true;
             dust.fadeIn = 1.4f;
             dust.velocity = Projectile.velocity.RotatedBy(ang_offset) * 0.7f;

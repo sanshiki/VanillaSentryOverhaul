@@ -11,9 +11,9 @@ using SummonerExpansionMod.Initialization;
 
 namespace SummonerExpansionMod.Content.Items.Weapons.Summon
 {
-    public class StardustSentryStaff : ModItem
+    public class CursedFireExtractorStaff : ModItem
     {
-        public override string Texture => ModGlobal.MOD_TEXTURE_PATH + "Items/StardustSentryStaff";
+        public override string Texture => ModGlobal.MOD_TEXTURE_PATH + "Items/CursedFireExtractorSentryStaff";
         public override void SetStaticDefaults()
         {
             ItemID.Sets.GamepadWholeScreenUseRange[Item.type] = true; // This lets the player target anywhere on the whole screen while using a controller
@@ -24,7 +24,7 @@ namespace SummonerExpansionMod.Content.Items.Weapons.Summon
 
         public override void SetDefaults()
         {
-            Item.damage = 175;
+            Item.damage = 25;
             Item.knockBack = 3f;
             Item.mana = 10; // mana cost
             Item.width = 32;
@@ -39,9 +39,9 @@ namespace SummonerExpansionMod.Content.Items.Weapons.Summon
             // These below are needed for a minion weapon
             Item.noMelee = true; // this item doesn't do any melee damage
             Item.DamageType = DamageClass.Summon; // Makes the damage register as summon. If your item does not have any damage type, it becomes true damage (which means that damage scalars will not affect it). Be sure to have a damage type
-            // Item.buffType = ModContent.BuffType<DarkMagicTowerBuff>();
+            // Item.buffType = ModContent.BuffType<BunnySentryBuff>();
             // No buffTime because otherwise the item tooltip would say something like "1 minute duration"
-            Item.shoot = ModContent.ProjectileType<StardustSentry>(); // This item creates the minion projectile
+            Item.shoot = ModContent.ProjectileType<CursedFireExtractorSentry>(); // This item creates the minion projectile
             // Item.shoot = ModContent.ProjectileType<BabySlimeOverride>();
         }
 
