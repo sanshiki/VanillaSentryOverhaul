@@ -15,6 +15,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
     public class StardustSentryBullet : ModProjectile
     {
         private string TEXTURE_PATH = "Terraria/Images/Projectile_" + ProjectileID.StardustJellyfishSmall;
+        private const string TRAIL_VERTEX_TEXTURE_PATH = ModGlobal.MOD_TEXTURE_PATH + "Vertexes/TriangleVertex";
         private string EXTRA_TEXURE_PATH = "Terraria/Images/Extra_46";
         private const int MAX_PENETRATE = 3;
         public override string Texture => TEXTURE_PATH;
@@ -24,6 +25,8 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         public override void SetStaticDefaults()
         {
             Main.projFrames[Projectile.type] = FRAME_COUNT;
+            ProjectileID.Sets.TrailCacheLength[Projectile.type] = 10;
+            ProjectileID.Sets.TrailingMode[Projectile.type] = 0;
         }
 
         public override void SetDefaults()
@@ -130,6 +133,15 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 
         public override bool PreDraw(ref Color lightColor)
         {
+            // 绘制顶点拖尾效果
+            MinionAIHelper.DrawVertexTrail(
+                Projectile,
+                TRAIL_VERTEX_TEXTURE_PATH,
+                new Color(70, 160, 255, 200),  // 起始颜色：亮蓝色
+                new Color(30, 80, 150, 0),     // 结束颜色：暗蓝色并透明
+                20f,                            // 起始宽度
+                20f                              // 结束宽度
+            );
             Texture2D extraTexture = ModContent.Request<Texture2D>(EXTRA_TEXURE_PATH).Value;
 
             Main.EntitySpriteDraw(

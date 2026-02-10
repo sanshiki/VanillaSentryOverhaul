@@ -8,6 +8,7 @@ using Terraria.ModLoader;
 using SummonerExpansionMod.Content.Projectiles.Summon;
 using SummonerExpansionMod.Content.Buffs.Summon;
 using SummonerExpansionMod.Initialization;
+using SummonerExpansionMod.ModUtils;
 namespace SummonerExpansionMod.Content.Items.Weapons.Summon
 {
     public class TowerOfDryadsBlessingStaff : ModItem
@@ -24,16 +25,16 @@ namespace SummonerExpansionMod.Content.Items.Weapons.Summon
         public override void SetDefaults()
         {
             Item.damage = 0;
-            Item.knockBack = 3f;
+            Item.knockBack = 0f;
             Item.mana = 10; // mana cost
             Item.width = 32;
             Item.height = 32;
             Item.useTime = 36;
             Item.useAnimation = 36;
             Item.useStyle = ItemUseStyleID.Swing; // how the player's arm moves when using the item
-            Item.value = Item.sellPrice(gold: 30);
-            Item.rare = ItemRarityID.Cyan;
-            Item.UseSound = SoundID.Item44; // What sound should play when using the item
+            Item.value = Item.sellPrice(gold: 1);
+            Item.rare = ItemRarityID.Green;
+            Item.UseSound = SoundID.Item25; // What sound should play when using the item
 
             // These below are needed for a minion weapon
             Item.noMelee = true; // this item doesn't do any melee damage
@@ -46,8 +47,9 @@ namespace SummonerExpansionMod.Content.Items.Weapons.Summon
 
         public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback)
         {
-            // Here you can change where the minion is spawned. Most vanilla minions spawn at the cursor position
-            position = Main.MouseWorld;
+            Projectile projTemplate = ProjectileLoader.GetProjectile(type).Projectile;
+            Vector2? result = MinionAIHelper.SearchSpawnPoint(Main.MouseWorld, projTemplate.width, projTemplate.height);
+            position = result ?? Main.MouseWorld;
         }
 
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)

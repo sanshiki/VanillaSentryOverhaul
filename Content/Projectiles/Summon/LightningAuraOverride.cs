@@ -16,7 +16,45 @@ using Terraria.Audio;
 
 namespace SummonerExpansionMod.Content.Projectiles.Summon
 {
-    public class LightningAuraOverride : IProjectileOverride
+	public class LightningAuraOverride : IProjectileOverride
+	{
+		private Vector2 lastVelocity = new Vector2(0, 0);
+		public LightningAuraOverride()
+		{
+			RegisterFlags["PreAI"] = false;
+			RegisterFlags["OnTileCollide"] = true;
+			RegisterFlags["PostAI"] = true;
+		}
+
+		public override bool PreAI(Projectile projectile)
+		{
+			// apply velocity
+            // projectile.Center += new Vector2(lastVelocity.X, 0f);
+            // if(!(projectile.velocity.X == 0f && lastVelocity.X != 0f))
+            //     lastVelocity = projectile.velocity;
+
+			// projectile.velocity = Vector2.Zero;
+
+			lastVelocity = projectile.velocity;
+
+            return true;
+		}
+
+		public override void PostAI(Projectile projectile)
+		{
+			if(projectile.velocity.X != lastVelocity.X) projectile.tileCollide = false;
+			else projectile.tileCollide = true;
+			lastVelocity = projectile.velocity;
+		}
+
+		public override bool OnTileCollide(Projectile projectile, Vector2 oldVelocity)
+		{
+			projectile.velocity.X = 0f;
+			lastVelocity = new Vector2(0, 0);
+			return true;
+		}
+	}
+    public class LightningAuraOverrideAborted : IProjectileOverride
     {
         // constants
         protected const int HIT_COOLDOWN_LV1 = (int)(60 * 0.5f);
@@ -47,7 +85,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         protected bool SquireArmorSet = false;
         protected bool SquireAltArmorSet = false;
 
-        public LightningAuraOverride()
+        public LightningAuraOverrideAborted()
         {
             RegisterFlags["SetDefaults"] = true;
             RegisterFlags["PreAI"] = true;
@@ -327,13 +365,13 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 		}
     }
 
-    public class LightningAuraT1Override : LightningAuraOverride
-    {
-        public override bool PreAI(Projectile projectile)
-        {
-			VanillaLightningAuraAI(projectile);
-            // UpdateAnimation(projectile);
-            return false;
-        }
-    }
+    // public class LightningAuraT1Override : LightningAuraOverride
+    // {
+    //     public override bool PreAI(Projectile projectile)
+    //     {
+	// 		VanillaLightningAuraAI(projectile);
+    //         // UpdateAnimation(projectile);
+    //         return false;
+    //     }
+    // }
 }

@@ -33,6 +33,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         public static int CursedMagicTowerBulletSphere;
         public static int RocketSentryBullet;
         public static int AutocannonSentryBullet;
+        public static int MechEyeballTurretEyeFire;
         public static int TempleSentryHeatRay;
         public static int TempleSentryEyeBeamBullet;
         public static int MothronQueenTurretBullet;
@@ -51,6 +52,9 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         public static int HolyFlagProjectile;
         public static int TikiFlagProjectile;
         public static int TikiFlagBladeShot;
+        public static int GiantLeavesOfPlanteraProjectile;
+        public static int GiantLeavesOfPlanteraBullet1;
+        public static int GiantLeavesOfPlanteraBullet2;
         public static int SantaFlagProjectile;
         public static int SantaFlagBladeShot;
         public static int OneTrueFlagProjectile;

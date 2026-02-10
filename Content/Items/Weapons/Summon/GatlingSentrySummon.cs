@@ -29,7 +29,7 @@ namespace SummonerExpansionMod.Content.Items.Weapons.Summon
         public override void SetDefaults()
         {
             Item.damage = 5;
-            Item.knockBack = 2f;
+            Item.knockBack = 4f;
             // Item.mana = 10; // mana cost
             Item.width = 32;
             Item.height = 32;
@@ -37,8 +37,8 @@ namespace SummonerExpansionMod.Content.Items.Weapons.Summon
             Item.useAnimation = 36;
             Item.noUseGraphic = true;
             Item.useStyle = ItemUseStyleID.Swing; // how the player's arm moves when using the item
-            Item.value = Item.sellPrice(gold: 30);
-            Item.rare = ItemRarityID.Cyan;
+            Item.value = Item.sellPrice(gold: 2);
+            Item.rare = ItemRarityID.Pink;
             Item.UseSound = SoundID.Item1; // What sound should play when using the item
 
             // These below are needed for a minion weapon
@@ -68,6 +68,16 @@ namespace SummonerExpansionMod.Content.Items.Weapons.Summon
 
             // Since we spawned the projectile manually already, we do not need the game to spawn it for ourselves anymore, so return false
             return false;
+        }
+
+        public override void AddRecipes() {
+        	Recipe recipe = CreateRecipe();
+            recipe.AddIngredient(ModContent.ItemType<MachineGunSentrySummon>(), 1);
+            recipe.AddIngredient(ItemID.SoulofLight, 6);
+            recipe.AddIngredient(ItemID.SoulofNight, 6);
+            recipe.AddIngredient(ItemID.AmmoBox, 1);
+            recipe.AddTile(TileID.MythrilAnvil);
+            recipe.Register();
         }
     }
 }

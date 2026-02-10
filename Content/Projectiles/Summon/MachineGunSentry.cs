@@ -173,10 +173,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                         0,
                         Projectile.owner);
 
-                    bullet.DamageType = DamageClass.Summon;
-                    ProjectileID.Sets.SentryShot[bullet.type] = true;
-                    bullet.friendly = true;
-                    bullet.hostile = true;
+                    bullet.ArmorPenetration = 5;
                     // Main.NewText("Damage: " + Projectile.damage + "Bullet Damage: " + bullet.damage);
 
                     shootTimer = 0; // Reset shoot animation

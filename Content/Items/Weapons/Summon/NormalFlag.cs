@@ -18,8 +18,19 @@ namespace SummonerExpansionMod.Content.Items.Weapons.Summon
         public override void SetDefaults()
         {
             base.SetDefaults();
-            Item.damage = 19;
+            Item.damage = 10;
             Item.knockBack = 1;
+            Item.value = Item.sellPrice(silver: 10);
+            Item.rare = ItemRarityID.Blue;
+        }
+
+        public override void AddRecipes()
+        {
+            Recipe recipe = CreateRecipe();
+            recipe.AddIngredient(ItemID.Silk, 5);
+            recipe.AddIngredient(ItemID.Wood, 15);
+            recipe.AddTile(TileID.WorkBenches);
+            recipe.Register();
         }
 
     }

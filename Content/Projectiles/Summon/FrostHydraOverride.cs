@@ -31,6 +31,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             RegisterFlags["PreAI"] = true;
             RegisterFlags["OnTileCollide"] = true;
             RegisterFlags["TileCollideStyle"] = true;
+            RegisterFlags["OnSpawn"] = true;
         }
 
         public override void SetDefaults(Projectile projectile)
@@ -45,6 +46,11 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             projectile.sentry = true;
             projectile.netImportant = true;
             projectile.DamageType = DamageClass.Summon;
+        }
+
+        public override void OnSpawn(Projectile projectile, IEntitySource source)
+        {
+            SoundEngine.PlaySound(SoundID.Item46, projectile.Center);
         }
 
         public override bool OnTileCollide(Projectile projectile, Vector2 oldVelocity)

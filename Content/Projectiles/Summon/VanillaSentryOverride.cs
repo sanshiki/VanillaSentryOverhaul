@@ -23,6 +23,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 		public virtual bool? Colliding(Projectile projectile, Rectangle myRect, Rectangle targetRect) => null;
 		public virtual void OnHitNPC(Projectile projectile, NPC target, NPC.HitInfo hit, int damageDone) {}
 		public virtual bool TileCollideStyle(Projectile projectile, ref int width, ref int height, ref bool fallThrough, ref Vector2 hitboxCenterFrac) => true;
+		public virtual void OnSpawn(Projectile projectile, IEntitySource source) {}
 		// register flags
 		public Dictionary<string, bool> RegisterFlags = new()
 		{
@@ -34,6 +35,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 			{ "Colliding", false },
 			{ "OnHitNPC", false },
 			{ "TileCollideStyle", false },
+			{ "OnSpawn", false}
 		};
 	}
 	
@@ -53,11 +55,19 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 			{ ProjectileID.DD2FlameBurstTowerT1Shot, new FlameburstShotT1Override() },
 			{ ProjectileID.DD2FlameBurstTowerT2Shot, new FlameburstShotT2Override() },
 			{ ProjectileID.DD2FlameBurstTowerT3Shot, new FlameburstShotT3Override() },
-			// { ProjectileID.DD2LightningAuraT1, new LightningAuraT1Override() },
+			{ ProjectileID.DD2LightningAuraT1, new LightningAuraOverride() },
+			{ ProjectileID.DD2LightningAuraT2, new LightningAuraOverride() },
+			{ ProjectileID.DD2LightningAuraT3, new LightningAuraOverride() },
+			{ ProjectileID.DD2ExplosiveTrapT1, new ExplosiveTrapOverride() },
+			{ ProjectileID.DD2ExplosiveTrapT2, new ExplosiveTrapOverride() },
+			{ ProjectileID.DD2ExplosiveTrapT3, new ExplosiveTrapOverride() },
 			{ ProjectileID.SpiderHiver, new QueenSpiderOverride() },
 			{ ProjectileID.HoundiusShootius, new EyeBallTurretOverride() },
+			{ ProjectileID.HoundiusShootiusFireball, new EyeBallTurretFireballOverride() },
 			{ ProjectileID.FrostHydra, new FrostHydraOverrdie() },
 			{ ProjectileID.FrostBlastFriendly, new FrostBlastOverride() },
+			{ ProjectileID.MoonlordTurret, new MoonlordTurretOverride() },
+			{ ProjectileID.RainbowCrystal, new RainbowCrystalOverride() },
 			// 以后只需要在这里加映射
 		};
 
@@ -146,6 +156,14 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 				handler.OnHitNPC(projectile, target, hit, damageDone);
 			else
 				base.OnHitNPC(projectile, target, hit, damageDone);
+		}
+
+		public override void OnSpawn(Projectile projectile, IEntitySource source)
+		{
+			if (overrides.TryGetValue(projectile.type, out var handler))
+				handler.OnSpawn(projectile, source);
+			else
+				base.OnSpawn(projectile, source);
 		}
 	}
 }

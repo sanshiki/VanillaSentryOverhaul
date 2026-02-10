@@ -40,7 +40,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         private const int FRAME_COUNT = 4;
 
 
-        public override string Texture => "SummonerExpansionMod/Assets/Textures/Projectiles/SandustSentry";
+        public override string Texture => "SummonerExpansionMod/Assets/Textures/Projectiles/SandustSentryV2";
 
         public override void SetStaticDefaults()
         {
@@ -51,8 +51,8 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 
         public override void SetDefaults()
         {
-            Projectile.width = 56;
-            Projectile.height = 104;
+            Projectile.width = 40;
+            Projectile.height = 58;
             Projectile.friendly = false;
             Projectile.ignoreWater = true;
             Projectile.tileCollide = true;
@@ -161,7 +161,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             {
                 Dust dust;
                 int dustType = MinionAIHelper.RandomBool() ? 283 : 133;
-                float offset = dustType == 283 ? Projectile.height/2f : Projectile.height/4f;
+                float offset = dustType == 283 ? -12f : -21f;
                 Vector2 position = Projectile.position+new Vector2(0f, offset);
                 dust = Main.dust[Terraria.Dust.NewDust(position, Projectile.width, 5, dustType, 0f, -4.6511626f, 0, new Color(255,255,255), 1f)];
             }

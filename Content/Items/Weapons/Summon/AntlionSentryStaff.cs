@@ -25,7 +25,7 @@ namespace SummonerExpansionMod.Content.Items.Weapons.Summon
 
         public override void SetDefaults()
         {
-            Item.damage = 15;
+            Item.damage = 22;
             Item.knockBack = 3f;
             Item.mana = 10; // mana cost
             Item.width = 32;
@@ -33,9 +33,9 @@ namespace SummonerExpansionMod.Content.Items.Weapons.Summon
             Item.useTime = 36;
             Item.useAnimation = 36;
             Item.useStyle = ItemUseStyleID.Swing; // how the player's arm moves when using the item
-            Item.value = Item.sellPrice(gold: 30);
-            Item.rare = ItemRarityID.Cyan;
-            Item.UseSound = SoundID.Item44; // What sound should play when using the item
+            Item.value = Item.sellPrice(silver: 20);
+            Item.rare = ItemRarityID.Blue;
+            Item.UseSound = SoundID.Item46; // What sound should play when using the item
 
             // These below are needed for a minion weapon
             Item.noMelee = true; // this item doesn't do any melee damage
@@ -48,9 +48,8 @@ namespace SummonerExpansionMod.Content.Items.Weapons.Summon
 
         public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback)
         {
-            // Here you can change where the minion is spawned. Most vanilla minions spawn at the cursor position
-            // position = Main.MouseWorld;
-            Vector2? result = MinionAIHelper.SearchSpawnPoint(Main.MouseWorld, 38, 58);
+            Projectile projTemplate = ProjectileLoader.GetProjectile(type).Projectile;
+            Vector2? result = MinionAIHelper.SearchSpawnPoint(Main.MouseWorld, projTemplate.width, projTemplate.height);
             position = result ?? Main.MouseWorld;
         }
 
@@ -69,12 +68,12 @@ namespace SummonerExpansionMod.Content.Items.Weapons.Summon
             return false;
         }
 
-        // Please see Content/ExampleRecipes.cs for a detailed explanation of recipe creation.
-        // public override void AddRecipes() {
-        // 	CreateRecipe()
-        // 		.AddIngredient(ModContent.ItemType<ExampleItem>())
-        // 		.AddTile(ModContent.TileType<ExampleWorkbench>())
-        // 		.Register();
-        // }
+        public override void AddRecipes() {
+        	Recipe recipe = CreateRecipe();
+            recipe.AddIngredient(ItemID.AntlionMandible, 3);
+            recipe.AddIngredient(ItemID.SandBlock, 10);
+            recipe.AddTile(TileID.Anvils);
+            recipe.Register();
+        }
     }
 }

@@ -80,7 +80,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             // 伤害范围内的NPC
             foreach (NPC npc in Main.npc)
             {
-                if (npc.active && !npc.friendly && npc.Distance(center) < radius && npc != target)
+                if (npc.active && !npc.friendly && npc.Distance(center) < radius && npc != target && !npc.dontTakeDamage && !npc.immortal)
                 {
                     // 计算伤害
                     int damage = (int)(Projectile.damage * 0.8f); // 爆炸伤害稍低
@@ -115,7 +115,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         {
             if(MinionAIHelper.RandomFloat(0f, 1f) < SANDNADO_SPAWN_CHANCE)
             {
-                Projectile sandado = Projectile.NewProjectileDirect(Projectile.GetSource_FromAI(), Projectile.Center, Vector2.Zero, ModProjectileID.SandustSentrySandnadoFriendly, (int)(Projectile.damage * SANDNADO_DAMAGE_FACTOR), 0, Projectile.owner);
+                Projectile sandado = Projectile.NewProjectileDirect(Projectile.GetSource_FromAI(), Projectile.Center, Vector2.Zero, ModProjectileID.SandustSentrySandnadoFriendly, (int)(Projectile.damage * SANDNADO_DAMAGE_FACTOR), 2, Projectile.owner);
             }
         }
 

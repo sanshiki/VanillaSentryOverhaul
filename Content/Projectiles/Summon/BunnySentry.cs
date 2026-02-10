@@ -21,7 +21,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         private const int NORMAL_FRAME_SPEED = 20;
         private const int SHOOT_FRAME_SPEED = 5;
 
-        private const int SHOOT_INTERVAL = 50;
+        private const int SHOOT_INTERVAL = 25;
         private const float ENHANCEMENT_FACTOR = 0.75f;
         private int BUFF_ID = -1;
 
@@ -89,13 +89,14 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                 if (shootTimer == 0)
                 {
                     // Fire!
-                    Vector2 direction = target.Center - Projectile.Center;
+                    Vector2 bulletOffset = new Vector2(-18f * Projectile.spriteDirection, 7f);
+                    Vector2 direction = target.Center - Projectile.Center - bulletOffset;
                     float distance = direction.Length();
                     direction.Normalize();
                     direction *= 10f; // Bullet speed
                     direction.Y -= distance * 0.002f;
 
-                    Vector2 bulletOffset = new Vector2(-18f * Projectile.spriteDirection, 7f);
+                    
 
                     Projectile seed = Projectile.NewProjectileDirect(
                         Projectile.GetSource_FromAI(),
@@ -140,14 +141,10 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                 direction.Normalize();
                 Projectile.spriteDirection = direction.X > 0 ? -1 : 1;
             }
-            // else
-            // {
-            //     if (Projectile.frameCounter > NORMAL_FRAME_SPEED)
-            //     {
-            //         Projectile.frameCounter = 0;
-            //         Projectile.frame = Projectile.frame == 0 ? 1 : 0;
-            //     }
-            // }
+            else
+            {
+                Projectile.frame = 0;
+            }
         }
 
         public override bool OnTileCollide(Vector2 oldVelocity)

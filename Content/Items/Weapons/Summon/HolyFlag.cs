@@ -20,7 +20,17 @@ namespace SummonerExpansionMod.Content.Items.Weapons.Summon
         {
             base.SetDefaults();
             Item.damage = 55;
-            Item.knockBack = 1;
+            Item.knockBack = 2;
+            Item.value = Item.sellPrice(gold: 4, silver: 60);
+            Item.rare = ItemRarityID.Pink;
+        }
+
+        public override void AddRecipes()
+        {
+            Recipe recipe = CreateRecipe();
+            recipe.AddIngredient(ItemID.HallowedBar, 12);
+            recipe.AddTile(TileID.Anvils);
+            recipe.Register();
         }
 
     }

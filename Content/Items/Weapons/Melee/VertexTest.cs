@@ -42,7 +42,7 @@ namespace SummonerExpansionMod.Content.Items.Weapons.Melee
     public class VertexTestProj : ModProjectile
     {
         public override string Texture => ModGlobal.MOD_TEXTURE_PATH + "Projectiles/VertexTest";
-        private const string SWORD_TAIL_TEXTURE_PATH = ModGlobal.MOD_TEXTURE_PATH + "Vertexes/SwordTail3";
+        private const string SWORD_TAIL_TEXTURE_PATH = ModGlobal.MOD_TEXTURE_PATH + "Vertexes/StarShapeVertex";
 
 
         private const int TAIL_LENGTH = 20;

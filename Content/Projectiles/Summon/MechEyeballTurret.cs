@@ -25,7 +25,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         // animation constants
         private const int FRAME_NUM = 11;
         private const int REAL_FRAME_NUM = 17;
-        private const int SWTICH_FRAME_SPEED = 4;
+        private const int SWTICH_FRAME_SPEED = 2;
         private const float SWITCH_ROTATE_SPEED = ModGlobal.PI_FLOAT / (3 * SWTICH_FRAME_SPEED);
         private const float STICK_DOWN_DIST = 22f;
         private const float STICK_DOWN_SPEED = STICK_DOWN_DIST / (3 * SWTICH_FRAME_SPEED);
@@ -51,8 +51,8 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         private const int GREEN_STATE = 2;
         private const int GREEN_TO_RED = 3;
         private const float SEARCH_RANGE = 1000f;
-        private const float SWTICH_STATE_THRESHOLD = 270f;
-        private const int STATE_MAINTAIN_DURATION = 120;
+        private const float SWTICH_STATE_THRESHOLD = 220f;
+        private const int STATE_MAINTAIN_DURATION = 60;
 
         // damage constants
         private const int RED_SHOOT_INTERVAL = 20;
@@ -60,8 +60,8 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         private const float RED_DMG_FACTOR = 0.7f;
         private const float GREEN_DMG_FACTOR = 1.0f;
         private const float RED_BULLET_SPEED = 12f;
-        private const float PRED_RED_BULLET_SPEED = 30f;
-        private const float GREEN_BULLET_SPEED = 3f;
+        private const float PRED_RED_BULLET_SPEED = 35f;
+        private const float GREEN_BULLET_SPEED = 4f;
 
         // variables
         private int State = RED_STATE;
@@ -121,11 +121,11 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             {
                 if(State == RED_STATE)  // only use prediction when in red state
                 {
-                    direction = MinionAIHelper.PredictTargetPosition(Projectile.Center + ShootOffset, target.Center, target.velocity, PRED_RED_BULLET_SPEED, 60, 3) - Projectile.Center;
+                    direction = MinionAIHelper.PredictTargetPosition(Projectile.Center + ShootOffset, target.Center, target.velocity, PRED_RED_BULLET_SPEED, 60, 3) - Projectile.Center - ShootOffset;
                 }
                 else // otherwise, use target position
                 {
-                    direction = target.Center - Projectile.Center;
+                    direction = target.Center - Projectile.Center - ShootOffset;
                 }
                 distance = direction.Length();
                 direction.Normalize();
@@ -160,9 +160,6 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                                 (int)(Projectile.damage * RED_DMG_FACTOR),
                                 0,
                                 Projectile.owner);
-
-                            seed.DamageType = DamageClass.Summon;
-                            ProjectileID.Sets.SentryShot[seed.type] = true;
                             shootTimer = 0; // Reset shoot animation
                         }
                     }
@@ -214,15 +211,10 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                                 Projectile.Center + ShootOffset,
                                 velocity,
                                 // ProjectileID.Seed,
-                                ProjectileID.EyeFire,
+                                ModProjectileID.MechEyeballTurretEyeFire,
                                 (int)(Projectile.damage * GREEN_DMG_FACTOR),
                                 0,
                                 Projectile.owner);
-
-                            seed.DamageType = DamageClass.Summon;
-                            seed.hostile = false;
-                            seed.friendly = true;
-                            seed.penetrate = 4;
                             shootTimer = 0; // Reset shoot animation
 
                             SoundEngine.PlaySound(SoundID.Item34, Projectile.position);

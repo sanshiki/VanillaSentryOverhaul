@@ -19,8 +19,10 @@ namespace SummonerExpansionMod.Content.Items.Weapons.Summon
         public override void SetDefaults()
         {
             base.SetDefaults();
-            Item.damage = 15;
-            Item.knockBack = 1;
+            Item.damage = 19;
+            Item.knockBack = 2;
+            Item.value = Item.sellPrice(silver: 50);
+            Item.rare = ItemRarityID.Green;
         }
 
     }

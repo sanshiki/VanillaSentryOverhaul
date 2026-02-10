@@ -8,6 +8,7 @@ using Terraria.ModLoader;
 using Terraria.Audio;
 
 using SummonerExpansionMod.Initialization;
+using SummonerExpansionMod.ModUtils;
 
 namespace SummonerExpansionMod.Content.Projectiles.Summon
 {
@@ -17,6 +18,9 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         private const float GRAVITY = 1.0f;
         private const float MAX_GRAVITY = 30f;
         private const float EXPLOSION_RADIUS = 60f;
+        private const int SPLIT_COUNT = 4;
+
+        private bool hasSplit = false;
 
         public override string Texture => ModGlobal.VANILLA_PROJECTILE_TEXTURE_PATH + ProjectileID.SandBallFalling;
 
@@ -45,6 +49,45 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             // 旋转，增加视觉效果
             Projectile.rotation += Projectile.velocity.X * 0.05f;
 
+            // if(Projectile.velocity.Y > 0.1f && !hasSplit)
+            // {
+            //     NPC target = MinionAIHelper.SearchForTargets(
+            //         Main.player[Projectile.owner],
+            //         Projectile,
+            //         200f,
+            //         false,
+            //         null).TargetNPC;
+            //     if(target != null)
+            //     {
+            //         // split into 4 bullets
+            //         for(int i = 0; i < SPLIT_COUNT; i++)
+            //         {
+            //             Projectile bullet = Projectile.NewProjectileDirect(Projectile.GetSource_FromAI(), Projectile.Center, new Vector2(Projectile.velocity.X, Projectile.velocity.Y), ModProjectileID.AntlionSentryBullet, Projectile.damage, 0, Projectile.owner);
+            //             bullet.velocity = new Vector2(Projectile.velocity.X + (float)(i-SPLIT_COUNT/2)/SPLIT_COUNT*5f, Projectile.velocity.Y * MinionAIHelper.RandomFloat(0.7f, 1.0f));
+            //             if(bullet.ModProjectile is AntlionSentryBullet bulletProjectile)
+            //             {
+            //                 bulletProjectile.hasSplit = true;
+            //             }
+            //         }
+            //         Projectile.Kill();
+            //     }
+            // }
+
+            if(Projectile.velocity.Y > 3f && !hasSplit)
+            {
+                // split into 4 bullets
+                for(int i = 0; i < SPLIT_COUNT; i++)
+                {
+                    Projectile bullet = Projectile.NewProjectileDirect(Projectile.GetSource_FromAI(), Projectile.Center, new Vector2(Projectile.velocity.X, Projectile.velocity.Y), ModProjectileID.AntlionSentryBullet, (int)(Projectile.damage * 0.5f), 0, Projectile.owner);
+                    bullet.velocity = new Vector2(Projectile.velocity.X + (float)(i-SPLIT_COUNT/2)/SPLIT_COUNT*8f, Projectile.velocity.Y * MinionAIHelper.RandomFloat(0.5f, 1.0f));
+                    if(bullet.ModProjectile is AntlionSentryBullet bulletProjectile)
+                    {
+                        bulletProjectile.hasSplit = true;
+                    }
+                }
+                Projectile.Kill();
+            }
+
             // 粒子效果（可选）
             if (Main.rand.NextBool(5))
             {
@@ -71,10 +114,12 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             float radius = EXPLOSION_RADIUS; // 大约5格范围
             Vector2 center = Projectile.Center;
 
+            Player owner = Main.player[Projectile.owner];
+
             // 伤害范围内的NPC
             foreach (NPC npc in Main.npc)
             {
-                if (npc.active && !npc.friendly && npc.Distance(center) < radius && npc != target)
+                if (npc.active && !npc.friendly && npc.Distance(center) < radius && npc != target && !npc.dontTakeDamage && !npc.immortal)
                 {
                     // 计算伤害
                     int damage = (int)(Projectile.damage * 0.8f); // 爆炸伤害稍低
@@ -85,7 +130,9 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                     hitInfo.HitDirection = 0;
                     hitInfo.Knockback = 0f;
                     hitInfo.Damage = damage;
-                    npc.StrikeNPC(hitInfo, false, false);
+                    
+                    // npc.StrikeNPC(hitInfo, false, false);
+                    owner.StrikeNPCDirect(npc, hitInfo);
                 }
             }
 

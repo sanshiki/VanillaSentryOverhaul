@@ -50,6 +50,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         // protected float RAISE_MAX_SPEED => 2f * RAISE_MAX_HEIGHT / (float)TIME_LEFT_RAISE;   // max speed of the pole when raised
         // protected float RAISE_ACC => RAISE_MAX_SPEED / (float)TIME_LEFT_RAISE * 2f; // acceleration of the pole when raised
         protected virtual int FULLY_CHARGED_DUST => DustID.CrimsonSpray;
+        protected virtual float RAISE_BUFF_TIME_COEFF => 0.42f;
 
         // planting and recalling sentries
         protected virtual int PLANT_EXIST_DURATION => 60*60*10; // 10 min
@@ -79,7 +80,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         /* ------------------------- Flag Cloth Constants ------------------------- */
         protected virtual int FLAG_WIDTH => 128;
         protected virtual int FLAG_HEIGHT => 80;
-        protected virtual float ROT_DISPLACEMENT => 2.05f + 2.05f;  //  1.275f + 2.05f
+        protected virtual float ROT_DISPLACEMENT => (2.05f + 2.05f);  //  1.275f + 2.05f
         protected virtual float SLOW_WAVE_AMPLITUDE => 10f;
         protected virtual float SLOW_WAVE_SPEED_FACTOR => 7f;
 
@@ -93,8 +94,8 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         protected virtual bool TAIL_ENABLE_GLOBAL => true;
         protected virtual int TAIL_LENGTH => 6;
         protected virtual int FLAG_CLOTH_LENGTH => 4;
-        protected virtual int TAIL_OVERLAP_SIZE => 3;
-        protected virtual int TAIL_FIT_INSERT_SIZE => 1;
+        protected virtual int TAIL_OVERLAP_SIZE => 1;    // 2
+        protected virtual int TAIL_FIT_INSERT_SIZE => 2;   // 1
         protected virtual float TAIL_OFFSET_X_1 => -100f;  // -123
         protected virtual float TAIL_OFFSET_Y_1 => -135f;  // -213
         protected virtual float TAIL_OFFSET_X_2 => -100f;  // -123
@@ -104,7 +105,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         protected virtual Vector2 SPIN_CENTER_OFFSET => new Vector2(65f, 225f);
         protected virtual float SPIN_CENTER_OFFSET_ROT => 0f;
         protected virtual Color TAIL_COLOR => new Color(98, 0, 0, 95);
-        protected virtual bool TAIL_DYNAMIC_DEBUG => true;
+        protected virtual bool TAIL_DYNAMIC_DEBUG => false;
         protected virtual string FLAG_TAIL_TEXTURE_PATH => ModGlobal.MOD_TEXTURE_PATH + "Vertexes/SwordTail4";
         protected virtual bool ENABLE_VERTEX_FLAG => true;
         protected virtual bool VERTEX_DEBUG => false;
@@ -114,6 +115,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         protected virtual int NPC_DEBUFF_ID => BuffID.SwordWhipNPCDebuff;
         protected virtual int BUFF_START_TIME => 25;
         protected virtual int ENHANCE_BUFF_DURATION => 60*3; // 3s
+        protected virtual int ENHANCE_BUFF_DURATION_PLANTED => -1;
         protected virtual int NPC_DEBUFF_DURATION => 60*7; // 7s
         protected virtual float DAMAGE_DECAY_FACTOR => 0.8f;
 
@@ -137,6 +139,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         protected float RotAcc = 0f;
         protected float RotSpd = 0f;
         protected bool HasPlayedOnGroundSound = false;
+        protected bool HasPlayedBuffSound = false;
         protected int hitCount = 0;
         protected List<SentryRecallInfo> SentryRecallInfos = new List<SentryRecallInfo>();
         protected Vector2 STICK_OFFSET = new Vector2(0f, -MIN_POLE_PENGTH / 2f + 20f);
@@ -249,35 +252,53 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             }
 
             float dir = WaveDirection/*  * FixedDirection */;
+
+            float RotDisplacement = ROT_DISPLACEMENT * 1.12f/* DynamicParamManager.QuickGet("RotDisplacement", 100f, 0f, 200f).value / 100f */;
             
             // float ItemRot = player.itemRotation;
-            float RotRate = (ItemRot/*  * FixedDirection */ + ROT_DISPLACEMENT/2f) / ROT_DISPLACEMENT; // 0 to 1
+            float RotRate = (ItemRot/*  * FixedDirection */ + RotDisplacement/2f) / RotDisplacement; // 0 to 1
             float WaveUseTime = TIME_LEFT_WAVE / AttackSpeed;
 
             // rotate speed: accelerate then deaccelerate
             // RotAcc = -2 * ROT_DISPLACEMENT / WaveUseTime / WaveUseTime;
-            if(RotRate < 0.333f)
+            float accSplitRatio = 0.333f;// DynamicParamManager.QuickGet("AccSplitRatio", 0.333f, 0f, 1f).value;
+            if(RotRate < accSplitRatio)
             {
-                RotAcc = 2*ROT_DISPLACEMENT / (float)WaveUseTime / (float)(WaveUseTime * 0.333f);
+                RotAcc = 2*RotDisplacement / (float)WaveUseTime / (float)(WaveUseTime * accSplitRatio);
             }
             else
             {
-                RotAcc = -2*ROT_DISPLACEMENT / (float)WaveUseTime / (float)(WaveUseTime * (1f-0.333f));
+                RotAcc = -2*RotDisplacement / (float)WaveUseTime / (float)(WaveUseTime * (1f-accSplitRatio));
             }
             RotSpd += RotAcc;
 
             float offset_delta = 0f;
-            if (RotRate < 0.5f)
+            float offsetSplitRatio = 0.5f;// DynamicParamManager.QuickGet("OffsetSplitRatio", 0.5f, 0f, 1f).value;
+            if (RotRate < offsetSplitRatio)
             {
-                offset_delta = MathHelper.Lerp(0.5f, -0.1f, RotRate * 2f) * PoleLength;
+                offset_delta = MathHelper.Lerp(0.5f, -0.1f, RotRate / offsetSplitRatio) * PoleLength;
             }
             else
             {
-                offset_delta = MathHelper.Lerp(-0.1f, 0.5f, (RotRate - 0.5f) * 2f) * PoleLength;
+                offset_delta = MathHelper.Lerp(-0.1f, 0.5f, (RotRate - offsetSplitRatio) / (1f - offsetSplitRatio)) * PoleLength;
             }
             STICK_OFFSET = new Vector2(0f, -PoleLength / 2f + offset_delta);
             Vector2 StickOffset = new Vector2(STICK_OFFSET.X * dir, STICK_OFFSET.Y);
             StickOffsetList.Add(-PoleLength / 2f + offset_delta);
+
+            // string stickOffsetString = "";
+            // foreach(var offset in StickOffsetList)
+            // {
+            //     stickOffsetString += Math.Round(offset, 2) + " ";
+            // }
+            // Main.NewText("StickOffsetList: "+stickOffsetString);
+            // string TailString = "";
+            // foreach(var pos in Projectile.oldPos)
+            // {
+            //     TailString += Math.Round(pos.Y, 2) + " ";
+            // }
+            // Main.NewText("Projectile.oldPos: "+TailString);
+            // Main.NewText("RotRate: "+RotRate);
             
             // ItemRot += (1.275f + 2.05f) / (float)WaveUseTime;
             ItemRot += RotSpd;
@@ -320,9 +341,25 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             }
             RaiseTime++;
  
-            if(RaiseTime >= TimeLeftRaise * 0.42f)
+            if(RaiseTime >= TimeLeftRaise * RAISE_BUFF_TIME_COEFF)
             {
                 player.AddBuff(ENHANCE_BUFF_ID, ENHANCE_BUFF_DURATION);
+                if(!HasPlayedBuffSound)
+                {
+                    float DustSpd = 3f;
+                    for (float ang = -ModGlobal.PI_FLOAT; ang <= ModGlobal.PI_FLOAT; ang += ModGlobal.PI_FLOAT / 8f)
+                    {
+                        Dust dust;
+                        Vector2 position = player.Center;
+                        Vector2 DustVel = new Vector2(1, 0).RotatedBy(ang) * DustSpd;
+                        dust = Terraria.Dust.NewDustPerfect(position, FULLY_CHARGED_DUST, DustVel, 0, new Color(255,255,255), 1.3f);
+                        dust.noGravity = true;
+                        dust.fadeIn = 1f;
+                    }
+                    SoundEngine.PlaySound(SoundID.Item4, Projectile.Center);
+                    HasPlayedBuffSound = true;
+                }
+
             }
 
             // Vector2 StickOffset = new Vector2(STICK_OFFSET.X * FixedDirection, STICK_OFFSET.Y);
@@ -333,17 +370,6 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             
             if(SwitchFlag)
             {
-                float DustSpd = 3f;
-                for (float ang = -ModGlobal.PI_FLOAT; ang <= ModGlobal.PI_FLOAT; ang += ModGlobal.PI_FLOAT / 8f)
-                {
-                    Dust dust;
-                    Vector2 position = player.Center;
-                    Vector2 DustVel = new Vector2(1, 0).RotatedBy(ang) * DustSpd;
-                    dust = Terraria.Dust.NewDustPerfect(position, FULLY_CHARGED_DUST, DustVel, 0, new Color(255,255,255), 1.3f);
-                    dust.noGravity = true;
-                    dust.fadeIn = 1f;
-                }
-                SoundEngine.PlaySound(SoundID.Item4, Projectile.Center);
                 State = PLANT_STATE;
                 SwitchFlag = false;
                 Initialized = false;
@@ -352,6 +378,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 
         protected void PlantAI(Player player)
         {
+            int BuffTimePlanted = ENHANCE_BUFF_DURATION_PLANTED == -1 ? ENHANCE_BUFF_DURATION : ENHANCE_BUFF_DURATION_PLANTED;
             if (!Initialized)
             {
                 // initialize
@@ -361,7 +388,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                 Projectile.friendly = false;
 
                 // reset buff
-                player.AddBuff(ENHANCE_BUFF_ID, ENHANCE_BUFF_DURATION);
+                player.AddBuff(ENHANCE_BUFF_ID, BuffTimePlanted);
 
                 // Main.NewText("PlantAI:"+Projectile.identity);
                 Initialized = true;
@@ -424,7 +451,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                     }
 
                     // reset buff
-                    player.AddBuff(ENHANCE_BUFF_ID, ENHANCE_BUFF_DURATION);
+                    player.AddBuff(ENHANCE_BUFF_ID, BuffTimePlanted);
 
                     SentryRecallInitialized = true;
                 }
@@ -830,7 +857,8 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 
                 if (i < FlagClothLength)  // add flag cloth verteces
                 {
-                    Color b = new Color(255, 255, 255, 225);
+                    // Color b = new Color(255, 255, 255, 225);
+                    Color b = lightColor;
                     FlagClothVerteces.Add(new Vertex(SpinCenter - Main.screenPosition + UpperVertexPffset.RotatedBy(OldRot),
                             new Vector3(1-FlagClothRatio, 0, 1),
                             b));
@@ -841,7 +869,8 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                 if (i >= FlagClothLength - OverlapSize && i < FlagClothLength + TailLength - OverlapSize)  // add flag tail verteces
                 {
                     byte alpha = (byte)(MathHelper.Clamp(FlagTailRatio * 255, 0, 255));
-                    Color b = new Color(TAIL_COLOR.R, TAIL_COLOR.G, TAIL_COLOR.B, alpha);
+                    Color tailColor = new Color(TAIL_COLOR.R, TAIL_COLOR.G, TAIL_COLOR.B, alpha);
+                    Color b = new Color(Math.Min(lightColor.R, tailColor.R), Math.Min(lightColor.G, tailColor.G), Math.Min(lightColor.B, tailColor.B), alpha);
                     FlagTailVerteces.Add(new Vertex(SpinCenter - Main.screenPosition + UpperVertexPffset.RotatedBy(OldRot),
                             new Vector3(FlagTailRatio, 1, 1),
                             b));
@@ -960,14 +989,41 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
+            if(State == RAISE_STATE || State == PLANT_STATE) return false;
             Vector2 PoleStart = Projectile.Center + new Vector2(0, PoleLength/2f).RotatedBy(Projectile.rotation);
             Vector2 PoleEnd = Projectile.Center + new Vector2(0, PoleLength/2f).RotatedBy(Projectile.rotation+Math.PI);
+            int CurrentTime = (int)(TIME_LEFT_WAVE / AttackSpeed) - Projectile.timeLeft;
+            if(State == RECALL_STATE) CurrentTime = TIME_LEFT_RECALL - Projectile.timeLeft;
+            Vector2 PoleOldStart = PoleStart;
+            Vector2 PoleOldEnd = PoleEnd;
+            int buffer = 0;
+            if(CurrentTime > buffer)
+            {
+                PoleOldStart = Projectile.oldPos[buffer] + new Vector2(0, PoleLength/2f).RotatedBy(Projectile.oldRot[buffer]) + new Vector2(0, PoleLength / 2f);
+                PoleOldEnd = Projectile.oldPos[buffer] + new Vector2(0, PoleLength/2f).RotatedBy(Projectile.oldRot[buffer]+Math.PI) + new Vector2(0, PoleLength / 2f);
+            }
             float collisionPoint = 0f;
             if(Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), PoleStart, PoleEnd, 10f, ref collisionPoint))
             {
-                // Main.NewText("Collision: "+collisionPoint);
                 return true;
             }
+            float factor1 = 0.75f;
+            Vector2 PoleMidStart1 = factor1 * PoleStart + (1-factor1) * PoleOldStart;
+            Vector2 PoleMidEnd1 = factor1 * PoleEnd + (1-factor1) * PoleOldEnd;
+            if(Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), PoleMidStart1, PoleMidEnd1, 10f, ref collisionPoint))
+            {
+                return true;
+            }
+            float factor2 = 0.25f;
+            Vector2 PoleMidStart2 = factor2 * PoleStart + (1-factor2) * PoleOldStart;
+            Vector2 PoleMidEnd2 = factor2 * PoleEnd + (1-factor2) * PoleOldEnd;
+            if(Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), PoleMidStart2, PoleMidEnd2, 10f, ref collisionPoint))
+            {
+                return true;
+            }
+            //  Dust.QuickDustLine(PoleStart, PoleEnd, 10f, Color.Red);
+            //  Dust.QuickDustLine(PoleMidStart1, PoleMidEnd1, 10f, Color.Blue);
+            //  Dust.QuickDustLine(PoleMidStart2, PoleMidEnd2, 10f, Color.Green);
             return false;
         }
 

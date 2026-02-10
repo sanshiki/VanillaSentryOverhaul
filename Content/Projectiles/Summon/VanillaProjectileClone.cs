@@ -9,6 +9,7 @@ using Terraria.Audio;
 
 using SummonerExpansionMod.Initialization;
 using SummonerExpansionMod.ModUtils;
+using SummonerExpansionMod.Content.Buffs.Summon;
 
 namespace SummonerExpansionMod.Content.Projectiles.Summon
 {
@@ -94,6 +95,32 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             base.SetStaticDefaults();
             // 蜂巢哨兵子弹使用4帧动画
             Main.projFrames[Type] = 4;
+            ProjectileID.Sets.SummonTagDamageMultiplier[Type] = 0.5f;
+        }
+
+        public override bool OnTileCollide(Vector2 oldVelocity)
+        {
+            if (Projectile.velocity.X != oldVelocity.X && Math.Abs(oldVelocity.X) > 0.1f)
+            {
+                Projectile.velocity.X = -oldVelocity.X;
+            }
+            if (Projectile.velocity.Y != oldVelocity.Y && Math.Abs(oldVelocity.Y) > 0.1f)
+            {
+                Projectile.velocity.Y = -oldVelocity.Y;
+            }
+
+            Projectile.penetrate --;
+            
+            return false;
+        }
+
+        public override void Kill(int timeLeft)
+        {
+            for(int i = 0; i < 3; i++)
+            {
+                Dust d = Dust.NewDustDirect(Projectile.Center - Projectile.Size/2f, Projectile.width, Projectile.height, 150);
+                d.noGravity = true;
+            }
         }
     }
 
@@ -108,6 +135,38 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             base.SetStaticDefaults();
             // 蜂巢哨兵子弹使用4帧动画
             Main.projFrames[Type] = 4;
+            ProjectileID.Sets.SummonTagDamageMultiplier[Type] = 0.5f;
+        }
+
+        public override void SetDefaults()
+        {
+            base.SetDefaults();
+            Projectile.tileCollide = true;
+        }
+
+        public override bool OnTileCollide(Vector2 oldVelocity)
+        {
+            if (Projectile.velocity.X != oldVelocity.X && Math.Abs(oldVelocity.X) > 0.1f)
+            {
+                Projectile.velocity.X = -oldVelocity.X;
+            }
+            if (Projectile.velocity.Y != oldVelocity.Y && Math.Abs(oldVelocity.Y) > 0.1f)
+            {
+                Projectile.velocity.Y = -oldVelocity.Y;
+            }
+
+            Projectile.penetrate --;
+            
+            return false;
+        }
+
+        public override void Kill(int timeLeft)
+        {
+            for(int i = 0; i < 5; i++)
+            {
+                Dust d = Dust.NewDustDirect(Projectile.Center - Projectile.Size/2f, Projectile.width, Projectile.height, 150);
+                d.noGravity = true;
+            }
         }
     }
 
@@ -141,7 +200,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
-            target.AddBuff(BuffID.Ichor, 2*60);
+            target.AddBuff(BuffID.Ichor, 3*60);
         }
     }
 
@@ -160,10 +219,35 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             // Projectile.tileCollide = true;
         }
 
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
+        {
+            target.AddBuff(BuffID.CursedInferno, 3*60);
+        }
+
         public override bool OnTileCollide(Vector2 oldVelocity)
         {
             Projectile.Kill();
             return false;
+        }
+    }
+
+    public class MechEyeballTurretEyeFire : ClonedSentryProjectile
+    {
+        public override int BaseProjectileID => ProjectileID.EyeFire;
+
+        public override string TexturePath => "Terraria/Images/Projectile_" + ProjectileID.EyeFire;
+
+        public override void SetDefaults()
+        {
+            base.SetDefaults();
+            Projectile.hostile = false;
+            Projectile.friendly = true;
+            Projectile.penetrate = 3;
+        }
+
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
+        {
+            target.AddBuff(BuffID.CursedInferno, 3*60);
         }
     }
 
@@ -179,6 +263,81 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = 20;
             Projectile.tileCollide = true;
+        }
+    }
+
+    public class GiantLeavesOfPlanteraBullet1 : ClonedSentryProjectile
+    {
+        public override int BaseProjectileID => ProjectileID.SeedPlantera;
+
+        public override string TexturePath => "Terraria/Images/Projectile_" + ProjectileID.SeedPlantera;
+
+        public override void SetStaticDefaults()
+        {
+            base.SetStaticDefaults();
+            Main.projFrames[Type] = 2;
+        }
+
+        public override void SetDefaults()
+        {
+            base.SetDefaults();
+            Projectile.penetrate = 1;
+            Projectile.friendly = true;
+            Projectile.hostile = false;
+            Projectile.timeLeft = 20;
+            Projectile.DamageType = DamageClass.Summon;
+            Projectile.ownerHitCheck = true;
+        }
+
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
+        {
+            target.AddBuff(ModBuffID.TikiFlagDebuff, 5*60);
+        }
+
+        public override void Kill(int timeLeft)
+        {
+            for(int i = 0; i < 5; i++)
+            {
+                Dust d = Dust.NewDustDirect(Projectile.Center - Projectile.Size/2f, Projectile.width, Projectile.height, 145);
+            }
+        }
+    }
+
+    public class GiantLeavesOfPlanteraBullet2 : ClonedSentryProjectile
+    {
+        public override int BaseProjectileID => ProjectileID.PoisonSeedPlantera;
+
+        public override string TexturePath => "Terraria/Images/Projectile_" + ProjectileID.PoisonSeedPlantera;
+
+        public override void SetStaticDefaults()
+        {
+            base.SetStaticDefaults();
+            Main.projFrames[Type] = 2;
+        }
+
+        public override void SetDefaults()
+        {
+            base.SetDefaults();
+            Projectile.penetrate = 1;
+            Projectile.friendly = true;
+            Projectile.hostile = false;
+            Projectile.timeLeft = 20;
+            Projectile.DamageType = DamageClass.Summon;
+            Projectile.ownerHitCheck = true;
+        }
+
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
+        {
+            target.AddBuff(ModBuffID.TikiFlagDebuff, 5*60);
+            target.AddBuff(BuffID.Poisoned, 3*60);
+        }
+
+        public override void Kill(int timeLeft)
+        {
+            for(int i = 0; i < 5; i++)
+            {
+                Dust d = Dust.NewDustDirect(Projectile.Center - Projectile.Size/2f, Projectile.width, Projectile.height, 40);
+            }
         }
     }
     

@@ -83,7 +83,6 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             Projectile.aiStyle = -1;
             Projectile.timeLeft = Projectile.SentryLifeTime;
             Projectile.DamageType = DamageClass.Summon;
-            Projectile.ArmorPenetration = 25;
             
             BUFF_ID = ModBuffID.SentryEnhancement;
         }
@@ -167,6 +166,8 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                         Projectile.damage,
                         0,
                         Projectile.owner);
+
+                    bullet.ArmorPenetration = 15;
 
                     // bullet.DamageType = DamageClass.Summon;
                     // bullet.friendly = true;

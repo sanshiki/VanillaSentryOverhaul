@@ -1,0 +1,28 @@
+# 布料仿真配置文件
+
+# 布料网格参数
+cloth_height: 8          # 布料高度（行数）
+cloth_width: 10           # 布料宽度（列数）
+dist_between_nodes: 40    # 节点间距离（像素）
+
+# 物理参数
+gravity: 9.8              # 重力加速度
+spring_k: 0.2             # 弹簧常数 k
+mass: 0.001              # 节点质量
+damping: 0.0001             # 阻尼系数（0-1之间，越接近1阻尼越大）
+dt: 0.02                 # 时间步长（约60FPS）
+
+# 显示参数
+window_width: 800
+window_height: 600
+fps: 60
+
+# 颜色设置
+background_color: [20, 20, 40]     # 背景色 RGB
+node_color: [255, 255, 255]        # 节点颜色
+constraint_color: [100, 150, 255]  # 约束线颜色
+fixed_node_color: [255, 100, 100]  # 固定节点颜色
+
+# 节点大小
+node_radius: 2
+line_width: 1

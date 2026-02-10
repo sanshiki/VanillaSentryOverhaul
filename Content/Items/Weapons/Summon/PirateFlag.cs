@@ -20,6 +20,9 @@ namespace SummonerExpansionMod.Content.Items.Weapons.Summon
         {
             base.SetDefaults();
             Item.damage = 40;
+            Item.knockBack = 2;
+            Item.value = Item.sellPrice(gold: 1);
+            Item.rare = ItemRarityID.LightRed;
         }
 
     }

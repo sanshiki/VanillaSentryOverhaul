@@ -12,7 +12,8 @@ namespace SummonerExpansionMod.Content.Buffs.Summon
 {
     public class TikiFlagBuff : ModBuff
     {
-        public override string Texture => ModGlobal.MOD_TEXTURE_PATH + "Buffs/TikiFlagBuff";
+        // public override string Texture => ModGlobal.MOD_TEXTURE_PATH + "Buffs/TikiFlagBuff";
+        public override string Texture =>  ModGlobal.MOD_TEXTURE_PATH + "Buffs/GiantLeavesOfPlanteraBuff";
         public override void SetStaticDefaults()
         {
             Main.buffNoSave[Type] = true; // This buff won't save when you exit the world

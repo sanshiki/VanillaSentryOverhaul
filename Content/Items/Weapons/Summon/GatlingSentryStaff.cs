@@ -24,7 +24,7 @@ namespace SummonerExpansionMod.Content.Items.Weapons.Summon
 
         public override void SetDefaults()
         {
-            Item.damage = 6;
+            Item.damage = 4;
             Item.knockBack = 2f;
             Item.mana = 10; // mana cost
             Item.width = 32;
@@ -65,13 +65,5 @@ namespace SummonerExpansionMod.Content.Items.Weapons.Summon
             // Since we spawned the projectile manually already, we do not need the game to spawn it for ourselves anymore, so return false
             return false;
         }
-
-        // Please see Content/ExampleRecipes.cs for a detailed explanation of recipe creation.
-        // public override void AddRecipes() {
-        // 	CreateRecipe()
-        // 		.AddIngredient(ModContent.ItemType<ExampleItem>())
-        // 		.AddTile(ModContent.TileType<ExampleWorkbench>())
-        // 		.Register();
-        // }
     }
 }

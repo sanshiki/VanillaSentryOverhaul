@@ -143,6 +143,8 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                         ProjectileID.Sets.SentryShot[bullet.type] = true;
                         Projectile.usesIDStaticNPCImmunity = true;
                         Projectile.idStaticNPCHitCooldown = 20;
+
+                        SoundEngine.PlaySound(SoundID.Item73, Projectile.position);
                     }
                     if(shootAnimationTimer >= SHOOT_TIME * SHOOT_FRAME_SPEED)
                     {
@@ -199,6 +201,11 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                     if (Projectile.frameCounter >= SHOOT_FRAME_SPEED)
                     {
                         Projectile.frameCounter = 0;
+                    }
+                    if(Projectile.frame == 8 || Projectile.frame == 10 || Projectile.frame == 12)
+                    {
+                        SoundStyle style = new SoundStyle("Terraria/Sounds/Item_83") with { Volume = .68f,  Pitch = 1f,  PitchVariance = 1.05f, };
+                        SoundEngine.PlaySound(style, Projectile.position);
                     }
                 } break;
                 case SHOOT_STATE:

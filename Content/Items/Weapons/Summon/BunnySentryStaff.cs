@@ -8,6 +8,7 @@ using Terraria.ModLoader;
 using SummonerExpansionMod.Content.Projectiles.Summon;
 using SummonerExpansionMod.Content.Buffs.Summon;
 using SummonerExpansionMod.Initialization;
+using SummonerExpansionMod.ModUtils;
 
 namespace SummonerExpansionMod.Content.Items.Weapons.Summon
 {
@@ -32,8 +33,8 @@ namespace SummonerExpansionMod.Content.Items.Weapons.Summon
             Item.useTime = 36;
             Item.useAnimation = 36;
             Item.useStyle = ItemUseStyleID.Swing; // how the player's arm moves when using the item
-            Item.value = Item.sellPrice(gold: 30);
-            Item.rare = ItemRarityID.Cyan;
+            Item.value = Item.sellPrice(silver: 50);
+            Item.rare = ItemRarityID.Blue;
             Item.UseSound = SoundID.Item44; // What sound should play when using the item
 
             // These below are needed for a minion weapon
@@ -47,8 +48,9 @@ namespace SummonerExpansionMod.Content.Items.Weapons.Summon
 
         public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback)
         {
-            // Here you can change where the minion is spawned. Most vanilla minions spawn at the cursor position
-            position = Main.MouseWorld;
+            Projectile projTemplate = ProjectileLoader.GetProjectile(type).Projectile;
+            Vector2? result = MinionAIHelper.SearchSpawnPoint(Main.MouseWorld, projTemplate.width, (int)(projTemplate.height*1.2f));
+            position = result ?? Main.MouseWorld;
         }
 
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
@@ -66,12 +68,66 @@ namespace SummonerExpansionMod.Content.Items.Weapons.Summon
             return false;
         }
 
-        // Please see Content/ExampleRecipes.cs for a detailed explanation of recipe creation.
-        // public override void AddRecipes() {
-        // 	CreateRecipe()
-        // 		.AddIngredient(ModContent.ItemType<ExampleItem>())
-        // 		.AddTile(ModContent.TileType<ExampleWorkbench>())
-        // 		.Register();
-        // }
+        public override void AddRecipes() {
+        	Recipe recipe = CreateRecipe();
+            recipe.AddIngredient(ItemID.Bunny, 1);
+            recipe.AddIngredient(ItemID.Boomstick, 1);
+            recipe.AddTile(TileID.Anvils);
+            recipe.Register();
+
+            Recipe recipe2 = CreateRecipe();
+            recipe2.AddIngredient(ItemID.Bunny, 1);
+            recipe2.AddIngredient(ItemID.QuadBarrelShotgun, 1);
+            recipe2.AddTile(TileID.Anvils);
+            recipe2.Register();
+
+            Recipe recipe3 = CreateRecipe();
+            recipe3.AddIngredient(ItemID.Bunny, 1);
+            recipe3.AddIngredient(ItemID.TheUndertaker, 1);
+            recipe3.AddTile(TileID.Anvils);
+            recipe3.Register();
+
+            Recipe recipe4 = CreateRecipe();
+            recipe4.AddIngredient(ItemID.Bunny, 1);
+            recipe4.AddIngredient(ItemID.Revolver, 1);
+            recipe4.AddTile(TileID.Anvils);
+            recipe4.Register();
+
+            Recipe recipe5 = CreateRecipe();
+            recipe5.AddIngredient(ItemID.Bunny, 1);
+            recipe5.AddIngredient(ItemID.Minishark, 1);
+            recipe5.AddTile(TileID.Anvils);
+            recipe5.Register();
+
+            Recipe recipe6 = CreateRecipe();
+            recipe6.AddIngredient(ItemID.Bunny, 1);
+            recipe6.AddIngredient(ItemID.Handgun, 1);
+            recipe6.AddTile(TileID.Anvils);
+            recipe6.Register();
+
+            Recipe recipe7 = CreateRecipe();
+            recipe7.AddIngredient(ItemID.Bunny, 1);
+            recipe7.AddIngredient(ItemID.Musket, 1);
+            recipe7.AddTile(TileID.Anvils);
+            recipe7.Register();
+
+            Recipe recipe8 = CreateRecipe();
+            recipe8.AddIngredient(ItemID.Bunny, 1);
+            recipe8.AddIngredient(ItemID.FlintlockPistol, 1);
+            recipe8.AddTile(TileID.Anvils);
+            recipe8.Register();
+
+            Recipe recipe9 = CreateRecipe();
+            recipe9.AddIngredient(ItemID.Bunny, 1);
+            recipe9.AddIngredient(ItemID.Shotgun, 1);
+            recipe9.AddTile(TileID.Anvils);
+            recipe9.Register();
+
+            Recipe recipe10 = CreateRecipe();
+            recipe10.AddIngredient(ItemID.Bunny, 1);
+            recipe10.AddIngredient(ItemID.RedRyder, 1);
+            recipe10.AddTile(TileID.Anvils);
+            recipe10.Register();
+        }
     }
 }

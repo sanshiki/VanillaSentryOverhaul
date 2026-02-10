@@ -119,6 +119,9 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                     {
                         PressorState = SHOOT_STATE;
                         shootAnimationTimer = 0;
+                        SoundEngine.PlaySound(SoundID.Item13, Projectile.position);
+                        SoundStyle style = new SoundStyle("Terraria/Sounds/Item_167") with { Volume = .67f,  Pitch = .76f,  PitchVariance = .61f, };
+                        SoundEngine.PlaySound(style, Projectile.position);
                     }
                 } break;
                 case SHOOT_STATE:

@@ -50,6 +50,7 @@ namespace SummonerExpansionMod.Initialization
 			ModProjectileID.CursedMagicTowerBulletSphere = ModContent.ProjectileType<CursedMagicTowerBulletSphere>();
 			ModProjectileID.RocketSentryBullet = ModContent.ProjectileType<RocketSentryBullet>();
 			ModProjectileID.AutocannonSentryBullet = ModContent.ProjectileType<AutocannonSentryBullet>();
+			ModProjectileID.MechEyeballTurretEyeFire = ModContent.ProjectileType<MechEyeballTurretEyeFire>();
 			ModProjectileID.TempleSentryHeatRay = ModContent.ProjectileType<TempleSentryHeatRay>();
 			ModProjectileID.StardustSentrySignal = ModContent.ProjectileType<StardustSentrySignal>();
 			ModProjectileID.StardustSentryBullet = ModContent.ProjectileType<StardustSentryBullet>();
@@ -68,6 +69,9 @@ namespace SummonerExpansionMod.Initialization
 			ModProjectileID.HolyFlagProjectile = ModContent.ProjectileType<HolyFlagProjectile>();
 			ModProjectileID.TikiFlagProjectile = ModContent.ProjectileType<TikiFlagProjectile>();
 			ModProjectileID.TikiFlagBladeShot = ModContent.ProjectileType<TikiFlagBladeShot>();
+			ModProjectileID.GiantLeavesOfPlanteraProjectile = ModContent.ProjectileType<GiantLeavesOfPlanteraProjectile>();
+			ModProjectileID.GiantLeavesOfPlanteraBullet1 = ModContent.ProjectileType<GiantLeavesOfPlanteraBullet1>();
+			ModProjectileID.GiantLeavesOfPlanteraBullet2 = ModContent.ProjectileType<GiantLeavesOfPlanteraBullet2>();
 			ModProjectileID.SantaFlagProjectile = ModContent.ProjectileType<SantaFlagProjectile>();
 			ModProjectileID.SantaFlagBladeShot = ModContent.ProjectileType<SantaFlagBladeShot>();
 			ModProjectileID.OneTrueFlagProjectile = ModContent.ProjectileType<OneTrueFlagProjectile>();
@@ -78,6 +82,7 @@ namespace SummonerExpansionMod.Initialization
 			ModBuffID.SentryEnhancement = ModContent.BuffType<SentryEnhancementBuff>();
 			ModBuffID.SentryTarget = ModContent.BuffType<SentryTargetBuff>();
 			ModBuffID.ElectricShock = ModContent.BuffType<ElectricShock>();
+			ModBuffID.MothronDustDebuff = ModContent.BuffType<MothronDustDebuff>();
 			ModBuffID.NormalFlagBuff = ModContent.BuffType<NormalFlagBuff>();
 			ModBuffID.GoblinFlagBuff = ModContent.BuffType<GoblinFlagBuff>();
 			ModBuffID.HellFlagBuff = ModContent.BuffType<HellFlagBuff>();

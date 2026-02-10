@@ -139,24 +139,30 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 
             float SpeedOffset = MinionAIHelper.RandomFloat(-1f, 1f);
 
-            Projectile proj = Projectile.NewProjectileDirect(
-                Projectile.GetSource_FromAI(),
-                Projectile.Center + ShootOffset,
-                direction * (RealBulletSpeed + SpeedOffset),
-                // ProjectileID.WaterStream, // Reusing vanilla projectile
-                ModProjectileID.CursedMagicTowerBulletSmall,
-                // ProjectileID.SapphireBolt,
-                Projectile.damage,
-                Projectile.knockBack,
-                Projectile.owner
-            );
+            // Projectile proj = Projectile.NewProjectileDirect(
+            //     Projectile.GetSource_FromAI(),
+            //     Projectile.Center + ShootOffset,
+            //     direction * (RealBulletSpeed + SpeedOffset),
+            //     // ProjectileID.WaterStream, // Reusing vanilla projectile
+            //     ModProjectileID.CursedMagicTowerBulletSmall,
+            //     // ProjectileID.SapphireBolt,
+            //     Projectile.damage,
+            //     Projectile.knockBack,
+            //     Projectile.owner
+            // );
 
-            proj.ai[0] = target.whoAmI;
+            // proj.ai[0] = target.whoAmI;
 
-            if(proj.ModProjectile is CursedMagicTowerBulletSmall bullet)
-            {
-                bullet.Target = PredictedPos;
-            }
+            // if(proj.ModProjectile is CursedMagicTowerBulletSmall bullet)
+            // {
+            //     bullet.Target = PredictedPos;
+            // }
+
+            NPC bullet_npc = NPC.NewNPCDirect(Projectile.GetSource_FromAI(), (int)Projectile.Center.X, (int)Projectile.Center.Y, ModContent.NPCType<CursedMagicTowerBulletNPC>());
+            bullet_npc.target = Projectile.owner;
+            bullet_npc.ai[0] = (float)Projectile.damage;
+            bullet_npc.ai[1] = (float)Projectile.knockBack;
+            bullet_npc.ai[2] = (float)target.whoAmI;
 
             SoundEngine.PlaySound(SoundID.Item43, Projectile.Center);
         }

@@ -97,7 +97,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             NPC target = MinionAIHelper.SearchForTargets(
                 owner, 
                 Projectile, 
-                1000f, 
+                700f, 
                 true, 
                 null).TargetNPC;
             if (target != null && fireTimer >= fireInterval)

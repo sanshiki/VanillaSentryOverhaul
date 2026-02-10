@@ -19,8 +19,18 @@ namespace SummonerExpansionMod.Content.Items.Weapons.Summon
         public override void SetDefaults()
         {
             base.SetDefaults();
-            Item.damage = 29;
-            Item.knockBack = 1;
+            Item.damage = 28;
+            Item.knockBack = 2;
+            Item.value = Item.sellPrice(silver: 54);
+            Item.rare = ItemRarityID.Orange;
+        }
+
+        public override void AddRecipes()
+        {
+            Recipe recipe = CreateRecipe();
+            recipe.AddIngredient(ItemID.HellstoneBar, 18);
+            recipe.AddTile(TileID.Anvils);
+            recipe.Register();
         }
 
     }

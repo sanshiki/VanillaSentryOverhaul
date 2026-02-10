@@ -1,0 +1,15 @@
+{
+    "ProjectileSettings": {
+        "AntlionSentry": {
+            "Width": 38,
+            "Height": 58,
+            "AIStyle": 0,
+            "Friendly": true,
+            "Hostile": false,
+            "Penetrate": 1,
+            "TimeLeft": 600,
+            "TileCollide": true,
+            "DamageType": "Melee"
+        }
+    }
+}

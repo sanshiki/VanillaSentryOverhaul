@@ -16,14 +16,31 @@ namespace SummonerExpansionMod.Content.Dusts
         {
             dust.noGravity = false;
             dust.frame = new Rectangle(0, 0, 48, 10);
+
+            dust.customData = Main.rand.NextFloat(0.5f, 0.8f);
         }
 		public override bool Update(Dust dust) {
+            float rotSpeed = 0.6f;
+            if (dust.customData is float s)
+                rotSpeed = s;
             if(dust.noGravity == false) dust.velocity += new Vector2(0, 0.2f);
 			dust.position += dust.velocity;
-            dust.rotation += 0.6f;
+            dust.rotation += rotSpeed;
             dust.alpha += 5;
 			if (dust.alpha > 250)
 				dust.active = false;
+
+            Point tilePos = dust.position.ToTileCoordinates();
+            if (WorldGen.SolidTile(tilePos.X, tilePos.Y + 1))
+            {
+                if (dust.velocity.Y > 0f && dust.position.Y % 16 > 12)
+                {
+                    dust.velocity.Y *= -0.5f; // 弹跳
+                    dust.velocity.X *= 0.8f;  // 水平减速
+                    if (dust.customData is float spd)
+                        dust.customData = spd * 0.3f;
+                }
+            }
 
 			return false;
 		}

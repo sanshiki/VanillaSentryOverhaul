@@ -16,7 +16,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 {
     public class QueenSpiderOverride : IProjectileOverride
     {
-        private const int SHOOT_INTERVAL = 60;
+        private const int SHOOT_INTERVAL = 80;
         private const float BULLET_SPEED = 15f;
         private const float COMPENSATE_ANGLE = 20f * ModGlobal.DEG_TO_RAD_FLOAT;
         private const float ANGLE_STEP = 22.5f * ModGlobal.DEG_TO_RAD_FLOAT;

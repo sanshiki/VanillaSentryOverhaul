@@ -24,17 +24,17 @@ namespace SummonerExpansionMod.Content.Items.Weapons.Summon
 
         public override void SetDefaults()
         {
-            Item.damage = 15;
-            Item.knockBack = 3f;
+            Item.damage = 12;
+            Item.knockBack = 6f;
             Item.mana = 10; // mana cost
             Item.width = 32;
             Item.height = 32;
             Item.useTime = 36;
             Item.useAnimation = 36;
             Item.useStyle = ItemUseStyleID.Swing; // how the player's arm moves when using the item
-            Item.value = Item.sellPrice(gold: 30);
-            Item.rare = ItemRarityID.Cyan;
-            Item.UseSound = SoundID.Item44; // What sound should play when using the item
+            Item.value = Item.sellPrice(gold: 2);
+            Item.rare = ItemRarityID.Orange;
+            Item.UseSound = SoundID.Item82; // What sound should play when using the item
 
             // These below are needed for a minion weapon
             Item.noMelee = true; // this item doesn't do any melee damage

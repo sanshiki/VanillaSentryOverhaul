@@ -37,8 +37,8 @@ namespace SummonerExpansionMod.Content.Items.Weapons.Summon
             Item.useAnimation = 36;
             Item.noUseGraphic = true;
             Item.useStyle = ItemUseStyleID.Swing; // how the player's arm moves when using the item
-            Item.value = Item.sellPrice(gold: 30);
-            Item.rare = ItemRarityID.Cyan;
+            Item.value = Item.sellPrice(silver: 50);
+            Item.rare = ItemRarityID.Orange;
             Item.UseSound = SoundID.Item1; // What sound should play when using the item
 
             // These below are needed for a minion weapon
@@ -68,6 +68,14 @@ namespace SummonerExpansionMod.Content.Items.Weapons.Summon
 
             // Since we spawned the projectile manually already, we do not need the game to spawn it for ourselves anymore, so return false
             return false;
+        }
+
+        public override void AddRecipes() {
+        	Recipe recipe = CreateRecipe();
+            recipe.AddIngredient(ItemID.MeteoriteBar, 15);
+            recipe.AddIngredient(ItemID.IllegalGunParts, 1);
+            recipe.AddTile(TileID.Anvils);
+            recipe.Register();
         }
     }
 }

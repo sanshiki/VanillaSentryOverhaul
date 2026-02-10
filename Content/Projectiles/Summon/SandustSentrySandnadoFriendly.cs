@@ -42,6 +42,12 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             // Projectile.usesIDStaticNPCImmunity = true;
             // Projectile.idStaticNPCHitCooldown = 10;
         }
+        
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
+        {
+            hit.HitDirection = target.Center.X > Projectile.Center.X ? -1 : 1;
+            target.StrikeNPC(hit, false, false);
+        }
 
         public override void OnSpawn(IEntitySource source)
         {

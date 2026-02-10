@@ -98,6 +98,16 @@ Buffs: {
 		DisplayName: One True Flag Debuff
 		Description: Mods.SummonerExpansionMod.Buffs.OneTrueFlagDebuff.Description
 	}
+
+	MothronDustDebuff: {
+		DisplayName: Mothron Dust Debuff
+		Description: Mods.SummonerExpansionMod.Buffs.MothronDustDebuff.Description
+	}
+
+	SummonFatigueDebuff: {
+		DisplayName: Summon Fatigue Debuff
+		Description: Mods.SummonerExpansionMod.Buffs.SummonFatigueDebuff.Description
+	}
 }
 
 Items: {
@@ -281,6 +291,11 @@ Items: {
 		Tooltip: ""
 	}
 
+	MothronQueenTurretStaff: {
+		DisplayName: Mothron Queen Turret Staff
+		Tooltip: ""
+	}
+
 	SandustSentryStaff: {
 		DisplayName: Sandust Sentry Staff
 		Tooltip: ""
@@ -298,6 +313,11 @@ Items: {
 
 	SentinelTalismanLv3: {
 		DisplayName: Sentinel Talisman Lv3
+		Tooltip: ""
+	}
+
+	GiantLeavesOfPlantera: {
+		DisplayName: Giant Leaves Of Plantera
 		Tooltip: ""
 	}
 }
@@ -373,7 +393,77 @@ Projectiles: {
 	SandustSentryBullet.DisplayName: Sandust Sentry Bullet
 	SandustSentrySandadoFriendly.DisplayName: Sandust Sentry Sandado Friendly
 	SandustSentrySandnadoFriendly.DisplayName: Sandust Sentry Sandnado Friendly
+	MechEyeballTurretEyeFire.DisplayName: Mech Eyeball Turret Eye Fire
+	CursedMagicTowerBulletV3.DisplayName: Cursed Magic Tower Bullet V3
+	CursedMagicTowerV2.DisplayName: Cursed Magic Tower V2
+	GiantLeavesOfPlanteraProjectile.DisplayName: Giant Leaves Of Plantera Projectile
+	GiantLeavesOfPlanteraBullet1.DisplayName: Giant Leaves Of Plantera Bullet1
+	GiantLeavesOfPlanteraBullet2.DisplayName: Giant Leaves Of Plantera Bullet2
 }
 
-NPCs.CursorTargetDummy.DisplayName: Cursor Target Dummy
+NPCs: {
+	CursorTargetDummy.DisplayName: Cursor Target Dummy
+	CursedMagicTowerBulletNPC.DisplayName: Cursed Magic Tower Bullet N P C
+}
+
 "Keybinds.Toggle Dynamic Param Manager UI.DisplayName": Toggle  Dynamic  Param  Manager  U I
+
+Configs: {
+	ProjectileConfig: {
+		DisplayName: Projectile 参数配置
+
+		ProjectileSettings: {
+			Label: 弹幕参数表
+			Tooltip: 为每个 ModProjectile 定义配置参数
+		}
+	}
+
+	ProjectileConfigData: {
+		Tooltip: ""
+
+		Width: {
+			Label: 宽度
+			Tooltip: ""
+		}
+
+		Height: {
+			Label: 高度
+			Tooltip: ""
+		}
+
+		AIStyle: {
+			Label: AI 样式
+			Tooltip: ""
+		}
+
+		Friendly: {
+			Label: 友好
+			Tooltip: ""
+		}
+
+		Hostile: {
+			Label: 敌对
+			Tooltip: ""
+		}
+
+		Penetrate: {
+			Label: 穿透次数
+			Tooltip: ""
+		}
+
+		TimeLeft: {
+			Label: 存活时间
+			Tooltip: ""
+		}
+
+		TileCollide: {
+			Label: 是否碰撞地形
+			Tooltip: ""
+		}
+
+		DamageType: {
+			Label: 伤害类型
+			Tooltip: ""
+		}
+	}
+}

@@ -272,14 +272,14 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                                             projectile.Center + bulletOffset, 
                                             BulletVelocity_1, 
                                             ProjectileID.DD2BallistraProj, 
-                                            projectile.damage / 2, 
+                                            projectile.damage, 
                                             projectile.knockBack, 
                                             projectile.owner);
                     Projectile.NewProjectile(projectile.GetSource_FromThis(), 
                                             projectile.Center + bulletOffset, 
                                             BulletVelocity_2, 
                                             ProjectileID.DD2BallistraProj, 
-                                            projectile.damage / 2, 
+                                            projectile.damage, 
                                             projectile.knockBack, 
                                             projectile.owner);
                 }

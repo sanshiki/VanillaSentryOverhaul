@@ -121,7 +121,9 @@ namespace SummonerExpansionMod.Content.UI
                     true
                 );
 
-                float step = Main.keyState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.LeftShift) ? 0.01f : 0.1f;
+                float step = (max - min) / 100f;
+
+                step = Main.keyState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.LeftShift) ? step/10f : step;
                 float newValue = MathHelper.Lerp(min, max, percent);
                 newValue = (float)Math.Round(newValue / step) * step;
 

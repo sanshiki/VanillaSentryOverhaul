@@ -59,6 +59,15 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             BUFF_ID = ModBuffID.SentryEnhancement;
         }
 
+        public override void OnSpawn(IEntitySource source)
+        {
+            for(int i = 0; i < 6; i++)
+            {
+                Dust d = Dust.NewDustDirect(Projectile.Center - Projectile.Size/2f, Projectile.width, Projectile.height, 150);
+                d.noGravity = true;
+            }
+        }
+
         private bool CheckHiveBackpack(Player owner)
         {
             for(int idx = 3; idx <= 9; idx++)

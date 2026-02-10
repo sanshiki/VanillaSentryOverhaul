@@ -24,17 +24,17 @@ namespace SummonerExpansionMod.Content.Items.Weapons.Summon
 
         public override void SetDefaults()
         {
-            Item.damage = 60;
-            Item.knockBack = 3f;
+            Item.damage = 110;
+            Item.knockBack = 5f;
             Item.mana = 10; // mana cost
             Item.width = 32;
             Item.height = 32;
             Item.useTime = 36;
             Item.useAnimation = 36;
             Item.useStyle = ItemUseStyleID.Swing; // how the player's arm moves when using the item
-            Item.value = Item.sellPrice(gold: 30);
-            Item.rare = ItemRarityID.Cyan;
-            Item.UseSound = SoundID.Item44; // What sound should play when using the item
+            Item.value = Item.sellPrice(gold: 4);
+            Item.rare = ItemRarityID.Yellow;
+            Item.UseSound = SoundID.Item82; // What sound should play when using the item
 
             // These below are needed for a minion weapon
             Item.noMelee = true; // this item doesn't do any melee damage
@@ -66,12 +66,12 @@ namespace SummonerExpansionMod.Content.Items.Weapons.Summon
             return false;
         }
 
-        // Please see Content/ExampleRecipes.cs for a detailed explanation of recipe creation.
-        // public override void AddRecipes() {
-        // 	CreateRecipe()
-        // 		.AddIngredient(ModContent.ItemType<ExampleItem>())
-        // 		.AddTile(ModContent.TileType<ExampleWorkbench>())
-        // 		.Register();
-        // }
+        public override void AddRecipes() {
+        	Recipe recipe = CreateRecipe();
+            recipe.AddIngredient(ModContent.ItemType<DarkMagicTowerStaff>(), 1);
+            recipe.AddIngredient(ItemID.SpectreBar, 10);
+            recipe.AddTile(TileID.MythrilAnvil);
+            recipe.Register();
+        }
     }
 }

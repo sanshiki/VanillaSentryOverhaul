@@ -21,12 +21,15 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         private const float PRED_BULLET_SPEED = 12f;
         private int shootTimer = 0;
 
+        private Vector2 lastVelocity = new Vector2(0, 0);
+
         private Vector2 direction = new Vector2(0, -1);
 
         public EyeBallTurretOverride()
         {
-            RegisterFlags["SetDefaults"] = true;
+            RegisterFlags["SetDefaults"] = false;
             RegisterFlags["PreAI"] = true;
+            RegisterFlags["AI"] = false;
             RegisterFlags["OnTileCollide"] = true;
             RegisterFlags["TileCollideStyle"] = true;
         }
@@ -42,12 +45,14 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             projectile.sentry = true;
             projectile.netImportant = true;
             projectile.DamageType = DamageClass.Summon;
+            // AIType = ProjectileID.HoundiusShootius;
         }
 
         public override bool OnTileCollide(Projectile projectile, Vector2 oldVelocity)
         {
             // projectile.velocity = Vector2.Zero;
             projectile.velocity.X = 0f;
+            lastVelocity = new Vector2(0, 0);
             return true;
         }
 
@@ -59,50 +64,90 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 
         public override bool PreAI(Projectile projectile)
         {
-            // apply gravity
-            MinionAIHelper.ApplyGravity(projectile, ModGlobal.SENTRY_GRAVITY, ModGlobal.SENTRY_MAX_FALL_SPEED);
+            // // apply gravity
+            // MinionAIHelper.ApplyGravity(projectile, ModGlobal.SENTRY_GRAVITY, ModGlobal.SENTRY_MAX_FALL_SPEED);
 
-            // search for target
+            // // search for target
+            // NPC target = MinionAIHelper.SearchForTargets(
+            //     Main.player[projectile.owner], 
+            //     projectile, 
+            //     800f, 
+            //     true, 
+            //     null).TargetNPC;
+
+            // if(target != null)
+            // {
+            //     Vector2 ShootOffset = new Vector2(0, -20f);
+            //     Vector2 ShootCenter = projectile.Center + ShootOffset;
+            //     Vector2 PredictedPos = MinionAIHelper.PredictTargetPosition(ShootCenter, target.Center, target.velocity, PRED_BULLET_SPEED, 60, 3);
+            //     direction = PredictedPos - projectile.Center;
+            //     direction.Normalize();
+
+            //     if(shootTimer >= SHOOT_INTERVAL)
+            //     {
+            //         shootTimer = 0;
+            //     }
+            //     if(shootTimer == 0)
+            //     {
+                    
+            //         Projectile bullet = Projectile.NewProjectileDirect(
+            //             projectile.GetSource_FromThis(),
+            //             ShootCenter,
+            //             direction * REAL_BULLET_SPEED,
+            //             ProjectileID.HoundiusShootiusFireball,
+            //             projectile.damage,
+            //             projectile.knockBack, 
+            //             projectile.owner);
+            //     }
+            // }
+
+            // shootTimer++;
+            // if(shootTimer >= SHOOT_INTERVAL)
+            // {
+            //     shootTimer = SHOOT_INTERVAL;
+            // }
+
+            // return false;
+
+            // apply velocity
+            projectile.Center += new Vector2(lastVelocity.X, 0f);
+            if(!(projectile.velocity.X == 0f && lastVelocity.X != 0f))
+                lastVelocity = projectile.velocity;
+
+            return true;
+        }
+    }
+
+    public class EyeBallTurretFireballOverride : IProjectileOverride
+    {
+        private const float HOMING_RANGE = 400f;
+        private const float HOMING_SPEED = 10f;
+        private const float MAX_ACC = 0.2f;
+        private const float HOMING_INERTIA = 60f;
+        public EyeBallTurretFireballOverride()
+        {
+            RegisterFlags["AI"] = true;
+        }
+
+        public override void AI(Projectile projectile)
+        {
             NPC target = MinionAIHelper.SearchForTargets(
                 Main.player[projectile.owner], 
                 projectile, 
-                800f, 
+                HOMING_RANGE, 
                 true, 
                 null).TargetNPC;
 
             if(target != null)
             {
-                Vector2 ShootOffset = new Vector2(0, -20f);
-                Vector2 ShootCenter = projectile.Center + ShootOffset;
-                Vector2 PredictedPos = MinionAIHelper.PredictTargetPosition(ShootCenter, target.Center, target.velocity, PRED_BULLET_SPEED, 60, 3);
-                direction = PredictedPos - projectile.Center;
-                direction.Normalize();
-
-                if(shootTimer >= SHOOT_INTERVAL)
-                {
-                    shootTimer = 0;
-                }
-                if(shootTimer == 0)
-                {
-                    
-                    Projectile bullet = Projectile.NewProjectileDirect(
-                        projectile.GetSource_FromThis(),
-                        ShootCenter,
-                        direction * REAL_BULLET_SPEED,
-                        ProjectileID.HoundiusShootiusFireball,
-                        projectile.damage,
-                        projectile.knockBack, 
-                        projectile.owner);
-                }
+                MinionAIHelper.HomeinToTarget(projectile, target.Center, HOMING_SPEED, HOMING_INERTIA);
             }
-
-            shootTimer++;
-            if(shootTimer >= SHOOT_INTERVAL)
+            else
             {
-                shootTimer = SHOOT_INTERVAL;
+                projectile.velocity += projectile.velocity.SafeNormalize(Vector2.Zero) * MAX_ACC;
+                if(projectile.velocity.Length() > HOMING_SPEED)
+                    projectile.velocity = projectile.velocity.SafeNormalize(Vector2.Zero) * HOMING_SPEED;
             }
-
-            return false;
         }
     }
 }

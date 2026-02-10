@@ -6,6 +6,7 @@ namespace SummonerExpansionMod.Content.Buffs.Summon
         public static int SentryEnhancement;
         public static int SentryTarget;
         public static int ElectricShock;
+        public static int MothronDustDebuff;
         public static int NormalFlagBuff;
         public static int GoblinFlagBuff;
         public static int HellFlagBuff;

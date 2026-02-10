@@ -10,6 +10,7 @@ using Terraria.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using SummonerExpansionMod.ModUtils;
 using SummonerExpansionMod.Initialization;
+using SummonerExpansionMod.Content.Buffs.Summon;
 
 namespace SummonerExpansionMod.Content.Projectiles.Summon
 {
@@ -20,6 +21,8 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         private const float MAX_SPEED = 15f;
         private const float ACC = 0.2f;
         private const float INERTIA = 15f;
+        private const float EXPLOSION_RADIUS = 80f;
+        private const float DAMAGE_INCREASE_PER_LEVEL = 0.02f;
 
         public override void SetStaticDefaults()
         {
@@ -69,6 +72,28 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                 else
                 {
                     Projectile.velocity -= Projectile.velocity.SafeNormalize(Vector2.Zero) * ACC;
+                }
+            }
+
+            
+            // add mothron dust debuff to targets in radius
+            if (Projectile.timeLeft % 60 == 0)
+            {
+                List<NPC> targets = MinionAIHelper.SearchTargetsInRadius(Projectile.Center, EXPLOSION_RADIUS);
+                foreach (NPC targ in targets)
+                {
+                    targ.AddBuff(ModBuffID.MothronDustDebuff, 60);
+                    var npcData = targ.GetGlobalNPC<MothronDustDebuffNPC>();
+                    npcData.lvl++;
+                    // Main.NewText("Add mothron dust debuff to target: " + targ.type);
+                }
+                for (int i = 0; i < 15; i++)
+                {
+                        Dust dust;
+                        Vector2 position = Projectile.Center - Projectile.Size/2f;
+                        dust = Main.dust[Terraria.Dust.NewDust(position, Projectile.width, Projectile.height, 233, 0f, 0f, 0, new Color(255,255,255), 1.2f)];
+                        dust.noGravity = true;
+                        dust.velocity = new Vector2(1, 0).RotatedBy(MinionAIHelper.RandomFloat(-ModGlobal.PI_FLOAT, ModGlobal.PI_FLOAT)) * MinionAIHelper.RandomFloat(1f, 5f);
                 }
             }
 
@@ -123,6 +148,39 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                 dust.noGravity = true;
             }
         }
+
+        public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
+        {
+            var npcData = target.GetGlobalNPC<MothronDustDebuffNPC>();
+
+            if (npcData.lvl > 0)
+            {
+                float bonus = 1f + (npcData.lvl * DAMAGE_INCREASE_PER_LEVEL);
+                modifiers.FinalDamage *= bonus;
+            }
+        }
+
+        public override bool PreDraw(ref Color lightColor)
+        {
+            Texture2D texture = ModContent.Request<Texture2D>(Texture).Value;
+            int width = texture.Width;
+            int FrameHeight = Projectile.height * Projectile.frame;
+            Rectangle rect = new Rectangle(0, FrameHeight, width, Projectile.height);
+            Vector2 worldPos = MinionAIHelper.ConvertToWorldPos(Projectile, new Vector2(0, 0));
+            Vector2 origin = new Vector2(width / 2, Projectile.height / 2);
+            MinionAIHelper.DrawPart(Projectile, texture, worldPos, rect, lightColor, Projectile.rotation, origin);
+
+
+            for(int i = Projectile.oldPos.Length-1;i >= 0; i-=2)
+            {
+                Vector2 pos = MinionAIHelper.ConvertToWorldPos(Projectile.oldPos[i] + Projectile.Size / 2f, Projectile.oldRot[i] , new Vector2(0, 0));
+                Color color = Projectile.GetAlpha(lightColor) * ((Projectile.oldPos.Length - i) / (float)Projectile.oldPos.Length);
+
+                MinionAIHelper.DrawPart(Projectile, texture, pos, rect, color, Projectile.rotation, origin);
+            }
+
+            return false;
+        }   
     }
 
     public class MothronQueenTurretBullet : ModProjectile
@@ -133,6 +191,14 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         private const float EXPLOSION_RADIUS = 60f;
 
         public override string Texture => ModGlobal.VANILLA_NPC_TEXTURE_PATH + NPCID.MothronEgg;
+
+        public override void SetStaticDefaults()
+        {
+            Main.projFrames[Projectile.type] = 3;
+            ProjectileID.Sets.TrailCacheLength[Projectile.type] = 5;
+            ProjectileID.Sets.TrailingMode[Projectile.type] = 0;
+            ProjectileID.Sets.SentryShot[Projectile.type] = true;
+        }
 
         public override void SetDefaults()
         {
@@ -184,6 +250,28 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                     // dust.noGravity = true;
             }
         }
+
+        public override bool PreDraw(ref Color lightColor)
+        {
+            Texture2D texture = ModContent.Request<Texture2D>(Texture).Value;
+            int width = texture.Width;
+            int FrameHeight = Projectile.height * Projectile.frame;
+            Rectangle rect = new Rectangle(0, FrameHeight, width, Projectile.height);
+            Vector2 worldPos = MinionAIHelper.ConvertToWorldPos(Projectile, new Vector2(0, 0));
+            Vector2 origin = new Vector2(width / 2, Projectile.height / 2);
+            MinionAIHelper.DrawPart(Projectile, texture, worldPos, rect, lightColor, Projectile.rotation, origin);
+
+
+            for(int i = Projectile.oldPos.Length-1;i >= 0; i-=2)
+            {
+                Vector2 pos = MinionAIHelper.ConvertToWorldPos(Projectile.oldPos[i] + Projectile.Size / 2f, Projectile.oldRot[i] , new Vector2(0, 0));
+                Color color = Projectile.GetAlpha(lightColor) * ((Projectile.oldPos.Length - i) / (float)Projectile.oldPos.Length);
+
+                MinionAIHelper.DrawPart(Projectile, texture, pos, rect, color, Projectile.rotation, origin);
+            }
+
+            return false;
+        }   
 
     }
 }

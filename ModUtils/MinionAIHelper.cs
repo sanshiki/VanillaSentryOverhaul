@@ -159,7 +159,7 @@ namespace SummonerExpansionMod.ModUtils
 				NPC npc = Main.npc[owner.MinionAttackTargetNPC];
 				float distance = Vector2.Distance(npc.Center, minion.Center);
 				bool canBeChased = npc.CanBeChasedBy(minion);
-				bool canHit = checkCanHit ? Collision.CanHitLine(minion.position, minion.width, minion.height, 
+				bool canHit = checkCanHit ? Collision.CanHitLine(minion.position, /* minion.width, minion.height,  */ 6, 6, 
 																  npc.position, npc.width, npc.height) : true;
 
 				if (distance < searchRange && canHit && canBeChased && (otherCondition == null || otherCondition(npc)))
@@ -317,7 +317,20 @@ namespace SummonerExpansionMod.ModUtils
 		{
 			// 使用 GenSearch 向下搜索地面
 			Point? found = Searches.Chain(new Searches.Down(100), new Conditions.NotNull(), new Conditions.IsSolid()).Find(start.ToTileCoordinates());
-			return found.HasValue ? found.Value.ToWorldCoordinates(0f, 0f) - new Vector2(projectileWidth / 2f, projectileHeight / 2f) : null;
+			return found.HasValue ? found.Value.ToWorldCoordinates(0f, 0f) - new Vector2(0f, projectileHeight / 2f) : null;
+		}
+
+		public static List<NPC> SearchTargetsInRadius(Vector2 center, float radius)
+		{
+			List<NPC> targets = new List<NPC>();
+			foreach (NPC npc in Main.npc)
+            {
+                if (npc.active && !npc.friendly && npc.Distance(center) < radius && !npc.dontTakeDamage && !npc.immortal)
+                {
+                    targets.Add(npc);
+                }
+            }
+			return targets;
 		}
 
 		/// <summary>
@@ -726,6 +739,16 @@ namespace SummonerExpansionMod.ModUtils
 				return new Polar(r, th);
 			}
 		}
+
+		public static float TaianglePeekFunc(float h, float w, float m, float v)
+		{
+			if(v > m - w/2 && v <= m)
+				return (v-m+w/2) / (w/2) * h;
+			else if(v > m && v < m + w/2)
+				return (m+w/2-v) / (w/2) * h;
+			else
+				return 0;
+		}
 		#endregion
 
 		#region Texture Methods
@@ -882,6 +905,88 @@ namespace SummonerExpansionMod.ModUtils
 			projectile.velocity = (projectile.velocity * (inertia - 1) + direction) / inertia;
 
 			// Main.NewText("Homein velocity: " + projectile.velocity + " direction: " + direction + " speed: " + speed + " inertia: " + inertia);
+		}
+		#endregion
+
+		#region Trail Drawing Methods
+		/// <summary>
+		/// 绘制顶点拖尾效果
+		/// </summary>
+		/// <param name="projectile">弹幕对象</param>
+		/// <param name="trailTexturePath">拖尾纹理路径</param>
+		/// <param name="startColor">起始颜色（拖尾头部）</param>
+		/// <param name="endColor">结束颜色（拖尾尾部）</param>
+		/// <param name="startWidth">起始宽度（拖尾头部）</param>
+		/// <param name="endWidth">结束宽度（拖尾尾部）</param>
+		/// <param name="blendState">混合模式，默认为加法混合</param>
+		public static void DrawVertexTrail(
+			Projectile projectile, 
+			string trailTexturePath, 
+			Color startColor, 
+			Color endColor, 
+			float startWidth, 
+			float endWidth,
+			BlendState blendState = null)
+		{
+			if (blendState == null)
+				blendState = BlendState.Additive;
+
+			SpriteBatch sb = Main.spriteBatch;
+			GraphicsDevice gd = Main.graphics.GraphicsDevice;
+			
+			// 结束当前批次，开始顶点绘制批次
+			sb.End();
+			sb.Begin(SpriteSortMode.Immediate, blendState, SamplerState.AnisotropicClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+			
+			List<Vertex> vertices = new List<Vertex>();
+			int trailLength = ProjectileID.Sets.TrailCacheLength[projectile.type];
+			
+			// 遍历所有缓存的旧位置，创建拖尾效果
+			for (int i = 0; i < trailLength; i++)
+			{
+				// 如果旧位置为零向量，说明还没有足够的历史记录，跳过
+				if (projectile.oldPos[i] == Vector2.Zero)
+					break;
+				
+				float ratio = i / (float)trailLength;
+				// 颜色从起始颜色渐变到结束颜色
+				Color trailColor = Color.Lerp(startColor, endColor, ratio);
+				
+				// 计算拖尾的宽度，从粗到细
+				float width = MathHelper.Lerp(startWidth, endWidth, ratio);
+				
+				// 获取当前位置的中心点
+				Vector2 center = projectile.oldPos[i] + projectile.Size / 2f - Main.screenPosition;
+				
+				// 根据旧的旋转角度计算垂直方向
+				float rotation = projectile.oldRot[i];
+				Vector2 perpendicular = new Vector2((float)Math.Cos(rotation), (float)Math.Sin(rotation));
+				
+				// 创建拖尾带的两个边缘顶点
+				vertices.Add(new Vertex(
+					center + perpendicular * width,
+					new Vector3(ratio, 0, 1),
+					trailColor
+				));
+				
+				vertices.Add(new Vertex(
+					center - perpendicular * width,
+					new Vector3(ratio, 1, 1),
+					trailColor
+				));
+			}
+			
+			// 只有至少3个顶点才能绘制三角形带
+			if (vertices.Count >= 3)
+			{
+				Texture2D trailTexture = ModContent.Request<Texture2D>(trailTexturePath).Value;
+				gd.Textures[0] = trailTexture;
+				gd.DrawUserPrimitives(PrimitiveType.TriangleStrip, vertices.ToArray(), 0, vertices.Count - 2);
+			}
+			
+			// 结束顶点绘制，恢复默认的SpriteBatch设置
+			sb.End();
+			sb.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.AnisotropicClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
 		}
 		#endregion
 

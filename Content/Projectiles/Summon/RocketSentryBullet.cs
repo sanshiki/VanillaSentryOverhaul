@@ -17,9 +17,12 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
     {
         public override string Texture => ModGlobal.VANILLA_PROJECTILE_TEXTURE_PATH + ProjectileID.RocketI;
 
-        private const float MAX_HOMING_RANGE = 600f;
+        private const float MAX_HOMING_RANGE = 800f;
         private const float MAX_HOMING_TURN_SPEED = 0.2f;
         private const float EXPLOSION_RADIUS = 100f;
+        private const float HOMING_SPEED = 25f;
+        private const float ACC = 2f;
+        private const float HOMING_INERTIA = 7f;
 
         public override void SetStaticDefaults()
         {
@@ -105,31 +108,49 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 				Projectile.rotation = (float)Math.Atan2(Projectile.velocity.Y, Projectile.velocity.X) + 1.57f;
 			}
 
-            NPC target = Main.npc[(int)(Projectile.ai[0])];
-
-            if(target == null || !target.active)
-            {
-                target = MinionAIHelper.SearchForTargets(
+            // NPC target = Main.npc[(int)(Projectile.ai[0])];
+            NPC target = MinionAIHelper.SearchForTargets(
                 Main.player[Projectile.owner], 
                 Projectile, 
                 MAX_HOMING_RANGE, 
                 true, 
                 null).TargetNPC;
-            }
+
+            // if(target == null || !target.active)
+            // {
+            //     target = MinionAIHelper.SearchForTargets(
+            //     Main.player[Projectile.owner], 
+            //     Projectile, 
+            //     MAX_HOMING_RANGE, 
+            //     true, 
+            //     null).TargetNPC;
+            // }
 
             if(target != null)
             {
-                float VelMod = Projectile.velocity.Length();
-                float VelDir = (float)Math.Atan2(Projectile.velocity.Y, Projectile.velocity.X);
-                float HomeDir = (float)Math.Atan2(target.Center.Y - Projectile.Center.Y, target.Center.X - Projectile.Center.X);
-                float error = MinionAIHelper.NormalizeAngle(HomeDir - VelDir);
-                float turnSpeed = Math.Min(MAX_HOMING_TURN_SPEED, Math.Abs(error));
-                if(turnSpeed > 0.01f)
+                // float VelMod = Projectile.velocity.Length();
+                // float VelDir = (float)Math.Atan2(Projectile.velocity.Y, Projectile.velocity.X);
+                // float HomeDir = (float)Math.Atan2(target.Center.Y - Projectile.Center.Y, target.Center.X - Projectile.Center.X);
+                // float error = MinionAIHelper.NormalizeAngle(HomeDir - VelDir);
+                // float turnSpeed = Math.Min(MAX_HOMING_TURN_SPEED, Math.Abs(error));
+                // if(turnSpeed > 0.01f)
+                // {
+                //     VelDir += Math.Sign(error) * turnSpeed;
+                // }
+                // Projectile.velocity = new Vector2((float)Math.Cos(VelDir), (float)Math.Sin(VelDir)) * VelMod;
+
+                MinionAIHelper.HomeinToTarget(Projectile, target.Center, HOMING_SPEED, HOMING_INERTIA);
+            }
+            else
+            {
+                if(Projectile.velocity.Length() < HOMING_SPEED)
                 {
-                    VelDir += Math.Sign(error) * turnSpeed;
+                    Projectile.velocity += Projectile.velocity.SafeNormalize(Vector2.Zero) * ACC;
                 }
-                Projectile.velocity = new Vector2((float)Math.Cos(VelDir), (float)Math.Sin(VelDir)) * VelMod;
-                
+                else
+                {
+                    Projectile.velocity = Projectile.velocity.SafeNormalize(Vector2.Zero) * HOMING_SPEED;
+                }
             }
         }
 

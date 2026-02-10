@@ -1,0 +1,469 @@
+Buffs: {
+	ExampleSimpleMinionBuff: {
+		DisplayName: Example Simple Minion Buff
+		Description: Mods.SummonerExpansionMod.Buffs.ExampleSimpleMinionBuff.Description
+	}
+
+	BabySlimeOverrideBuff: {
+		DisplayName: Baby Slime Override Buff
+		Description: Mods.SummonerExpansionMod.Buffs.BabySlimeOverrideBuff.Description
+	}
+
+	SentryPlatformBuff: {
+		DisplayName: Sentry Platform Buff
+		Description: Mods.SummonerExpansionMod.Buffs.SentryPlatformBuff.Description
+	}
+
+	SentryEnhancementBuff: {
+		DisplayName: Sentry Enhancement Buff
+		Description: Mods.SummonerExpansionMod.Buffs.SentryEnhancementBuff.Description
+	}
+
+	SentryRecallBuff: {
+		DisplayName: Sentry Recall Buff
+		Description: Mods.SummonerExpansionMod.Buffs.SentryRecallBuff.Description
+	}
+
+	SentryTargetBuff: {
+		DisplayName: Sentry Target Buff
+		Description: Mods.SummonerExpansionMod.Buffs.SentryTargetBuff.Description
+	}
+
+	ElectricShock: {
+		DisplayName: Electric Shock
+		Description: Mods.SummonerExpansionMod.Buffs.ElectricShock.Description
+	}
+
+	ElectricBoostBuff: {
+		DisplayName: Electric Boost Buff
+		Description: Mods.SummonerExpansionMod.Buffs.ElectricBoostBuff.Description
+	}
+
+	GoblinFlagBuff: {
+		DisplayName: Goblin Flag Buff
+		Description: Mods.SummonerExpansionMod.Buffs.GoblinFlagBuff.Description
+	}
+
+	HellFlagBuff: {
+		DisplayName: Hell Flag Buff
+		Description: Mods.SummonerExpansionMod.Buffs.HellFlagBuff.Description
+	}
+
+	HolyFlagBuff: {
+		DisplayName: Holy Flag Buff
+		Description: Mods.SummonerExpansionMod.Buffs.HolyFlagBuff.Description
+	}
+
+	NormalFlagBuff: {
+		DisplayName: Normal Flag Buff
+		Description: Mods.SummonerExpansionMod.Buffs.NormalFlagBuff.Description
+	}
+
+	PirateFlagBuff: {
+		DisplayName: Pirate Flag Buff
+		Description: Mods.SummonerExpansionMod.Buffs.PirateFlagBuff.Description
+	}
+
+	PirateFlagDebuff: {
+		DisplayName: Pirate Flag Debuff
+		Description: Mods.SummonerExpansionMod.Buffs.PirateFlagDebuff.Description
+	}
+
+	OneTrueFlagBuff: {
+		DisplayName: One True Flag Buff
+		Description: Mods.SummonerExpansionMod.Buffs.OneTrueFlagBuff.Description
+	}
+
+	SantaFlagBuff: {
+		DisplayName: Santa Flag Buff
+		Description: Mods.SummonerExpansionMod.Buffs.SantaFlagBuff.Description
+	}
+
+	TikiFlagBuff: {
+		DisplayName: Tiki Flag Buff
+		Description: Mods.SummonerExpansionMod.Buffs.TikiFlagBuff.Description
+	}
+
+	SantaFlagDebuff: {
+		DisplayName: Santa Flag Debuff
+		Description: Mods.SummonerExpansionMod.Buffs.SantaFlagDebuff.Description
+	}
+
+	TikiFlagDebuff: {
+		DisplayName: Tiki Flag Debuff
+		Description: Mods.SummonerExpansionMod.Buffs.TikiFlagDebuff.Description
+	}
+
+	OneTrueFlagDebuff: {
+		DisplayName: One True Flag Debuff
+		Description: Mods.SummonerExpansionMod.Buffs.OneTrueFlagDebuff.Description
+	}
+
+	MothronDustDebuff: {
+		DisplayName: Mothron Dust Debuff
+		Description: Mods.SummonerExpansionMod.Buffs.MothronDustDebuff.Description
+	}
+
+	SummonFatigueDebuff: {
+		// DisplayName: Summon Fatigue Debuff
+		// Description: Mods.SummonerExpansionMod.Buffs.SummonFatigueDebuff.Description
+	}
+}
+
+Items: {
+	ExampleSimpleMinionStaff: {
+		DisplayName: Example Simple Minion Staff
+		Tooltip: ""
+	}
+
+	SentryPlatformStaff: {
+		DisplayName: Sentry Platform Staff
+		Tooltip: ""
+	}
+
+	DarkMagicTowerStaff: {
+		DisplayName: Dark Magic Tower Staff
+		Tooltip: ""
+	}
+
+	BunnySentryStaff: {
+		DisplayName: Bunny Sentry Staff
+		Tooltip: ""
+	}
+
+	MachineGunSentryStaff: {
+		DisplayName: Machine Gun Sentry Staff
+		Tooltip: ""
+	}
+
+	RocketSentryStaff: {
+		DisplayName: Rocket Sentry Staff
+		Tooltip: ""
+	}
+
+	AntlionSentryStaff: {
+		DisplayName: Antlion Sentry Staff
+		Tooltip: ""
+	}
+
+	TowerOfDryadsBlessingStaff: {
+		DisplayName: Tower Of Dryads Blessing Staff
+		Tooltip: ""
+	}
+
+	FlagWeapon: {
+		DisplayName: Flag Weapon
+		Tooltip: ""
+	}
+
+	FlagProjectileWeapon: {
+		DisplayName: Flag Pole Weapon
+		Tooltip: ""
+	}
+
+	HoneyCombSentryStaff: {
+		DisplayName: Honey Comb Sentry Staff
+		Tooltip: ""
+	}
+
+	MechEyeballTurretStaff: {
+		DisplayName: Mech Eyeball Turret Staff
+		Tooltip: ""
+	}
+
+	CursedMagicTowerStaff: {
+		DisplayName: Cursed Magic Tower Staff
+		Tooltip: ""
+	}
+
+	GatlingSentryStaff: {
+		DisplayName: Gatling Sentry Staff
+		Tooltip: ""
+	}
+
+	MachineGunSentrySummon: {
+		DisplayName: Machine Gun Sentry Summon
+		Tooltip: ""
+	}
+
+	RocketSentrySummon: {
+		DisplayName: Rocket Sentry Summon
+		Tooltip: ""
+	}
+
+	GatlingSentrySummon: {
+		DisplayName: Gatling Sentry Summon
+		Tooltip: ""
+	}
+
+	AutocannonSentrySummon: {
+		DisplayName: Autocannon Sentry Summon
+		Tooltip: ""
+	}
+
+	SelfDamagePreventer: {
+		DisplayName: Self Damage Preventer
+		Tooltip: ""
+	}
+
+	SuperEarthCloak: {
+		DisplayName: Super Earth Cloak
+		Tooltip: ""
+	}
+
+	VertexTest: {
+		DisplayName: Vertex Test
+		Tooltip: ""
+	}
+
+	PirateFlag: {
+		DisplayName: Pirate Flag
+		Tooltip: ""
+	}
+
+	TempleSentryStaff: {
+		DisplayName: Temple Sentry Staff
+		Tooltip: ""
+	}
+
+	StardustSentryStaff: {
+		DisplayName: Stardust Sentry Staff
+		Tooltip: ""
+	}
+
+	NormalFlag: {
+		DisplayName: Normal Flag
+		Tooltip: ""
+	}
+
+	GoblinFlag: {
+		DisplayName: Goblin Flag
+		Tooltip: ""
+	}
+
+	HellFlag: {
+		DisplayName: Hell Flag
+		Tooltip: ""
+	}
+
+	HolyFlag: {
+		DisplayName: Holy Flag
+		Tooltip: ""
+	}
+
+	ExampleSword: {
+		DisplayName: Example Sword
+		Tooltip: ""
+	}
+
+	OneTrueFlag: {
+		DisplayName: One True Flag
+		Tooltip: ""
+	}
+
+	SantaFlag: {
+		DisplayName: Santa Flag
+		Tooltip: ""
+	}
+
+	TikiFlag: {
+		DisplayName: Tiki Flag
+		Tooltip: ""
+	}
+
+	SentinelTalisman: {
+		DisplayName: Sentinel Talisman
+		Tooltip: ""
+	}
+
+	IchorPressorStaff: {
+		DisplayName: Ichor Pressor Staff
+		Tooltip: ""
+	}
+
+	CursedFireExtractorStaff: {
+		DisplayName: Cursed Fire Extractor Staff
+		Tooltip: ""
+	}
+
+	MothronQueenTurretStaffStaff: {
+		DisplayName: Mothron Queen Turret Staff Staff
+		Tooltip: ""
+	}
+
+	MothronQueenTurretStaff: {
+		// DisplayName: Mothron Queen Turret Staff
+		// Tooltip: ""
+	}
+
+	SandustSentryStaff: {
+		DisplayName: Sandust Sentry Staff
+		Tooltip: ""
+	}
+
+	SentinelTalismanLv1: {
+		DisplayName: Sentinel Talisman Lv1
+		Tooltip: ""
+	}
+
+	SentinelTalismanLv2: {
+		DisplayName: Sentinel Talisman Lv2
+		Tooltip: ""
+	}
+
+	SentinelTalismanLv3: {
+		DisplayName: Sentinel Talisman Lv3
+		Tooltip: ""
+	}
+
+	GiantLeavesOfPlantera: {
+		DisplayName: Giant Leaves Of Plantera
+		Tooltip: ""
+	}
+}
+
+Projectiles: {
+	ExampleSimpleMinion.DisplayName: Example Simple Minion
+	BabySlimeOverride.DisplayName: Baby Slime Override
+	SentryPlatform.DisplayName: Sentry Platform
+	DarkMagicTower.DisplayName: Dark Magic Tower
+	BunnySentry.DisplayName: Bunny Sentry
+	MachineGunSentry.DisplayName: Machine Gun Sentry
+	RocketSentry.DisplayName: Rocket Sentry
+	AntlionSentry.DisplayName: Antlion Sentry
+	AntlionSentryBullet.DisplayName: Antlion Sentry Bullet
+	TowerOfDryadsBlessing.DisplayName: Tower Of Dryads Blessing
+	TowerOfDryadsBlessingProjectile.DisplayName: Tower Of Dryads Blessing Projectile
+	MachineGunSentryBullet.DisplayName: Machine Gun Sentry Bullet
+	FlagWeaponProjectile.DisplayName: Flag Weapon Projectile
+	FlagProjectile.DisplayName: Flag Projectile
+	FlagWeaponProjectileV1.DisplayName: Flag Weapon Projectile V1
+	HoneyCombSentry.DisplayName: Honey Comb Sentry
+	HoneyCombSentryBullet.DisplayName: Honey Comb Sentry Bullet
+	DarkMagicTowerBullet.DisplayName: Dark Magic Tower Bullet
+	MechEyeballTurret.DisplayName: Mech Eyeball Turret
+	CursedMagicTower.DisplayName: Cursed Magic Tower
+	CursedMagicTowerBullet.DisplayName: Cursed Magic Tower Bullet
+	CursedMagicTowerV1.DisplayName: Cursed Magic Tower V1
+	CursedMagicTowerBulletSmall.DisplayName: Cursed Magic Tower Bullet Small
+	CursedMagicTowerBulletSphere.DisplayName: Cursed Magic Tower Bullet Sphere
+	CursedMagicTowerBulletLarge.DisplayName: Cursed Magic Tower Bullet Large
+	GatlingSentry.DisplayName: Gatling Sentry
+	Hellpod.DisplayName: Hellpod
+	HellpodSummonBall.DisplayName: Hellpod Summon Ball
+	HellpodSummonSignal.DisplayName: Hellpod Summon Signal
+	RocketSentryBullet.DisplayName: Rocket Sentry Bullet
+	AutocannonSentry.DisplayName: Autocannon Sentry
+	AutocannonSentryBullet.DisplayName: Autocannon Sentry Bullet
+	VertexTestProj.DisplayName: Vertex Test Proj
+	PirateFlagProjectile.DisplayName: Pirate Flag Projectile
+	TempleSentry.DisplayName: Temple Sentry
+	TempleSentryHeatRay.DisplayName: Temple Sentry Heat Ray
+	StardustSentry.DisplayName: Stardust Sentry
+	StardustSentrySignal.DisplayName: Stardust Sentry Signal
+	StardustSentryBullet.DisplayName: Stardust Sentry Bullet
+	NormalFlagProjectile.DisplayName: Normal Flag Projectile
+	GoblinFlagProjectile.DisplayName: Goblin Flag Projectile
+	HellFlagProjectile.DisplayName: Hell Flag Projectile
+	HolyFlagProjectile.DisplayName: Holy Flag Projectile
+	OneTrueFlagProjectile.DisplayName: One True Flag Projectile
+	SantaFlagProjectile.DisplayName: Santa Flag Projectile
+	TikiFlagProjectile.DisplayName: Tiki Flag Projectile
+	FlagBladeShot.DisplayName: Flag Blade Shot
+	TikiFlagBladeShot.DisplayName: Tiki Flag Blade Shot
+	SantaFlagBladeShot.DisplayName: Santa Flag Blade Shot
+	OneTrueFlagBladeShot.DisplayName: One True Flag Blade Shot
+	OneTrueFlagDrone.DisplayName: One True Flag Drone
+	OneTrueFlagAnchor.DisplayName: One True Flag Anchor
+	IchorPressorSentry.DisplayName: Ichor Pressor Sentry
+	BunnySentryBullet.DisplayName: Bunny Sentry Bullet
+	HoneyCombSentryGiantBullet.DisplayName: Honey Comb Sentry Giant Bullet
+	AutocannonSentryBulletClone.DisplayName: Autocannon Sentry Bullet Clone
+	BunnySentryBulletClone.DisplayName: Bunny Sentry Bullet Clone
+	HoneyCombSentryBulletClone.DisplayName: Honey Comb Sentry Bullet Clone
+	MachineGunSentryBulletClone.DisplayName: Machine Gun Sentry Bullet Clone
+	TempleSentryEyeBeamBullet.DisplayName: Temple Sentry Eye Beam Bullet
+	IchorPressorSentryBullet.DisplayName: Ichor Pressor Sentry Bullet
+	CursedFireExtractorSentry.DisplayName: Cursed Fire Extractor Sentry
+	CursedFireExtractorSentryBullet.DisplayName: Cursed Fire Extractor Sentry Bullet
+	MothronQueenTurret.DisplayName: Mothron Queen Turret
+	MothronQueenTurretBullet.DisplayName: Mothron Queen Turret Bullet
+	MothronBabyFriendly.DisplayName: Mothron Baby Friendly
+	SandustSentry.DisplayName: Sandust Sentry
+	SandustSentryBullet.DisplayName: Sandust Sentry Bullet
+	SandustSentrySandadoFriendly.DisplayName: Sandust Sentry Sandado Friendly
+	SandustSentrySandnadoFriendly.DisplayName: Sandust Sentry Sandnado Friendly
+	MechEyeballTurretEyeFire.DisplayName: Mech Eyeball Turret Eye Fire
+	CursedMagicTowerBulletV3.DisplayName: Cursed Magic Tower Bullet V3
+	CursedMagicTowerV2.DisplayName: Cursed Magic Tower V2
+	GiantLeavesOfPlanteraProjectile.DisplayName: Giant Leaves Of Plantera Projectile
+	GiantLeavesOfPlanteraBullet1.DisplayName: Giant Leaves Of Plantera Bullet1
+	GiantLeavesOfPlanteraBullet2.DisplayName: Giant Leaves Of Plantera Bullet2
+}
+
+NPCs: {
+	CursorTargetDummy.DisplayName: Cursor Target Dummy
+	CursedMagicTowerBulletNPC.DisplayName: Cursed Magic Tower Bullet N P C
+}
+
+"Keybinds.Toggle Dynamic Param Manager UI.DisplayName": Toggle  Dynamic  Param  Manager  U I
+
+Configs: {
+	ProjectileConfig: {
+		DisplayName: Projectile 参数配置
+
+		ProjectileSettings: {
+			Label: 弹幕参数表
+			Tooltip: 为每个 ModProjectile 定义配置参数
+		}
+	}
+
+	ProjectileConfigData: {
+		Tooltip: ""
+
+		Width: {
+			Label: 宽度
+			Tooltip: ""
+		}
+
+		Height: {
+			Label: 高度
+			Tooltip: ""
+		}
+
+		AIStyle: {
+			Label: AI 样式
+			Tooltip: ""
+		}
+
+		Friendly: {
+			Label: 友好
+			Tooltip: ""
+		}
+
+		Hostile: {
+			Label: 敌对
+			Tooltip: ""
+		}
+
+		Penetrate: {
+			Label: 穿透次数
+			Tooltip: ""
+		}
+
+		TimeLeft: {
+			Label: 存活时间
+			Tooltip: ""
+		}
+
+		TileCollide: {
+			Label: 是否碰撞地形
+			Tooltip: ""
+		}
+
+		DamageType: {
+			Label: 伤害类型
+			Tooltip: ""
+		}
+	}
+}
