@@ -158,7 +158,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                                 // ProjectileID.Seed,
                                 ProjectileID.MiniRetinaLaser,
                                 (int)(Projectile.damage * RED_DMG_FACTOR),
-                                0,
+                                Projectile.knockBack,
                                 Projectile.owner);
                             shootTimer = 0; // Reset shoot animation
                         }

@@ -123,7 +123,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                         velocity,
                         ModProjectileID.SandustSentryBullet,
                         Projectile.damage,
-                        0,
+                        Projectile.knockBack,
                         Projectile.owner);
 
                     ProjectileID.Sets.SentryShot[proj.type] = true;

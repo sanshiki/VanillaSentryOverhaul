@@ -28,38 +28,56 @@ namespace SummonerExpansionMod.Content.Items.Accessories
 
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
-            player.GetModPlayer<SentinelTalismanLv3Player>().hasAccessory = true;
-        }
-    }
+            player.maxTurrets += 1;
 
-    public class SentinelTalismanLv3Player : ModPlayer
-    {
-        public bool hasAccessory = false;
-
-        public override void ResetEffects() {
-            hasAccessory = false;
-        }
-
-        public override void PostUpdate()
-        {
-            // Main.NewText("hasAccessory: " + hasAccessory + " maxTurrets: " + Player.maxTurrets);
-            if (hasAccessory && Player.maxTurrets >= 5) {
+            if (player.maxTurrets >= 5)
+            {
                 int armorDefense = 0;
 
                 for (int i = 0; i < 3; i++)
                 {
-                    Item armorPiece = Player.armor[i];
-                    if (armorPiece != null && !armorPiece.IsAir)
-                    {
+                    Item armorPiece = player.armor[i];
+                    if (!armorPiece.IsAir)
                         armorDefense += armorPiece.defense;
-                    }
                 }
 
-                int bonusDefense = MinionAIHelper.DefenseCompensate(armorDefense, 60, 0.5f, 25f, 25f);
+                int bonusDefense = MinionAIHelper.DefenseCompensate(
+                    armorDefense, 60, 0.5f, 25f, 25f);
 
-                Player.statDefense += bonusDefense;
-                Player.maxTurrets += 1;
+                player.statDefense += bonusDefense;
             }
         }
+
     }
+
+    // public class SentinelTalismanLv3Player : ModPlayer
+    // {
+    //     public bool hasAccessory = false;
+
+    //     public override void ResetEffects() {
+    //         hasAccessory = false;
+    //     }
+
+    //     public override void PostUpdate()
+    //     {
+    //         // Main.NewText("hasAccessory: " + hasAccessory + " maxTurrets: " + Player.maxTurrets);
+    //         if (hasAccessory && Player.maxTurrets >= 5) {
+    //             int armorDefense = 0;
+
+    //             for (int i = 0; i < 3; i++)
+    //             {
+    //                 Item armorPiece = Player.armor[i];
+    //                 if (armorPiece != null && !armorPiece.IsAir)
+    //                 {
+    //                     armorDefense += armorPiece.defense;
+    //                 }
+    //             }
+
+    //             int bonusDefense = MinionAIHelper.DefenseCompensate(armorDefense, 60, 0.5f, 25f, 25f);
+
+    //             Player.statDefense += bonusDefense;
+    //             Player.maxTurrets += 8;
+    //         }
+    //     }
+    // }
 }

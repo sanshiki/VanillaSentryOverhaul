@@ -14,6 +14,7 @@ namespace SummonerExpansionMod.Content.Items.Weapons.Summon
         public override string Texture => ModGlobal.MOD_TEXTURE_PATH + "Items/NormalFlagItem";
         protected override int MOD_PROJECTILE_ID => ModProjectileID.NormalFlagProjectile;
         protected override int POLE_LENGTH => 200;
+        protected override int WAVE_USE_TIME => 25+5;
 
         public override void SetDefaults()
         {

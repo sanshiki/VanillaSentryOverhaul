@@ -33,6 +33,14 @@ namespace SummonerExpansionMod.Content.Items.Weapons.Summon
             {
                 item.damage = 86;
             }
+            if (item.type == ItemID.QueenSpiderStaff)
+            {
+                item.damage = 30;
+            }
+            if (item.type == ItemID.DD2FlameburstTowerT2Popper)
+            {
+                item.damage = 50;
+            }
 
         }
     }

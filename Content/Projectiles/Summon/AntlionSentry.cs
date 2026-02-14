@@ -136,7 +136,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                         new Vector2(vx, -vy),
                         ModProjectileID.AntlionSentryBullet,
                         Projectile.damage,
-                        0,
+                        Projectile.knockBack,
                         Projectile.owner);
 
                     ProjectileID.Sets.SentryShot[proj.type] = true;

@@ -30,5 +30,6 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         protected override int FULLY_CHARGED_DUST => 263;
         protected override int ENHANCE_BUFF_ID => ModBuffID.HolyFlagBuff;
         protected override int NPC_DEBUFF_ID => BuffID.SwordWhipNPCDebuff;
+        protected override bool AUTO_READD_BUFF_ON_PLANT => true;
     }
 }

@@ -29,6 +29,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         protected const float RANGE_FACTOR = 1.5f;
         protected const int SHOOT_ANIMATION_SPEED = 5;
         protected const int SHOOT_INTERVAL = (int)(60 * 0.5f);
+        protected const float ATTACK_SPEED_ENHANCEMENT_FACTOR = 0.75f;
         protected virtual int FRAME_COUNT => 9;
 
         protected Vector2 direction = new Vector2(1f, 0f);
@@ -188,7 +189,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                 n => (n.Center - projectile.Center).ToRotation() <= ModGlobal.PI_FLOAT/4f || (n.Center - projectile.Center).ToRotation() >= 3f*ModGlobal.PI_FLOAT/4f).TargetNPC;
 
 
-            int shootInterval = SHOOT_INTERVAL + FRAME_COUNT * SHOOT_ANIMATION_SPEED;
+            int shootInterval = (int)((SHOOT_INTERVAL + FRAME_COUNT * SHOOT_ANIMATION_SPEED) * (Enhanced ? ATTACK_SPEED_ENHANCEMENT_FACTOR : 1f));
 
 
             // shooting
@@ -291,7 +292,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                 n => (n.Center - projectile.Center).ToRotation() <= ModGlobal.PI_FLOAT/4f || (n.Center - projectile.Center).ToRotation() >= 3f*ModGlobal.PI_FLOAT/4f).TargetNPC;
 
 
-            int shootInterval = SHOOT_INTERVAL + FRAME_COUNT * SHOOT_ANIMATION_SPEED;
+            int shootInterval = (int)((SHOOT_INTERVAL + FRAME_COUNT * SHOOT_ANIMATION_SPEED) * (Enhanced ? ATTACK_SPEED_ENHANCEMENT_FACTOR : 1f));
 
 
             // shooting
@@ -394,7 +395,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                 n => (n.Center - projectile.Center).ToRotation() <= ModGlobal.PI_FLOAT/4f || (n.Center - projectile.Center).ToRotation() >= 3f*ModGlobal.PI_FLOAT/4f).TargetNPC;
 
 
-            int shootInterval = SHOOT_INTERVAL + FRAME_COUNT * SHOOT_ANIMATION_SPEED;
+            int shootInterval = (int)((SHOOT_INTERVAL + FRAME_COUNT * SHOOT_ANIMATION_SPEED) * (Enhanced ? ATTACK_SPEED_ENHANCEMENT_FACTOR : 1f));
 
 
             // shooting

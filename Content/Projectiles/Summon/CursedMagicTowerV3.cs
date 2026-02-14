@@ -20,7 +20,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         private const int FRAME_COUNT = 3;
         private int FRAME_SPEED = 10;
         // private int fireCooldown = 30;
-        private const int FIRE_INTERVAL = 120;
+        private const int FIRE_INTERVAL = 90;
         private int fireTimer = 0;
         private long floatCnt = 0;
 
@@ -28,6 +28,10 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         private const float PRED_BULLET_SPEED = 15f;
         private const float DEACCELERATION = 0.5f;
         private const bool USE_PREDICTION = false;
+        private const int TELEPORT_COOLDOWN = 60*5;
+        private const int TELEPORT_TRIGGER_DISTANCE = 2000;
+        private const int TELEPORT_MAX_DISTANCE = 4000;
+        private int teleportTimer = 0;
 
         private const float ENHANCEMENT_FACTOR = 0.75f;
         private int BUFF_ID = -1;
@@ -83,12 +87,13 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             Projectile.Center += new Vector2(0, FloatOffset);
 
             // teleport to owner if needed
-            float maxDistance = 2000f;
             Player owner = Main.player[Projectile.owner];
-            if (Vector2.Distance(Projectile.Center, owner.Center) > maxDistance)
+            if (Vector2.Distance(Projectile.Center, owner.Center) > TELEPORT_TRIGGER_DISTANCE && Vector2.Distance(Projectile.Center, owner.Center) < TELEPORT_MAX_DISTANCE && teleportTimer >= TELEPORT_COOLDOWN)
             {
                 TryTeleportNearPlayer(owner);
+                teleportTimer = 0;
             }
+            teleportTimer += teleportTimer >= TELEPORT_COOLDOWN ? 0 : 1;
 
             int fireInterval = FIRE_INTERVAL;
             if(owner.HasBuff(BUFF_ID))

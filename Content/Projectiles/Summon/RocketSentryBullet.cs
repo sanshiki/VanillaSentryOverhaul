@@ -10,6 +10,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 using SummonerExpansionMod.ModUtils;
 using SummonerExpansionMod.Initialization;
+using SummonerExpansionMod.Content.Items.Accessories;
 
 namespace SummonerExpansionMod.Content.Projectiles.Summon
 {
@@ -24,6 +25,14 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         private const float ACC = 2f;
         private const float HOMING_INERTIA = 7f;
 
+        private bool hasAccessory = false;
+
+        private bool DamageDebug = false;
+        
+        private const int SelfDamage = 120;
+
+        private const int SelfArmorPenetration = 45;
+
         public override void SetStaticDefaults()
         {
             ProjectileID.Sets.MinionShot[Projectile.type] = true;
@@ -33,7 +42,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         {
             Projectile.CloneDefaults(ProjectileID.RocketI);
             Projectile.friendly = true;
-            Projectile.hostile = true;
+            Projectile.hostile = false;
             Projectile.aiStyle = -1;
             Projectile.tileCollide = true;
             Projectile.penetrate = 1;
@@ -43,6 +52,13 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 
             Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = 20;
+        }
+
+        public override void OnSpawn(IEntitySource source)
+        {
+            Player player = Main.player[Projectile.owner];
+            HD2SentryDmgReductionPlayer hd2SentryDmgReductionPlayer = player.GetModPlayer<HD2SentryDmgReductionPlayer>();
+            hasAccessory = hd2SentryDmgReductionPlayer.hasAccessory;
         }
 
         public override void AI()
@@ -151,6 +167,49 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                 {
                     Projectile.velocity = Projectile.velocity.SafeNormalize(Vector2.Zero) * HOMING_SPEED;
                 }
+            }
+
+            DealDamage(SelfDamage, true);
+        }
+
+        private void DealDamage(int damage, bool checkIntersection = true)
+        {
+            Player player = Main.player[Projectile.owner];
+            if(player.dead || player.active == false)
+            {
+                return;
+            }
+
+            float DifficultyFactor = 1f;
+            float expertFactor = DamageDebug ? 1f : DynamicParamManager.QuickGet("RocketSentryBulletExpertFactor", 1.95f, 1f, 3f).value;
+            float masterFactor = DamageDebug ? 1f : DynamicParamManager.QuickGet("RocketSentryBulletMasterFactor", 2.9f, 1f, 3f).value;
+            if(Main.expertMode && !Main.masterMode)
+            {
+                DifficultyFactor = 1f/expertFactor;
+            }
+            else if (Main.masterMode)
+            {
+                DifficultyFactor = 1f/masterFactor;
+            }
+
+            float ReductionFactor = hasAccessory ? 0.5f : 1f;
+
+            if ((checkIntersection && Projectile.Hitbox.Intersects(player.Hitbox) || !checkIntersection) && !player.immune)
+            {
+                int hitDir = Projectile.Center.X > player.Center.X ? 1 : -1;
+                player.Hurt(
+                    PlayerDeathReason.ByProjectile(
+                        player.whoAmI,
+                        Projectile.whoAmI),
+                    (int)(damage * DifficultyFactor * ReductionFactor),
+                    hitDir,
+                    knockback: hasAccessory ? 0f : Projectile.knockBack,
+                    armorPenetration:SelfArmorPenetration
+                );
+
+                if(hasAccessory) player.immuneTime += 30;
+
+                Projectile.Kill(); // 避免每帧重复触发
             }
         }
 
@@ -271,6 +330,12 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                     hitInfo.Damage = damage;
                     npc.StrikeNPC(hitInfo, false, false);
                 }
+            }
+
+            Player player = Main.player[Projectile.owner];
+            if(player.Distance(center) < radius)
+            {
+                DealDamage((int)(SelfDamage*0.8f), false);
             }
         }
     }

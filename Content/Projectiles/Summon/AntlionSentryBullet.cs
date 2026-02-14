@@ -78,7 +78,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                 // split into 4 bullets
                 for(int i = 0; i < SPLIT_COUNT; i++)
                 {
-                    Projectile bullet = Projectile.NewProjectileDirect(Projectile.GetSource_FromAI(), Projectile.Center, new Vector2(Projectile.velocity.X, Projectile.velocity.Y), ModProjectileID.AntlionSentryBullet, (int)(Projectile.damage * 0.5f), 0, Projectile.owner);
+                    Projectile bullet = Projectile.NewProjectileDirect(Projectile.GetSource_FromAI(), Projectile.Center, new Vector2(Projectile.velocity.X, Projectile.velocity.Y), ModProjectileID.AntlionSentryBullet, (int)(Projectile.damage * 0.5f), Projectile.knockBack, Projectile.owner);
                     bullet.velocity = new Vector2(Projectile.velocity.X + (float)(i-SPLIT_COUNT/2)/SPLIT_COUNT*8f, Projectile.velocity.Y * MinionAIHelper.RandomFloat(0.5f, 1.0f));
                     if(bullet.ModProjectile is AntlionSentryBullet bulletProjectile)
                     {
@@ -104,7 +104,41 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         // 撞击地面时
         public override bool OnTileCollide(Vector2 oldVelocity)
         {
-            Explosion(null);
+            if(!hasSplit)
+            {
+                if (Projectile.velocity.X != oldVelocity.X && Math.Abs(oldVelocity.X) > 0.1f)
+                {
+                    for(int i = 0; i < SPLIT_COUNT-1; i++)
+                    {
+                        float velY = MinionAIHelper.RandomFloat(-3f, 3f) + oldVelocity.Y * 0.5f;                     Projectile bullet = Projectile.NewProjectileDirect(Projectile.GetSource_FromAI(), Projectile.Center, new Vector2(-oldVelocity.X*MinionAIHelper.RandomFloat(0.3f, 0.7f), velY), ModProjectileID.AntlionSentryBullet, (int)(Projectile.damage * 0.5f), Projectile.knockBack, Projectile.owner);
+                        if(bullet.ModProjectile is AntlionSentryBullet bulletProjectile)
+                        {
+                            bulletProjectile.hasSplit = true;
+                        }
+                    }
+
+                    Projectile.Kill();
+                }
+                if (Projectile.velocity.Y != oldVelocity.Y && Math.Abs(oldVelocity.Y) > 0.1f)
+                {
+                    if (oldVelocity.Y <= 0f)
+                    {
+                        for(int i = 0; i < SPLIT_COUNT-1; i++)
+                        {
+                            float velX = MinionAIHelper.RandomFloat(-3f, 3f) + oldVelocity.X * 0.5f;
+                            Projectile bullet = Projectile.NewProjectileDirect(Projectile.GetSource_FromAI(), Projectile.Center, new Vector2(velX, -oldVelocity.Y*MinionAIHelper.RandomFloat(0.3f, 0.7f)), ModProjectileID.AntlionSentryBullet, (int)(Projectile.damage * 0.5f), Projectile.knockBack, Projectile.owner);
+                            if(bullet.ModProjectile is AntlionSentryBullet bulletProjectile)
+                            {
+                                bulletProjectile.hasSplit = true;
+                            }
+                        }
+
+                        Projectile.Kill();
+                    }
+                }
+            }
+            else
+                Explosion(null);
             return false; // Kill() 在 Explosion 内处理
         }
 

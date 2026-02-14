@@ -25,7 +25,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         private const int SIGNAL_TIME = 60*4;
 
         private Vector3 LIGHT_RGB = new Vector3(1f, 1f, 1f);
-        private const float LIGHT_STRENGTH = 6.0f;
+        private const float LIGHT_STRENGTH = 1.5f;
 
         private bool initialized = false;
 
@@ -61,7 +61,8 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             for(int i = 0; i < SIGNAL_HEIGHT / SIGNAL_SLICE_HEIGHT; i++)
             {
                 int repeatY = SIGNAL_BASE_HEIGHT + i * SIGNAL_SLICE_HEIGHT;
-                Lighting.AddLight(Projectile.Center + new Vector2(0, SIGNAL_HEIGHT/2f) - new Vector2(0, repeatY), LIGHT_RGB * LIGHT_STRENGTH);
+                float decay_factor = 1f - (float)i / (SIGNAL_HEIGHT / SIGNAL_SLICE_HEIGHT);
+                Lighting.AddLight(Projectile.Center + new Vector2(0, SIGNAL_HEIGHT/2f) - new Vector2(0, repeatY), LIGHT_RGB * LIGHT_STRENGTH * decay_factor);
             }
         }
 

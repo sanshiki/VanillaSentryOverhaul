@@ -30,7 +30,8 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         protected override int FULLY_CHARGED_DUST => 110;
         protected override int ENHANCE_BUFF_ID => ModBuffID.TikiFlagBuff;
         protected override int NPC_DEBUFF_ID => ModBuffID.TikiFlagDebuff;
-        protected override int ENHANCE_BUFF_DURATION => 60*5;
+        protected override int ENHANCE_BUFF_DURATION => 60*4;
+        protected override bool AUTO_READD_BUFF_ON_PLANT => true;
         protected bool isCharged = false;
         protected bool BladShotInited = false;
         protected Vector2 CursorPos;
@@ -47,7 +48,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             Player player = Main.player[Projectile.owner];
             if (State == WAVE_STATE && isCharged)
             {
-                float wave_ratio = Projectile.timeLeft / (float)TIME_LEFT_WAVE * AttackSpeed;
+                float wave_ratio = Projectile.timeLeft / (float)player.itemAnimationMax;
                 float wave_ratio_mean = 0.6f; // DynamicParamManager.QuickGet("WaveRatioMean", 0.6f, 0f, 1f).value;
                 float wave_ratio_range = 0.1f; //DynamicParamManager.QuickGet("WaveRatioRange", 0.2f, 0f, 1f).value;
                 if(/* Projectile.timeLeft % 2 == 0 &&  */wave_ratio >= wave_ratio_mean - wave_ratio_range && wave_ratio <= wave_ratio_mean + wave_ratio_range)

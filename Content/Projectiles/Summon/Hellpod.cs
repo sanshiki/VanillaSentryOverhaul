@@ -10,6 +10,7 @@ using Terraria.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using SummonerExpansionMod.ModUtils;
 using SummonerExpansionMod.Initialization;
+using SummonerExpansionMod.Content.Items.Accessories;
 
 
 namespace SummonerExpansionMod.Content.Projectiles.Summon
@@ -26,15 +27,28 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 
         public override string Texture => ModGlobal.MOD_TEXTURE_PATH + "Projectiles/Hellpod";
 
+        private bool DamageDebug = false;
+        private int SelfDamage = 100;
+        private bool HurtFlag = false;
+
+        private bool hasAccessory = false;
+
         public override void SetDefaults()
         {
             Projectile.width = 40;
             Projectile.height = 53;
             Projectile.friendly = true;
-            Projectile.hostile = true;
+            Projectile.hostile = false;
             Projectile.tileCollide = false;
             Projectile.timeLeft = 600;
             Projectile.penetrate = -1;
+        }
+
+        public override void OnSpawn(IEntitySource source)
+        {
+            Player player = Main.player[Projectile.owner];
+            HD2SentryDmgReductionPlayer hd2SentryDmgReductionPlayer = player.GetModPlayer<HD2SentryDmgReductionPlayer>();
+            hasAccessory = hd2SentryDmgReductionPlayer.hasAccessory;
         }
 
         public override void AI()
@@ -74,6 +88,40 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             Dust middleFlameDust = Dust.NewDustPerfect(Projectile.Center + MiddleFlameOffset, DustID.FlameBurst, MiddleFlameSpeed, 0, default, MiddleFlameScale);
             middleFlameDust.noGravity = true;
 
+            // deal damage
+            Player player = Main.player[Projectile.owner];
+
+            float DifficultyFactor = 1f;
+            float expertFactor = DamageDebug ? 2f : DynamicParamManager.QuickGet("HellpodExpertFactor", 2f, 1f, 3f).value;
+            float masterFactor = DamageDebug ? 3f : DynamicParamManager.QuickGet("HellpodMasterFactor", 3f, 1f, 3f).value;
+            float ReductionFactor = hasAccessory ? 0.5f : 1f;
+            if(Main.expertMode && !Main.masterMode)
+            {
+                DifficultyFactor = 1f/expertFactor;
+            }
+            else if (Main.masterMode)
+            {
+                DifficultyFactor = 1f/masterFactor;
+            }
+
+            if (Projectile.Hitbox.Intersects(player.Hitbox) && !player.immune)
+            {
+                int hitDir = Projectile.Center.X > player.Center.X ? 1 : -1;
+                player.Hurt(
+                    PlayerDeathReason.ByProjectile(
+                        player.whoAmI,
+                        Projectile.whoAmI),
+                    (int)(SelfDamage * DifficultyFactor * ReductionFactor),
+                    hitDir,
+                    knockback: hasAccessory ? 0f : Projectile.knockBack,
+                    armorPenetration:5
+                );
+
+                if(hasAccessory) player.immuneTime += 30;
+
+                HurtFlag = true;
+            }
         }
+
     }
 }

@@ -63,7 +63,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             ProjectileID.Sets.MinionSacrificable[Projectile.type] = true;
             ProjectileID.Sets.MinionTargettingFeature[Projectile.type] = true;
             Main.projFrames[Projectile.type] = 1;
-            ProjectileID.Sets.MinionShot[Projectile.type] = true;
+            ProjectileID.Sets.SentryShot[Projectile.type] = true;
             ProjectileID.Sets.CultistIsResistantTo[Projectile.type] = true;
         }
 
@@ -136,11 +136,6 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                 }
                 if(shootTimer == 0)
                 {
-                    // Whip add damage
-                    int addDamage = MinionAIHelper.AccumulateWhipDamage(target);
-                    addDamage = (int)(addDamage);
-                    int totalDamage = Projectile.damage + addDamage;
-
                     // Fire!
                     Vector2 bulletVelocity = direction * REAL_BULLET_SPEED;
 
@@ -152,8 +147,8 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                         bulletVelocity,
                         // ProjectileID.RocketI,
                         ModProjectileID.RocketSentryBullet,
-                        totalDamage,
-                        0,
+                        Projectile.damage,
+                        Projectile.knockBack,
                         Projectile.owner);
 
 
@@ -175,6 +170,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                 // {
                 //     shootInterval = (int)(shootInterval * ENHANCEMENT_FACTOR);
                 // }
+                
 
 
             }

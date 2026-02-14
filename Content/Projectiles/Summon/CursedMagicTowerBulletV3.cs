@@ -16,7 +16,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
     {
         private float MAX_SPEED = 20f;
         private const float INERTIA = 20f;
-        private const int TIME_LEFT = 60*10;
+        private const int TIME_LEFT = 60*5;
         private int timeLeftCnt = 0;
         private bool HitByOwner = false;
         private int HitDamage = 0;

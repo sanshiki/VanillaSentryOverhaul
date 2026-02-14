@@ -189,10 +189,10 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                                             projectile.owner);
                 }
             }
-            else if (target == null )
-            {
-                TargetDirection = new Vector2(1f, 0);
-            }
+            // else if (target == null )
+            // {
+            //     TargetDirection = new Vector2(1f, 0);
+            // }
 
             shootTimer++;
             if(shootTimer >= shootInterval)
@@ -284,10 +284,10 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                                             projectile.owner);
                 }
             }
-            else if (target == null )
-            {
-                TargetDirection = new Vector2(1f, 0);
-            }
+            // else if (target == null )
+            // {
+            //     TargetDirection = new Vector2(1f, 0);
+            // }
 
             shootTimer++;
             if(shootTimer >= shootInterval)
@@ -371,29 +371,29 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                                             projectile.Center + bulletOffset, 
                                             BulletVelocity_1, 
                                             ProjectileID.DD2BallistraProj, 
-                                            projectile.damage / 3, 
+                                            projectile.damage, 
                                             projectile.knockBack, 
                                             projectile.owner);
                     Projectile.NewProjectile(projectile.GetSource_FromThis(), 
                                             projectile.Center + bulletOffset, 
                                             BulletVelocity_2, 
                                             ProjectileID.DD2BallistraProj, 
-                                            projectile.damage / 3, 
+                                            projectile.damage, 
                                             projectile.knockBack, 
                                             projectile.owner);
                     Projectile.NewProjectile(projectile.GetSource_FromThis(), 
                                             projectile.Center + bulletOffset, 
                                             BulletVelocity_3, 
                                             ProjectileID.DD2BallistraProj, 
-                                            projectile.damage / 3, 
+                                            projectile.damage, 
                                             projectile.knockBack, 
                                             projectile.owner);
                 }
             }
-            else if (target == null )
-            {
-                TargetDirection = new Vector2(1f, 0);
-            }
+            // else if (target == null )
+            // {
+            //     TargetDirection = new Vector2(1f, 0);
+            // }
 
             shootTimer++;
             if(shootTimer >= shootInterval)

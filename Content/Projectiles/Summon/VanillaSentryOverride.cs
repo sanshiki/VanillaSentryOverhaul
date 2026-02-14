@@ -22,6 +22,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 		public virtual bool OnTileCollide(Projectile projectile, Vector2 oldVelocity) => true;
 		public virtual bool? Colliding(Projectile projectile, Rectangle myRect, Rectangle targetRect) => null;
 		public virtual void OnHitNPC(Projectile projectile, NPC target, NPC.HitInfo hit, int damageDone) {}
+		public virtual void ModifyHitNPC(Projectile projectile, NPC target, ref NPC.HitModifiers modifiers) {}
 		public virtual bool TileCollideStyle(Projectile projectile, ref int width, ref int height, ref bool fallThrough, ref Vector2 hitboxCenterFrac) => true;
 		public virtual void OnSpawn(Projectile projectile, IEntitySource source) {}
 		// register flags
@@ -34,6 +35,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 			{ "OnTileCollide", false },
 			{ "Colliding", false },
 			{ "OnHitNPC", false },
+			{ "ModifyHitNPC", false },
 			{ "TileCollideStyle", false },
 			{ "OnSpawn", false}
 		};
@@ -158,6 +160,13 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 				base.OnHitNPC(projectile, target, hit, damageDone);
 		}
 
+		public override void ModifyHitNPC(Projectile projectile, NPC target, ref NPC.HitModifiers modifiers)
+		{
+			if (overrides.TryGetValue(projectile.type, out var handler))
+				handler.ModifyHitNPC(projectile, target, ref modifiers);
+			else
+				base.ModifyHitNPC(projectile, target, ref modifiers);
+		}
 		public override void OnSpawn(Projectile projectile, IEntitySource source)
 		{
 			if (overrides.TryGetValue(projectile.type, out var handler))

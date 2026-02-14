@@ -32,8 +32,9 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         protected override int FULLY_CHARGED_DUST => DustID.FrostHydra;
         protected override int ENHANCE_BUFF_ID => ModBuffID.SantaFlagBuff;
         protected override int NPC_DEBUFF_ID => BuffID.MaceWhipNPCDebuff;
-        protected override int ENHANCE_BUFF_DURATION => 60*5;
-        protected override int ENHANCE_BUFF_DURATION_PLANTED => 60*7;
+        protected override int ENHANCE_BUFF_DURATION => 60*4;
+        protected override int ENHANCE_BUFF_DURATION_PLANTED => 60*5;
+        protected override bool AUTO_READD_BUFF_ON_PLANT => true;
         protected bool isCharged = false;
         protected bool BladShotInited = false;
         protected Vector2 CursorPos;

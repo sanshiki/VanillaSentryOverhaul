@@ -21,7 +21,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         private const int NORMAL_FRAME_SPEED = 20;
         private const int SHOOT_FRAME_SPEED = 5;
 
-        private const int SHOOT_INTERVAL = 25;
+        private const int SHOOT_INTERVAL = 35;
         private const float ENHANCEMENT_FACTOR = 0.75f;
         private int BUFF_ID = -1;
 
@@ -104,7 +104,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                         direction,
                         ModProjectileID.BunnySentryBullet,
                         Projectile.damage,
-                        0,
+                        Projectile.knockBack,
                         Projectile.owner);
 
                     // seed.DamageType = DamageClass.Summon;
@@ -112,6 +112,9 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                     // Main.NewText("Damage: " + Projectile.damage + "Seed Damage: " + seed.damage);
 
                     shootTimer = 0; // Reset shoot animation
+
+                    SoundStyle style = new SoundStyle("Terraria/Sounds/Item_11") with { Volume = .7f,  Pitch = .72f,  PitchVariance = .26f, };
+                    SoundEngine.PlaySound(style, Projectile.Center);
                 }
             }
 

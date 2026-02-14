@@ -15,6 +15,7 @@ namespace SummonerExpansionMod.Content.Items.Weapons.Summon
         protected override int MOD_PROJECTILE_ID => ModProjectileID.PirateFlagProjectile;
         protected override int POLE_LENGTH => 260;
         protected override int RAISE_USE_TIME => 45;
+        protected override int WAVE_USE_TIME => 25+2;
 
         public override void SetDefaults()
         {

@@ -48,6 +48,31 @@ namespace SummonerExpansionMod.Content.Items
 					// Console.WriteLine(rule.GetType().Name);
 				}
 			}
+
+			if (item.type == ItemID.GolemBossBag) {
+				foreach (var rule in itemLoot.Get()) {
+					if (rule is OneFromRulesRule oneFromOptionsDrop) {
+
+						bool found = false;
+						foreach (var subRule in oneFromOptionsDrop.options) {
+							// Console.WriteLine("second layer: " + subRule.GetType().Name);
+							if(subRule is CommonDrop commonDrop && commonDrop.itemId == ItemID.EyeoftheGolem) {
+								found = true;
+								break;
+							}
+							// Console.WriteLine("found: " + found);
+						}
+
+						if(found) {
+							var original = oneFromOptionsDrop.options.ToList();
+							original.Add(ItemDropRule.Common(ModContent.ItemType<TempleSentryStaff>()));
+							oneFromOptionsDrop.options = original.ToArray();
+						}
+
+					}
+					// Console.WriteLine("first layer: " + rule.GetType().Name);
+				}
+			}
 		}
     }
 }

@@ -170,11 +170,16 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                         ModProjectileID.MachineGunSentryBullet,
                         // ProjectileID.Bullet,
                         Projectile.damage,
-                        0,
+                        Projectile.knockBack,
                         Projectile.owner);
 
                     bullet.ArmorPenetration = 5;
                     // Main.NewText("Damage: " + Projectile.damage + "Bullet Damage: " + bullet.damage);
+
+                    if(bullet.ModProjectile is MachineGunSentryBullet machineGunBullet)
+                    {
+                        machineGunBullet.SelfDamage = 5;
+                    }
 
                     shootTimer = 0; // Reset shoot animation
 

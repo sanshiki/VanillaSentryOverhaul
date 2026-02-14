@@ -78,6 +78,7 @@ namespace SummonerExpansionMod.Content.Items.Weapons.Summon
                     Direction = 1;
                 }
                 LastShootTime = CurTime;
+                KillExistingFlagProjectiles(player);
                 FlagProjectile = GenerateFlagProjectile(player, source, position, velocity, type, damage, knockback);
                 if (TryGet(FlagProjectile, out T flagPole))
                 {
@@ -119,6 +120,19 @@ namespace SummonerExpansionMod.Content.Items.Weapons.Summon
             {
                 FlagProjectile.Kill();
                 FlagProjectile = null;
+            }
+        }
+
+        protected void KillExistingFlagProjectiles(Player player)
+        {
+            foreach(Projectile proj in Main.projectile)
+            {
+                if (proj.active && 
+                    proj.owner == player.whoAmI &&
+                    proj.ModProjectile is FlagProjectile)
+                {
+                    proj.Kill();
+                }
             }
         }
 
@@ -168,6 +182,9 @@ namespace SummonerExpansionMod.Content.Items.Weapons.Summon
                         {
                             // Main.NewText("Raising");
                             ResetFlagProjectile();
+
+                            // kill existing flag projectiles
+                            KillExistingFlagProjectiles(player);
                             
                             FlagProjectile = GenerateFlagProjectile(player, player.GetSource_ItemUse(Item), player.Center, Vector2.Zero, MOD_PROJECTILE_ID, Item.damage, Item.knockBack);
                             // if (FlagProjectile.ModProjectile is FlagProjectile flagPole)

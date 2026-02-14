@@ -63,26 +63,6 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
     }
 
 
-    public class MachineGunSentryBullet : ClonedSentryProjectile
-    {
-        public override int BaseProjectileID => ProjectileID.Bullet;
-
-        public override string TexturePath => "Terraria/Images/Projectile_" + ProjectileID.Bullet;
-
-        public override void SetStaticDefaults()
-        {
-            base.SetStaticDefaults();
-            ProjectileID.Sets.SummonTagDamageMultiplier[Type] = 0.5f;
-        }
-
-        public override void SetDefaults()
-        {
-            base.SetDefaults();
-            Projectile.usesLocalNPCImmunity = true;
-            Projectile.localNPCHitCooldown = 4;
-        }
-    }
-
 
     public class HoneyCombSentryBullet : ClonedSentryProjectile
     {
@@ -170,19 +150,6 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         }
     }
 
-
-    public class AutocannonSentryBullet : ClonedSentryProjectile
-    {
-        public override int BaseProjectileID => ProjectileID.BulletHighVelocity;
-
-        public override string TexturePath => "Terraria/Images/Projectile_" + ProjectileID.BulletHighVelocity;
-
-        public override void SetDefaults()
-        {
-            base.SetDefaults();
-            Projectile.aiStyle = 1;
-        }
-    }
 
     public class IchorPressorSentryBullet : ClonedSentryProjectile
     {

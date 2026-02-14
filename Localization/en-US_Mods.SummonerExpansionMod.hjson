@@ -320,6 +320,11 @@ Items: {
 		DisplayName: Giant Leaves Of Plantera
 		Tooltip: ""
 	}
+
+	SentryAnchor: {
+		DisplayName: Sentry Anchor
+		Tooltip: ""
+	}
 }
 
 Projectiles: {

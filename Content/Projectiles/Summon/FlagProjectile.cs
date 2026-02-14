@@ -12,6 +12,7 @@ using SummonerExpansionMod.Content.Items.Weapons.Summon;
 using SummonerExpansionMod.Content.Buffs.Summon;
 using SummonerExpansionMod.Initialization;
 using SummonerExpansionMod.ModUtils;
+using SummonerExpansionMod.Content.Items.Accessories;
 
 namespace SummonerExpansionMod.Content.Projectiles.Summon
 {
@@ -63,6 +64,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         protected virtual float SENTRY_RECALL_TARGET_OFFSET => 70f;
         protected virtual float SENTRY_RANDOM_OFFSET => 20f;
         protected virtual bool USE_CUSTOM_SENTRY_RECALL => false;
+        protected virtual bool AUTO_READD_BUFF_ON_PLANT => false;
 
         // recalling flag
         protected virtual int TIME_LEFT_RECALL => 60*60; // 1 min
@@ -147,6 +149,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         protected float FlagClothAmplitude = 0f;
         protected float FlagClothWaveSpeed = 0f;
         protected bool UseFastAnimation = false;
+        protected bool HasSentryLockInSlot = false;
 
 
         /* -------------------------- Setting Defaults -------------------------- */
@@ -192,6 +195,18 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             }
             
             DynamicParamManager.Register("StickOffsetList.extra", 0, -30, 30);
+        }
+
+        public override void OnSpawn(IEntitySource source)
+        {
+            Player player = Main.player[Projectile.owner];
+            AttackSpeed = player.GetAttackSpeed(DamageClass.Melee);  
+
+            // Main.NewText("itemAnimationMax: " + player.itemAnimationMax +
+            //              " AttackSpeed: " + AttackSpeed +
+            //              "time left:" + TIME_LEFT_WAVE / AttackSpeed);
+
+            
         }
 
 
@@ -248,7 +263,8 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 
                 RotSpd = 0f;
 
-                Projectile.timeLeft = (int)(TIME_LEFT_WAVE / AttackSpeed);
+                // Projectile.timeLeft = (int)(TIME_LEFT_WAVE / AttackSpeed);
+                Projectile.timeLeft = (int)player.itemAnimationMax;
             }
 
             float dir = WaveDirection/*  * FixedDirection */;
@@ -257,7 +273,8 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             
             // float ItemRot = player.itemRotation;
             float RotRate = (ItemRot/*  * FixedDirection */ + RotDisplacement/2f) / RotDisplacement; // 0 to 1
-            float WaveUseTime = TIME_LEFT_WAVE / AttackSpeed;
+            // float WaveUseTime = TIME_LEFT_WAVE / AttackSpeed;
+            float WaveUseTime = player.itemAnimationMax;
 
             // rotate speed: accelerate then deaccelerate
             // RotAcc = -2 * ROT_DISPLACEMENT / WaveUseTime / WaveUseTime;
@@ -393,6 +410,12 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                 // Main.NewText("PlantAI:"+Projectile.identity);
                 Initialized = true;
 
+                SentryAnchorPlayer anchorPlayer = player.GetModPlayer<SentryAnchorPlayer>();
+                if(anchorPlayer.HasLockedSentryAnchor)
+                {
+                    HasSentryLockInSlot = true;
+                }
+
                 HasPlayedOnGroundSound = false;
             }
 
@@ -409,77 +432,81 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 
             if (OnGroundCnt >= 10)
             {
-                if (!SentryRecallInitialized)
+                if(!HasSentryLockInSlot)
                 {
-                    // find affected sentries
-                    SentryRecallInfos.Clear();
-                    foreach (var proj in Main.projectile)
+                    if (!SentryRecallInitialized)
                     {
-                        if (proj.active && proj.owner == Projectile.owner && proj.sentry && (proj.Center - Projectile.Center).Length() <= SENTRY_RECALL_MAX_DIST)
+                        // find affected sentries
+                        SentryRecallInfos.Clear();
+                        foreach (var proj in Main.projectile)
                         {
-                            SentryRecallInfo info = new SentryRecallInfo()
+                            if (proj.active && proj.owner == Projectile.owner && proj.sentry && (proj.Center - Projectile.Center).Length() <= SENTRY_RECALL_MAX_DIST)
                             {
-                                ID = proj.identity,
-                                TileCollide = proj.tileCollide,
-                                TargetPos = proj.Center,
-                                Seed = Main.rand.NextFloat(-SENTRY_RANDOM_OFFSET, SENTRY_RANDOM_OFFSET)
-                            };
-                            SentryRecallInfos.Add(info);
-                            // make sentry can go through tile
-                            if(!USE_CUSTOM_SENTRY_RECALL) proj.tileCollide = false;
+                                SentryRecallInfo info = new SentryRecallInfo()
+                                {
+                                    ID = proj.identity,
+                                    TileCollide = proj.tileCollide,
+                                    TargetPos = proj.Center,
+                                    Seed = Main.rand.NextFloat(-SENTRY_RANDOM_OFFSET, SENTRY_RANDOM_OFFSET)
+                                };
+                                SentryRecallInfos.Add(info);
+                                // make sentry can go through tile
+                                if(!USE_CUSTOM_SENTRY_RECALL) proj.tileCollide = false;
+                            }
                         }
-                    }
-                    // set target pos
-                    int SentryCount = SentryRecallInfos.Count;
-                    float TotalLength = SentryCount == 0 ? 0f : (float)Math.Sqrt(SentryCount - 1) * 200f;
-                    Random random = new Random();
-                    int ranDir = random.Next(2) == 0 ? 1 : -1;
-                    for (int i = 0; i < SentryCount; i++)
-                    {
-                        SentryRecallInfo info = SentryRecallInfos[i];
-                        float LocalX = SentryCount == 1 ? 0f : (float)i / (float)(SentryCount - 1) * TotalLength - TotalLength / 2f;
-                        float PreciseX = Projectile.Center.X + LocalX * ranDir;
-                        float PreciseY = Projectile.Center.Y - SENTRY_RECALL_TARGET_OFFSET;
-                        float X = PreciseX + info.Seed;
-                        float Y = PreciseY + info.Seed;
-                        int SentryWidth = Main.projectile[info.ID].width;
-                        int SentryHeight = Main.projectile[info.ID].height;
-                        Vector2 PossiblePos = MinionAIHelper.SearchForValidPosition(new Vector2(X, Y), (int)(SentryWidth * 1.5), (int)(SentryHeight * 1.5), 10);
-                        SentryRecallInfos[i].TargetPos = PossiblePos;
-
-                        // Main.NewText("Sentry "+i+" target pos: "+info.TargetPos);
-                    }
-
-                    // reset buff
-                    player.AddBuff(ENHANCE_BUFF_ID, BuffTimePlanted);
-
-                    SentryRecallInitialized = true;
-                }
-                foreach (var info in SentryRecallInfos)
-                {
-                    if (USE_CUSTOM_SENTRY_RECALL)
-                    {
-                        CustomSentryRecall(info);
-                    }
-                    else
-                    {
-                        // move sentries
-                        var sentry = Main.projectile[info.ID];
-                        Vector2 ToTargetDist = info.TargetPos - sentry.Center;
-                        if (ToTargetDist.Length() >= SENTRY_RECALL_THRESHOLD && !info.IsRecalled)
+                        // set target pos
+                        int SentryCount = SentryRecallInfos.Count;
+                        float TotalLength = SentryCount == 0 ? 0f : (float)Math.Sqrt(SentryCount - 1) * 200f;
+                        Random random = new Random();
+                        int ranDir = random.Next(2) == 0 ? 1 : -1;
+                        for (int i = 0; i < SentryCount; i++)
                         {
-                            Vector2 ToTargetDir = ToTargetDist.SafeNormalize(Vector2.UnitX);
-                            float DecayFactor = MathHelper.Clamp(ToTargetDist.Length() / SENTRY_RECALL_DECAY_DIST, 0.1f, 1f);
-                            // float DecayFactor = MathHelper.Clamp(2f-SENTRY_RECALL_DECAY_DIST/(ToTargetDist.Length()+0.0001f), 0f, 1f);
-                            sentry.velocity = ToTargetDir * SENTRY_RECALL_SPEED * DecayFactor;
-                            // sentry.velocity = Vector2.Zero;
-                            // sentry.Center += ToTargetDir * SENTRY_RECALL_SPEED * DecayFactor;
+                            SentryRecallInfo info = SentryRecallInfos[i];
+                            float LocalX = SentryCount == 1 ? 0f : (float)i / (float)(SentryCount - 1) * TotalLength - TotalLength / 2f;
+                            float PreciseX = Projectile.Center.X + LocalX * ranDir;
+                            float PreciseY = Projectile.Center.Y - SENTRY_RECALL_TARGET_OFFSET;
+                            float X = PreciseX + info.Seed;
+                            float Y = PreciseY + info.Seed;
+                            int SentryWidth = Main.projectile[info.ID].width;
+                            int SentryHeight = Main.projectile[info.ID].height;
+                            Vector2 PossiblePos = MinionAIHelper.SearchForValidPosition(new Vector2(X, Y), (int)(SentryWidth * 1.5), (int)(SentryHeight * 1.5), 10);
+                            SentryRecallInfos[i].TargetPos = PossiblePos;
+
+                            // Main.NewText("Sentry "+i+" target pos: "+info.TargetPos);
+                        }
+
+                        // reset buff
+                        player.AddBuff(ENHANCE_BUFF_ID, BuffTimePlanted);
+
+                        SentryRecallInitialized = true;
+                    }
+                
+                    foreach (var info in SentryRecallInfos)
+                    {
+                        if (USE_CUSTOM_SENTRY_RECALL)
+                        {
+                            CustomSentryRecall(info);
                         }
                         else
                         {
-                            // reset sentry tile collide
-                            sentry.tileCollide = info.TileCollide;
-                            info.IsRecalled = true;
+                            // move sentries
+                            var sentry = Main.projectile[info.ID];
+                            Vector2 ToTargetDist = info.TargetPos - sentry.Center;
+                            if (ToTargetDist.Length() >= SENTRY_RECALL_THRESHOLD && !info.IsRecalled)
+                            {
+                                Vector2 ToTargetDir = ToTargetDist.SafeNormalize(Vector2.UnitX);
+                                float DecayFactor = MathHelper.Clamp(ToTargetDist.Length() / SENTRY_RECALL_DECAY_DIST, 0.1f, 1f);
+                                // float DecayFactor = MathHelper.Clamp(2f-SENTRY_RECALL_DECAY_DIST/(ToTargetDist.Length()+0.0001f), 0f, 1f);
+                                sentry.velocity = ToTargetDir * SENTRY_RECALL_SPEED * DecayFactor;
+                                // sentry.velocity = Vector2.Zero;
+                                // sentry.Center += ToTargetDir * SENTRY_RECALL_SPEED * DecayFactor;
+                            }
+                            else
+                            {
+                                // reset sentry tile collide
+                                sentry.tileCollide = info.TileCollide;
+                                info.IsRecalled = true;
+                            }
                         }
                     }
                 }
@@ -490,6 +517,12 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             if (ToOwnerDist.Length() >= 4000f)
             {
                 Projectile.Kill();
+            }
+
+            // auto re-add buff
+            if (AUTO_READD_BUFF_ON_PLANT/*  && !player.HasBuff(ENHANCE_BUFF_ID) */)
+            {
+                player.AddBuff(ENHANCE_BUFF_ID, BuffTimePlanted);
             }
 
             if (SwitchFlag)
@@ -679,7 +712,8 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                 SpinCenter = player.Center;
 
 
-                int CurrentTime = (int)(TIME_LEFT_WAVE / AttackSpeed) - Projectile.timeLeft;
+                // int CurrentTime = (int)(TIME_LEFT_WAVE / AttackSpeed) - Projectile.timeLeft;
+                int CurrentTime = (int)player.itemAnimationMax - Projectile.timeLeft;
                 if(State == RECALL_STATE) CurrentTime = TIME_LEFT_RECALL - Projectile.timeLeft;
                 int OldPosSize = (int)Math.Min(CurrentTime, tailLength);
                 for(int i = 0; i < OldPosSize;i++)
@@ -784,16 +818,18 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             List<Vertex> FlagClothVerteces = new List<Vertex>();
             List<Vertex> FlagTailVerteces = new List<Vertex>();
             Vector2 SpinCenter = player.Center;
-            int CurrentTime = (int)(TIME_LEFT_WAVE / AttackSpeed) - Projectile.timeLeft;
+            // int CurrentTime = (int)(TIME_LEFT_WAVE / AttackSpeed) - Projectile.timeLeft;
+            int CurrentTime = (int)player.itemAnimationMax - Projectile.timeLeft;
             int OverlapSize = TAIL_OVERLAP_SIZE;
             if(State == RECALL_STATE) CurrentTime = TIME_LEFT_RECALL - Projectile.timeLeft;
             int OldPosSize = (int)Math.Min(CurrentTime, TAIL_LENGTH+FLAG_CLOTH_LENGTH-OverlapSize);
 
-            // construct polar points
+            // construct polar points（循环上界必须同时不超过 StickOffsetList 与 Projectile.oldRot 的长度，否则会越界）
             List<float> StickOffsetListInvert = new List<float>(StickOffsetList);
             StickOffsetListInvert.Reverse();
+            int polarCount = Math.Min(OldPosSize, Math.Min(StickOffsetListInvert.Count, Projectile.oldRot.Length));
             List<MinionAIHelper.PolarCurveFitter.Polar> PolarPoints = new List<MinionAIHelper.PolarCurveFitter.Polar>();
-            for(int i = 0; i < OldPosSize;i++)
+            for(int i = 0; i < polarCount; i++)
             {
                 PolarPoints.Add(new MinionAIHelper.PolarCurveFitter.Polar(StickOffsetListInvert[i] + PoleLength, Projectile.oldRot[i]));
             }
@@ -989,10 +1025,12 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
+            Player player = Main.player[Projectile.owner];
             if(State == RAISE_STATE || State == PLANT_STATE) return false;
             Vector2 PoleStart = Projectile.Center + new Vector2(0, PoleLength/2f).RotatedBy(Projectile.rotation);
             Vector2 PoleEnd = Projectile.Center + new Vector2(0, PoleLength/2f).RotatedBy(Projectile.rotation+Math.PI);
-            int CurrentTime = (int)(TIME_LEFT_WAVE / AttackSpeed) - Projectile.timeLeft;
+            // int CurrentTime = (int)(TIME_LEFT_WAVE / AttackSpeed) - Projectile.timeLeft;
+            int CurrentTime = (int)player.itemAnimationMax - Projectile.timeLeft;
             if(State == RECALL_STATE) CurrentTime = TIME_LEFT_RECALL - Projectile.timeLeft;
             Vector2 PoleOldStart = PoleStart;
             Vector2 PoleOldEnd = PoleEnd;
@@ -1030,7 +1068,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         protected void DamageGrassAlongBlade(Player player)
         {
             if ((State == RAISE_STATE || State == PLANT_STATE) ||
-                (State == WAVE_STATE && Projectile.timeLeft >= (int)(TIME_LEFT_WAVE / AttackSpeed) - 1) ||
+                (State == WAVE_STATE && Projectile.timeLeft >= (int)(/* TIME_LEFT_WAVE / AttackSpeed */ player.itemAnimationMax) - 1) ||
                 (State == RECALL_STATE && Projectile.timeLeft >= TIME_LEFT_RECALL - 1)) return;
             Vector2 CurrentPoleTip = Projectile.Center + new Vector2(0, PoleLength / 2f).RotatedBy(Projectile.rotation + Math.PI);
             Vector2 OldPoleTip = Projectile.oldPos[1] + new Vector2(0, PoleLength / 2f).RotatedBy(Projectile.oldRot[0] + Math.PI) + new Vector2(0, PoleLength / 2f);

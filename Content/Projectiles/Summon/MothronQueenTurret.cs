@@ -85,7 +85,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                 owner, 
                 Projectile, 
                 1500f, 
-                false, 
+                true, 
                 n => (n.Center - Projectile.Center).ToRotation() <= ModGlobal.PI_FLOAT/6f || (n.Center - Projectile.Center).ToRotation() >= 5f*ModGlobal.PI_FLOAT/6f).TargetNPC;
 
             

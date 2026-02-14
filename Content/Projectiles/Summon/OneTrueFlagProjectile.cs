@@ -40,6 +40,8 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         protected override int FULLY_CHARGED_DUST => DustID.MushroomSpray;
         protected override int ENHANCE_BUFF_ID => ModBuffID.OneTrueFlagBuff;
         protected override int NPC_DEBUFF_ID => ModBuffID.OneTrueFlagDebuff;
+        protected override int ENHANCE_BUFF_DURATION => 60*4;
+        protected override bool AUTO_READD_BUFF_ON_PLANT => true;
         protected bool BladShotInited = false;
         protected bool SoundPlayed = false;
         protected Vector2 CursorPos;

@@ -166,16 +166,16 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                         // ProjectileID.RocketI,
                         // ModProjectileID.RocketSentryBullet,
                         // ProjectileID.ExplosiveBullet,
-                        // ModProjectileID.AutocannonSentryBullet,
-                        ProjectileID.BulletHighVelocity,
+                        ModProjectileID.AutocannonSentryBullet,
+                        // ProjectileID.BulletHighVelocity,
                         totalDamage,
                         Projectile.knockBack,
                         Projectile.owner);
 
 
                     bullet.DamageType = DamageClass.Summon;
-                    bullet.hostile = true;
-                    bullet.friendly = true;
+                    // bullet.hostile = true;
+                    // bullet.friendly = true;
                     // rocket.hostile = false;
                     // rocket.friendly = true;
                     // rocket.usesLocalNPCImmunity = true;
@@ -183,6 +183,12 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                     // rocket.localNPCHitCooldown = 20;
                     // // Main.NewText("Damage: " + Projectile.damage + "Rocket Damage: " + rocket.damage);
                     // rocket.ai[0] = target.whoAmI;
+
+                    if(bullet.ModProjectile is AutocannonSentryBullet autocannonbullet)
+                    {
+                        autocannonbullet.SelfDamage = 80;
+                        autocannonbullet.SelfArmorPenetration = 20;
+                    }
 
                     isShooting = true;
 

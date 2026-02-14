@@ -173,10 +173,14 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 
         private float lastError = 0f;
 
+        private const float DAMAGE_DECAY_FACTOR = 0.8f;
+        private int hitCount = 0;
+
         public FrostBlastOverride()
         {
             RegisterFlags["SetDefaults"] = true;
             RegisterFlags["AI"] = true;
+            RegisterFlags["ModifyHitNPC"] = true;
         }
 
         public override void SetDefaults(Projectile projectile)
@@ -217,6 +221,18 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             turn_speed = MathHelper.Clamp(turn_speed, -MAX_TURN_SPEED, MAX_TURN_SPEED);
             Vector2 velocity = projectile.velocity;
             projectile.velocity = velocity.RotatedBy(turn_speed);
+        }
+
+        public override void ModifyHitNPC(Projectile projectile, NPC target, ref NPC.HitModifiers modifiers)
+        {
+            Player player = Main.player[projectile.owner];
+            modifiers.HitDirectionOverride = (target.Center - player.Center).X > 0 ? 1 : -1;
+
+            float multiplier = (float)Math.Pow(DAMAGE_DECAY_FACTOR, hitCount);
+
+            modifiers.FinalDamage *= multiplier;
+
+            hitCount++;
         }
     }
 }
