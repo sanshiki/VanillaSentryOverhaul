@@ -77,7 +77,8 @@ namespace SummonerExpansionMod.Initialization
 			ModProjectileID.OneTrueFlagProjectile = ModContent.ProjectileType<OneTrueFlagProjectile>();
 			ModProjectileID.OneTrueFlagBladeShot = ModContent.ProjectileType<OneTrueFlagBladeShot>();
 			ModProjectileID.OneTrueFlagAnchor = ModContent.ProjectileType<OneTrueFlagAnchor>();
-
+			ModProjectileID.HellFlagAnchor = ModContent.ProjectileType<HellFlagAnchor>();
+			ModProjectileID.GiantLeavesOfPlanteraAnchor = ModContent.ProjectileType<GiantLeavesOfPlanteraAnchor>();
 			/* ------------------------------- buffs ------------------------------- */
 			ModBuffID.SentryEnhancement = ModContent.BuffType<SentryEnhancementBuff>();
 			ModBuffID.SentryTarget = ModContent.BuffType<SentryTargetBuff>();

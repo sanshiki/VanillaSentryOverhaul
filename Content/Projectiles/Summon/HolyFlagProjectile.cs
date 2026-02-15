@@ -26,10 +26,18 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         protected override float TAIL_OFFSET_Y_2 => -63f;   
         protected override Color TAIL_COLOR => new Color(255, 255, 235, 100);
         protected override bool TAIL_DYNAMIC_DEBUG => false;
+        protected override float GRAVITY => 1.5f;
+        protected override float MAX_FALL_SPEED => 25f;
+        protected override bool USE_CURSOR_ASSISTED_PLANT => true;
         // protected override bool TAIL_ENABLE_GLOBAL => false;
         protected override int FULLY_CHARGED_DUST => 263;
         protected override int ENHANCE_BUFF_ID => ModBuffID.HolyFlagBuff;
         protected override int NPC_DEBUFF_ID => BuffID.SwordWhipNPCDebuff;
         protected override bool AUTO_READD_BUFF_ON_PLANT => true;
+        protected override float SENTRY_RECALL_SPEED => 40f;
+        protected override float SENTRY_RECALL_THRESHOLD => 40f;
+        protected override float SENTRY_RECALL_DECAY_DIST => 800f;
+        protected override float SENTRY_RECALL_MAX_DIST => 3500f;
+        protected override int ONGROUND_CNT_THRESHOLD => 20;
     }
 }

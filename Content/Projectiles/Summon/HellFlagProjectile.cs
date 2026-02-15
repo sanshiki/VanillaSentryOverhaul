@@ -27,11 +27,21 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         protected override float TAIL_OFFSET_Y_2 => -63f;   
         protected override Color TAIL_COLOR => new Color(190, 32, 3, 100);
         protected override bool TAIL_DYNAMIC_DEBUG => false;
+        protected override float GRAVITY => 1.0f;
+        protected override float MAX_FALL_SPEED => 20f;
+        protected override bool USE_CURSOR_ASSISTED_PLANT => true;
+        protected override bool USE_CUSTOM_SENTRY_RECALL => true;
+        protected override float SENTRY_RECALL_SPEED => 35f;
+        protected override float SENTRY_RECALL_THRESHOLD => 40f;
+        protected override float SENTRY_RECALL_DECAY_DIST => 600f;
+        protected override float SENTRY_RECALL_MAX_DIST => 3250f;
+        protected override int ONGROUND_CNT_THRESHOLD => 15;
         // protected override bool TAIL_ENABLE_GLOBAL => false;
         protected override int FULLY_CHARGED_DUST => 182;
         protected override int ENHANCE_BUFF_ID => ModBuffID.HellFlagBuff;
         protected override int NPC_DEBUFF_ID => BuffID.BoneWhipNPCDebuff;
         private bool isCharged = false;
+        private bool SoundPlayed = false;
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             if (isCharged)
@@ -40,6 +50,32 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             }
             base.OnHitNPC(target, hit, damageDone);
         }
+
+        protected override void CustomSentryRecall(SentryRecallInfo info)
+        {
+            var sentry = Main.projectile[info.ID];
+            if (!info.AnchorInited)
+            {
+                // Main.NewText("Sentry Recall Inited:"+info.ID);
+                if(info.TileCollide) info.TargetPos = MinionAIHelper.SearchForGround(info.TargetPos+new Vector2(0, 100f), 10, 16, (int)(sentry.height * 0.5f));
+                info.AnchorInited = true;
+                info.Anchor_ID = Projectile.NewProjectile(
+                    Projectile.GetSource_FromAI(),
+                    info.TargetPos,
+                    Vector2.Zero,
+                    ModProjectileID.HellFlagAnchor,
+                    Projectile.damage,
+                    Projectile.knockBack,
+                    Projectile.owner
+                );
+                Projectile proj = Main.projectile[info.Anchor_ID];
+                if (proj.ModProjectile is HellFlagAnchor anchor_)
+                {
+                    anchor_.sentryInfo = info;
+                }
+            }
+        }
+
         public override void AI()
         {
             base.AI();

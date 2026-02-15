@@ -30,5 +30,10 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         protected override int FULLY_CHARGED_DUST => DustID.MushroomSpray;
         protected override int ENHANCE_BUFF_ID => ModBuffID.NormalFlagBuff;
         protected override int NPC_DEBUFF_ID => BuffID.BlandWhipEnemyDebuff;
+        protected override float SENTRY_RECALL_SPEED => 30f;
+        protected override float SENTRY_RECALL_THRESHOLD => 40f;
+        protected override float SENTRY_RECALL_DECAY_DIST => 600f;
+        protected override float SENTRY_RECALL_MAX_DIST => 2700f;
+        protected override int ONGROUND_CNT_THRESHOLD => 40;
     }
 }

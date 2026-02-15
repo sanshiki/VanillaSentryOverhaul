@@ -55,6 +55,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 
         // planting and recalling sentries
         protected virtual int PLANT_EXIST_DURATION => 60*60*10; // 10 min
+        protected virtual int ONGROUND_CNT_THRESHOLD => 10;
         protected virtual float GRAVITY => 0.8f;
         protected virtual float MAX_FALL_SPEED => 16f;
         protected virtual float SENTRY_RECALL_SPEED => 50f;
@@ -65,6 +66,9 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         protected virtual float SENTRY_RANDOM_OFFSET => 20f;
         protected virtual bool USE_CUSTOM_SENTRY_RECALL => false;
         protected virtual bool AUTO_READD_BUFF_ON_PLANT => false;
+        protected virtual bool USE_CURSOR_ASSISTED_PLANT => false;
+        protected virtual float CURSOR_ASSISTED_PLANT_DISTANCE => 100f;
+        protected virtual float CURSOR_ASSIST_P_FACTOR => 28f;
 
         // recalling flag
         protected virtual int TIME_LEFT_RECALL => 60*60; // 1 min
@@ -150,6 +154,8 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         protected float FlagClothWaveSpeed = 0f;
         protected bool UseFastAnimation = false;
         protected bool HasSentryLockInSlot = false;
+        protected Vector2 CursorAssistedPlantPos = Vector2.Zero;
+        protected bool CursorAssisting = false;
 
 
         /* -------------------------- Setting Defaults -------------------------- */
@@ -384,6 +390,10 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             Projectile.Center = CenterMapping(player.MountedCenter, StickOffset, 0) + new Vector2(0, RaiseMaxHeight/2f-RaiseHeight);
             Projectile.spriteDirection = FixedDirection;
             // Projectile.velocity = player.velocity;
+
+            // calculate cursor assisted plant pos
+            float dist = (float)Math.Min((Main.MouseWorld - player.Center).Length(), CURSOR_ASSISTED_PLANT_DISTANCE);
+            CursorAssistedPlantPos = player.Center + (Main.MouseWorld - player.Center).SafeNormalize(Vector2.UnitX) * dist + new Vector2(0, -PoleLength/2f);
             
             if(SwitchFlag)
             {
@@ -416,8 +426,24 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                     HasSentryLockInSlot = true;
                 }
 
+                if (USE_CURSOR_ASSISTED_PLANT) CursorAssisting = true;
+
                 HasPlayedOnGroundSound = false;
             }
+
+            // apply cursor assist
+            if(CursorAssisting)
+            {
+                Projectile.tileCollide = false;
+                Vector2 dist = CursorAssistedPlantPos - Projectile.Center;
+                float process = dist.Length() / CURSOR_ASSISTED_PLANT_DISTANCE;
+                float factor = CURSOR_ASSIST_P_FACTOR * process;
+                Projectile.Center += dist.SafeNormalize(Vector2.UnitX) * factor;
+                // Dust.QuickDust(CursorAssistedPlantPos, Color.Red);
+                if(dist.Length() <= 5f) CursorAssisting = false;
+                else return;
+            }
+            else Projectile.tileCollide = true;
 
             // apply gravity
             // long timestamp = Main.GameUpdateCount;
@@ -430,7 +456,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                 HasPlayedOnGroundSound = true;
             }
 
-            if (OnGroundCnt >= 10)
+            if (OnGroundCnt >= ONGROUND_CNT_THRESHOLD)
             {
                 if(!HasSentryLockInSlot)
                 {

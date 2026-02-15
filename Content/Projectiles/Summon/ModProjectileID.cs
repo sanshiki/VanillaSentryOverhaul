@@ -60,5 +60,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         public static int OneTrueFlagProjectile;
         public static int OneTrueFlagBladeShot;
         public static int OneTrueFlagAnchor;
+        public static int HellFlagAnchor;
+        public static int GiantLeavesOfPlanteraAnchor;
     }
 }

@@ -40,73 +40,73 @@ Buffs: {
 	}
 
 	GoblinFlagBuff: {
-		DisplayName: Goblin Flag Buff
-		Description: Mods.SummonerExpansionMod.Buffs.GoblinFlagBuff.Description
+		DisplayName: Horde Banner
+		Description: +7.5% summon damage
 	}
 
 	HellFlagBuff: {
-		DisplayName: Hell Flag Buff
-		Description: Mods.SummonerExpansionMod.Buffs.HellFlagBuff.Description
+		DisplayName: Infernal Warbanner
+		Description: +7.5% summon damage, your flag ignites enemies
 	}
 
 	HolyFlagBuff: {
-		DisplayName: Holy Flag Buff
-		Description: Mods.SummonerExpansionMod.Buffs.HolyFlagBuff.Description
+		DisplayName: St. George
+		Description: +10% summon damage, +25% flag attack speed
 	}
 
 	NormalFlagBuff: {
-		DisplayName: Normal Flag Buff
-		Description: Mods.SummonerExpansionMod.Buffs.NormalFlagBuff.Description
+		DisplayName: Command Pennant
+		Description: +5% summon damage
 	}
 
 	PirateFlagBuff: {
-		DisplayName: Pirate Flag Buff
-		Description: Mods.SummonerExpansionMod.Buffs.PirateFlagBuff.Description
+		DisplayName: Jolly Roger
+		Description: +10% summon damage
 	}
 
 	PirateFlagDebuff: {
-		DisplayName: Pirate Flag Debuff
-		Description: Mods.SummonerExpansionMod.Buffs.PirateFlagDebuff.Description
+		DisplayName: Jolly Roger Debuff
+		Description: Inflicts 8 mark damage on enemies
 	}
 
 	OneTrueFlagBuff: {
-		DisplayName: One True Flag Buff
-		Description: Mods.SummonerExpansionMod.Buffs.OneTrueFlagBuff.Description
+		DisplayName: One True Flag
+		Description: +20% summon damage, minions gain 20% crit chance
 	}
 
 	SantaFlagBuff: {
-		DisplayName: Santa Flag Buff
-		Description: Mods.SummonerExpansionMod.Buffs.SantaFlagBuff.Description
+		DisplayName: Yuletide Snowmarch
+		Description: +16% summon damage, minions gain 15% crit chance
 	}
 
 	TikiFlagBuff: {
-		DisplayName: Tiki Flag Buff
-		Description: Mods.SummonerExpansionMod.Buffs.TikiFlagBuff.Description
+		DisplayName: Tiki Flag
+		Description: +13% summon damage, +13 defense
 	}
 
 	SantaFlagDebuff: {
-		DisplayName: Santa Flag Debuff
-		Description: Mods.SummonerExpansionMod.Buffs.SantaFlagDebuff.Description
+		DisplayName: Yuletide Snowmarch Debuff
+		Description: Inflicts 13 mark damage on enemies
 	}
 
 	TikiFlagDebuff: {
 		DisplayName: Tiki Flag Debuff
-		Description: Mods.SummonerExpansionMod.Buffs.TikiFlagDebuff.Description
+		Description: Inflicts 11 mark damage on enemies
 	}
 
 	OneTrueFlagDebuff: {
 		DisplayName: One True Flag Debuff
-		Description: Mods.SummonerExpansionMod.Buffs.OneTrueFlagDebuff.Description
+		Description: Inflicts 20 mark damage on enemies
 	}
 
 	MothronDustDebuff: {
-		DisplayName: Mothron Dust Debuff
-		Description: Mods.SummonerExpansionMod.Buffs.MothronDustDebuff.Description
+		DisplayName: Mothron Dust
+		Description: Increased damage taken from Mothron Queen
 	}
 
 	SummonFatigueDebuff: {
-		DisplayName: Summon Fatigue Debuff
-		Description: Mods.SummonerExpansionMod.Buffs.SummonFatigueDebuff.Description
+		DisplayName: Summon Fatigue
+		// Description: Mods.SummonerExpansionMod.Buffs.SummonFatigueDebuff.Description
 	}
 }
 
@@ -122,33 +122,54 @@ Items: {
 	}
 
 	DarkMagicTowerStaff: {
-		DisplayName: Dark Magic Tower Staff
-		Tooltip: ""
+		DisplayName: Void Spire Staff
+		Tooltip:
+			'''
+			Summons a Void Spire sentry
+			Fires dark orbs that chase enemies
+			'''
 	}
 
 	BunnySentryStaff: {
 		DisplayName: Bunny Sentry Staff
-		Tooltip: ""
+		Tooltip:
+			'''
+			Summons a bunny sentry
+			Fires seed bullets
+			'''
 	}
 
 	MachineGunSentryStaff: {
-		DisplayName: Machine Gun Sentry Staff
-		Tooltip: ""
+		DisplayName: MG-43 Machine Gun Sentry Staff
+		Tooltip: Summons an Machine Gun sentry that sprays enemies
 	}
 
 	RocketSentryStaff: {
-		DisplayName: Rocket Sentry Staff
-		Tooltip: ""
+		DisplayName: MLS-4X Rocket Sentry Staff
+		Tooltip:
+			'''
+			Summons an auto rocket sentry
+			Fires high-damage homing rockets
+			"Tell it to my four green combat readiness"
+			'''
 	}
 
 	AntlionSentryStaff: {
 		DisplayName: Antlion Sentry Staff
-		Tooltip: ""
+		Tooltip:
+			'''
+			Summons an antlion sentry
+			Launches loose sand that deals area damage
+			'''
 	}
 
 	TowerOfDryadsBlessingStaff: {
-		DisplayName: Tower Of Dryads Blessing Staff
-		Tooltip: ""
+		DisplayName: Dryad Spire Staff
+		Tooltip:
+			'''
+			Summons a Dryad Spire
+			Releases a blessing aura that buffs players and damages enemies
+			'''
 	}
 
 	FlagWeapon: {
@@ -163,42 +184,75 @@ Items: {
 
 	HoneyCombSentryStaff: {
 		DisplayName: Honey Comb Sentry Staff
-		Tooltip: ""
+		Tooltip:
+			'''
+			Summons a Honey Comb sentry
+			Releases bees that chase enemies
+			'''
 	}
 
 	MechEyeballTurretStaff: {
-		DisplayName: Mech Eyeball Turret Staff
-		Tooltip: ""
+		DisplayName: Mechanic Eye Laser Turret Staff
+		Tooltip:
+			'''
+			Summons a Mechanic Eye Laser Turret
+			Switches between laser eye and cursed flame eye modes
+			Fires lasers at distant enemies, sprays cursed flame at nearby foes
+			'''
 	}
 
 	CursedMagicTowerStaff: {
-		DisplayName: Cursed Magic Tower Staff
-		Tooltip: ""
+		DisplayName: Cursed Spire Staff
+		Tooltip:
+			'''
+			Summons a Cursed Spire
+			Fires magic skulls that chase the player
+			Use flag or whip to launch skulls at enemies
+			'''
 	}
 
 	GatlingSentryStaff: {
-		DisplayName: Gatling Sentry Staff
-		Tooltip: ""
+		DisplayName: G-16 Gatling Sentry Staff
+		Tooltip:
+			'''
+			Summons an auto gatling sentry
+			Sprays enemies at ultra-high speed
+			"You have been sent to military court"
+			'''
 	}
 
 	MachineGunSentrySummon: {
-		DisplayName: Machine Gun Sentry Summon
-		Tooltip: ""
+		DisplayName: MG-43 Machine Gun Sentry
+		Tooltip: Summons an Machine Gun sentry that sprays enemies
 	}
 
 	RocketSentrySummon: {
-		DisplayName: Rocket Sentry Summon
-		Tooltip: ""
+		DisplayName: MLS-4X Rocket Sentry
+		Tooltip:
+			'''
+			Summons an auto rocket sentry
+			Fires high-damage homing rockets
+			"Tell it to my four green combat readiness"
+			'''
 	}
 
 	GatlingSentrySummon: {
-		DisplayName: Gatling Sentry Summon
-		Tooltip: ""
+		DisplayName: G-16 Gatling Sentry
+		Tooltip:
+			'''
+			Summons an auto gatling sentry
+			Sprays enemies at ultra-high speed
+			"You have been sent to military court"
+			'''
 	}
 
 	AutocannonSentrySummon: {
-		DisplayName: Autocannon Sentry Summon
-		Tooltip: ""
+		DisplayName: AC-8 Autocannon Sentry
+		Tooltip:
+			'''
+			Summons an auto cannon
+			Fires high-speed bullets that pierce enemies
+			'''
 	}
 
 	SelfDamagePreventer: {
@@ -208,7 +262,10 @@ Items: {
 
 	SuperEarthCloak: {
 		DisplayName: Super Earth Cloak
-		Tooltip: ""
+		Tooltip:
+			'''
+			Reduces damage from certain blind weapons... maybe
+			'''
 	}
 
 	VertexTest: {
@@ -217,38 +274,83 @@ Items: {
 	}
 
 	PirateFlag: {
-		DisplayName: Pirate Flag
-		Tooltip: ""
+		DisplayName: Jolly Roger
+		Tooltip:
+			'''
+			8 summon mark damage
+			Left-click to mark enemies
+			Right-click hold to raise flag for buff
+			Right-click hold full charge to plant flag, attracts sentries
+			Right-click again to recall flag
+			'''
 	}
 
 	TempleSentryStaff: {
-		DisplayName: Temple Sentry Staff
-		Tooltip: ""
+		DisplayName: Lihzahrd Beacon Staff
+		Tooltip:
+			'''
+			Summons a Lihzahrd Beacon
+			Fires laser shots that speed up to charge
+			Fires high-power laser when fully charged
+			Brief cooldown after firing
+			'''
 	}
 
 	StardustSentryStaff: {
-		DisplayName: Stardust Sentry Staff
-		Tooltip: ""
+		DisplayName: Stardust Obelisk Staff
+		Tooltip:
+			'''
+			Summons a Stardust Obelisk
+			Calls down stardust projectiles from above
+			'''
 	}
 
 	NormalFlag: {
-		DisplayName: Normal Flag
-		Tooltip: ""
+		DisplayName: Command Pennant
+		Tooltip:
+			'''
+			4 summon mark damage
+			Left-click to mark enemies
+			Right-click hold to raise flag for buff
+			Right-click hold full charge to plant flag, attracts sentries
+			Right-click again to recall flag
+			'''
 	}
 
 	GoblinFlag: {
-		DisplayName: Goblin Flag
-		Tooltip: ""
+		DisplayName: Horde Banner
+		Tooltip:
+			'''
+			6 summon mark damage
+			Left-click to mark enemies
+			Right-click hold to raise flag for buff
+			Right-click hold full charge to plant flag, attracts sentries
+			Right-click again to recall flag
+			'''
 	}
 
 	HellFlag: {
-		DisplayName: Hell Flag
-		Tooltip: ""
+		DisplayName: Infernal Warbanner
+		Tooltip:
+			'''
+			7 summon mark damage
+			Left-click to mark enemies
+			Right-click hold to raise flag for buff and apply flame to flag
+			Right-click hold full charge to plant flag, attracts sentries
+			Right-click again to recall flag
+			'''
 	}
 
 	HolyFlag: {
-		DisplayName: Holy Flag
-		Tooltip: ""
+		DisplayName: St. George
+		Tooltip:
+			'''
+			9 summon mark damage
+			Left-click to mark enemies
+			Right-click hold to raise flag for buff and increase flag attack speed
+			Right-click hold full charge to plant flag, attracts sentries
+			Right-click again to recall flag
+			'''
 	}
 
 	ExampleSword: {
@@ -257,13 +359,28 @@ Items: {
 	}
 
 	OneTrueFlag: {
-		DisplayName: One True Flag
-		Tooltip: ""
+		DisplayName: CQC-1 One True Flag
+		Tooltip:
+			'''
+			20 summon mark damage
+			Left-click to mark enemies
+			Right-click hold to raise flag for buff
+			Right-click hold full charge to plant flag, attracts sentries
+			Right-click again to recall flag
+			"Super Earth is the bet"
+			'''
 	}
 
 	SantaFlag: {
-		DisplayName: Santa Flag
-		Tooltip: ""
+		DisplayName: Yuletide Snowmarch
+		Tooltip:
+			'''
+			14 summon mark damage
+			Left-click to mark enemies
+			Right-click hold to raise flag for buff and apply frost to weapon
+			Right-click hold full charge to plant flag, attracts sentries
+			Right-click again to recall flag
+			'''
 	}
 
 	TikiFlag: {
@@ -278,27 +395,44 @@ Items: {
 
 	IchorPressorStaff: {
 		DisplayName: Ichor Pressor Staff
-		Tooltip: ""
+		Tooltip:
+			'''
+			Summons an Ichor Pressor
+			Extracts ichor from Ichor Stickers to attack enemies
+			'''
 	}
 
 	CursedFireExtractorStaff: {
 		DisplayName: Cursed Fire Extractor Staff
-		Tooltip: ""
+		Tooltip:
+			'''
+			Summons a Cursed Fire Extractor
+			Extracts cursed fire from Cursed Hammers to attack enemies
+			'''
 	}
 
 	MothronQueenTurretStaffStaff: {
-		DisplayName: Mothron Queen Turret Staff Staff
-		Tooltip: ""
+		// DisplayName: Mothron Queen Turret Staff Staff
+		// Tooltip: ""
 	}
 
 	MothronQueenTurretStaff: {
 		DisplayName: Mothron Queen Turret Staff
-		Tooltip: ""
+		Tooltip:
+			'''
+			Summons a Mothron Queen
+			Spits mothron eggs at enemies, which hatch into mothron babies that chase foes
+			'''
 	}
 
 	SandustSentryStaff: {
-		DisplayName: Sandust Sentry Staff
-		Tooltip: ""
+		DisplayName: Forbidden Urn Staff
+		Tooltip:
+			'''
+			Summons a Forbidden Urn
+			Launches enchanted sand at enemies
+			Chance to spawn ancient sandnado on hit
+			'''
 	}
 
 	SentinelTalismanLv1: {
@@ -317,13 +451,26 @@ Items: {
 	}
 
 	GiantLeavesOfPlantera: {
-		DisplayName: Giant Leaves Of Plantera
-		Tooltip: ""
+		DisplayName: Far Beyond Bloom
+		Tooltip:
+			'''
+			11 summon mark damage
+			Left-click to mark enemies
+			Right-click hold to raise flag for buff and fire seeds from weapon
+			Right-click hold full charge to plant flag, attracts sentries
+			Right-click again to recall flag
+			'''
 	}
 
 	SentryAnchor: {
 		DisplayName: Sentry Anchor
-		Tooltip: ""
+		// Tooltip: ""
+		Tooltip_Unlocked: Right-click sentry anchor to lock sentries, preventing flag attraction
+		Tooltip_Locked:
+			'''
+			Your sentries are locked and cannot be attracted by flags
+			Right-click sentry anchor to unlock sentries
+			'''
 	}
 }
 
@@ -331,79 +478,81 @@ Projectiles: {
 	ExampleSimpleMinion.DisplayName: Example Simple Minion
 	BabySlimeOverride.DisplayName: Baby Slime Override
 	SentryPlatform.DisplayName: Sentry Platform
-	DarkMagicTower.DisplayName: Dark Magic Tower
+	DarkMagicTower.DisplayName: Void Spire
 	BunnySentry.DisplayName: Bunny Sentry
-	MachineGunSentry.DisplayName: Machine Gun Sentry
-	RocketSentry.DisplayName: Rocket Sentry
+	MachineGunSentry.DisplayName: MG-43 Machine Gun Sentry
+	RocketSentry.DisplayName: MLS-4X Rocket Sentry
 	AntlionSentry.DisplayName: Antlion Sentry
-	AntlionSentryBullet.DisplayName: Antlion Sentry Bullet
-	TowerOfDryadsBlessing.DisplayName: Tower Of Dryads Blessing
-	TowerOfDryadsBlessingProjectile.DisplayName: Tower Of Dryads Blessing Projectile
+	AntlionSentryBullet.DisplayName: Antlion Sentry Sand Bullet
+	TowerOfDryadsBlessing.DisplayName: Dryad Spire
+	TowerOfDryadsBlessingProjectile.DisplayName: Dryad Spire Leaf
 	MachineGunSentryBullet.DisplayName: Machine Gun Sentry Bullet
 	FlagWeaponProjectile.DisplayName: Flag Weapon Projectile
 	FlagProjectile.DisplayName: Flag Projectile
 	FlagWeaponProjectileV1.DisplayName: Flag Weapon Projectile V1
 	HoneyCombSentry.DisplayName: Honey Comb Sentry
-	HoneyCombSentryBullet.DisplayName: Honey Comb Sentry Bullet
-	DarkMagicTowerBullet.DisplayName: Dark Magic Tower Bullet
-	MechEyeballTurret.DisplayName: Mech Eyeball Turret
-	CursedMagicTower.DisplayName: Cursed Magic Tower
-	CursedMagicTowerBullet.DisplayName: Cursed Magic Tower Bullet
+	HoneyCombSentryBullet.DisplayName: Honey Comb Sentry Bee
+	DarkMagicTowerBullet.DisplayName: Void Spire Orb
+	MechEyeballTurret.DisplayName: Mechanic Eye Laser Turret
+	CursedMagicTower.DisplayName: Cursed Spire
+	CursedMagicTowerBullet.DisplayName: Cursed Spire Skull
 	CursedMagicTowerV1.DisplayName: Cursed Magic Tower V1
 	CursedMagicTowerBulletSmall.DisplayName: Cursed Magic Tower Bullet Small
 	CursedMagicTowerBulletSphere.DisplayName: Cursed Magic Tower Bullet Sphere
 	CursedMagicTowerBulletLarge.DisplayName: Cursed Magic Tower Bullet Large
-	GatlingSentry.DisplayName: Gatling Sentry
+	GatlingSentry.DisplayName: G-16 Gatling Sentry
 	Hellpod.DisplayName: Hellpod
-	HellpodSummonBall.DisplayName: Hellpod Summon Ball
+	HellpodSummonBall.DisplayName: Hellpod Summon Beacon
 	HellpodSummonSignal.DisplayName: Hellpod Summon Signal
-	RocketSentryBullet.DisplayName: Rocket Sentry Bullet
-	AutocannonSentry.DisplayName: Autocannon Sentry
+	RocketSentryBullet.DisplayName: Rocket Sentry Rocket
+	AutocannonSentry.DisplayName: AC-8 Autocannon Sentry
 	AutocannonSentryBullet.DisplayName: Autocannon Sentry Bullet
 	VertexTestProj.DisplayName: Vertex Test Proj
-	PirateFlagProjectile.DisplayName: Pirate Flag Projectile
-	TempleSentry.DisplayName: Temple Sentry
-	TempleSentryHeatRay.DisplayName: Temple Sentry Heat Ray
-	StardustSentry.DisplayName: Stardust Sentry
-	StardustSentrySignal.DisplayName: Stardust Sentry Signal
-	StardustSentryBullet.DisplayName: Stardust Sentry Bullet
-	NormalFlagProjectile.DisplayName: Normal Flag Projectile
-	GoblinFlagProjectile.DisplayName: Goblin Flag Projectile
-	HellFlagProjectile.DisplayName: Hell Flag Projectile
-	HolyFlagProjectile.DisplayName: Holy Flag Projectile
-	OneTrueFlagProjectile.DisplayName: One True Flag Projectile
-	SantaFlagProjectile.DisplayName: Santa Flag Projectile
+	PirateFlagProjectile.DisplayName: Jolly Roger
+	TempleSentry.DisplayName: Lihzahrd Beacon
+	TempleSentryHeatRay.DisplayName: Lihzahrd Beacon Heat Ray
+	StardustSentry.DisplayName: Stardust Obelisk
+	StardustSentrySignal.DisplayName: Stardust Obelisk Signal
+	StardustSentryBullet.DisplayName: Stardust Obelisk Projectile
+	NormalFlagProjectile.DisplayName: Command Pennant
+	GoblinFlagProjectile.DisplayName: Horde Banner
+	HellFlagProjectile.DisplayName: Infernal Warbanner
+	HolyFlagProjectile.DisplayName: St. George
+	OneTrueFlagProjectile.DisplayName: One True Flag
+	SantaFlagProjectile.DisplayName: Yuletide Snowmarch
 	TikiFlagProjectile.DisplayName: Tiki Flag Projectile
 	FlagBladeShot.DisplayName: Flag Blade Shot
-	TikiFlagBladeShot.DisplayName: Tiki Flag Blade Shot
-	SantaFlagBladeShot.DisplayName: Santa Flag Blade Shot
-	OneTrueFlagBladeShot.DisplayName: One True Flag Blade Shot
-	OneTrueFlagDrone.DisplayName: One True Flag Drone
+	TikiFlagBladeShot.DisplayName: Tiki Flag Projectile
+	SantaFlagBladeShot.DisplayName: Yuletide Snowmarch Blade
+	OneTrueFlagBladeShot.DisplayName: One True Flag Shadow
+	// OneTrueFlagDrone.DisplayName: One True Flag Drone
 	OneTrueFlagAnchor.DisplayName: One True Flag Anchor
-	IchorPressorSentry.DisplayName: Ichor Pressor Sentry
-	BunnySentryBullet.DisplayName: Bunny Sentry Bullet
-	HoneyCombSentryGiantBullet.DisplayName: Honey Comb Sentry Giant Bullet
+	IchorPressorSentry.DisplayName: Ichor Pressor
+	BunnySentryBullet.DisplayName: Bunny Sentry Seed
+	HoneyCombSentryGiantBullet.DisplayName: Giant Honey Comb Bee
 	AutocannonSentryBulletClone.DisplayName: Autocannon Sentry Bullet Clone
 	BunnySentryBulletClone.DisplayName: Bunny Sentry Bullet Clone
 	HoneyCombSentryBulletClone.DisplayName: Honey Comb Sentry Bullet Clone
 	MachineGunSentryBulletClone.DisplayName: Machine Gun Sentry Bullet Clone
-	TempleSentryEyeBeamBullet.DisplayName: Temple Sentry Eye Beam Bullet
-	IchorPressorSentryBullet.DisplayName: Ichor Pressor Sentry Bullet
-	CursedFireExtractorSentry.DisplayName: Cursed Fire Extractor Sentry
-	CursedFireExtractorSentryBullet.DisplayName: Cursed Fire Extractor Sentry Bullet
-	MothronQueenTurret.DisplayName: Mothron Queen Turret
-	MothronQueenTurretBullet.DisplayName: Mothron Queen Turret Bullet
-	MothronBabyFriendly.DisplayName: Mothron Baby Friendly
-	SandustSentry.DisplayName: Sandust Sentry
-	SandustSentryBullet.DisplayName: Sandust Sentry Bullet
-	SandustSentrySandadoFriendly.DisplayName: Sandust Sentry Sandado Friendly
-	SandustSentrySandnadoFriendly.DisplayName: Sandust Sentry Sandnado Friendly
-	MechEyeballTurretEyeFire.DisplayName: Mech Eyeball Turret Eye Fire
-	CursedMagicTowerBulletV3.DisplayName: Cursed Magic Tower Bullet V3
+	TempleSentryEyeBeamBullet.DisplayName: Lihzahrd Beacon Laser
+	IchorPressorSentryBullet.DisplayName: Ichor Pressor Beam
+	CursedFireExtractorSentry.DisplayName: Cursed Fire Extractor
+	CursedFireExtractorSentryBullet.DisplayName: Cursed Fire Extractor Projectile
+	MothronQueenTurret.DisplayName: Mothron Queen
+	MothronQueenTurretBullet.DisplayName: Mothron Queen Egg
+	MothronBabyFriendly.DisplayName: Mothron Baby
+	SandustSentry.DisplayName: Forbidden Urn
+	SandustSentryBullet.DisplayName: Forbidden Sand
+	// SandustSentrySandadoFriendly.DisplayName: Sandust Sentry Sandado Friendly
+	SandustSentrySandnadoFriendly.DisplayName: Forbidden Urn Sandnado
+	MechEyeballTurretEyeFire.DisplayName: Mechanic Eye Cursed Flame
+	CursedMagicTowerBulletV3.DisplayName: Cursed Spire
 	CursedMagicTowerV2.DisplayName: Cursed Magic Tower V2
-	GiantLeavesOfPlanteraProjectile.DisplayName: Giant Leaves Of Plantera Projectile
-	GiantLeavesOfPlanteraBullet1.DisplayName: Giant Leaves Of Plantera Bullet1
-	GiantLeavesOfPlanteraBullet2.DisplayName: Giant Leaves Of Plantera Bullet2
+	GiantLeavesOfPlanteraProjectile.DisplayName: Far Beyond Bloom
+	GiantLeavesOfPlanteraBullet1.DisplayName: Far Beyond Bloom Seed
+	GiantLeavesOfPlanteraBullet2.DisplayName: Far Beyond Bloom Poison Seed
+	HellFlagAnchor.DisplayName: Infernal Warbanner Anchor
+	GiantLeavesOfPlanteraAnchor.DisplayName: Far Beyond Bloom Anchor
 }
 
 NPCs: {

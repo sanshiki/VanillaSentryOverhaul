@@ -25,7 +25,13 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         protected override float TAIL_OFFSET_X_2 => -33f;  
         protected override float TAIL_OFFSET_Y_2 => -63f;
         protected override Color TAIL_COLOR => new Color(118, 49, 48, 100);
-        protected override float GRAVITY => 1.5f;
+        protected override float GRAVITY => 1.75f;
+        protected override float MAX_FALL_SPEED => 30f;
+        protected override float SENTRY_RECALL_SPEED => 46f;
+        protected override float SENTRY_RECALL_THRESHOLD => 40f;
+        protected override float SENTRY_RECALL_DECAY_DIST => 1000f;
+        protected override float SENTRY_RECALL_MAX_DIST => 4000f;
+        protected override int ONGROUND_CNT_THRESHOLD => 10;
         protected override float RECALL_SPEED => 40f;
         protected override bool TAIL_DYNAMIC_DEBUG => false;
         // protected override bool TAIL_ENABLE_GLOBAL => false;
@@ -35,6 +41,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         protected override int ENHANCE_BUFF_DURATION => 60*4;
         protected override int ENHANCE_BUFF_DURATION_PLANTED => 60*5;
         protected override bool AUTO_READD_BUFF_ON_PLANT => true;
+        protected override bool USE_CURSOR_ASSISTED_PLANT => true;
         protected bool isCharged = false;
         protected bool BladShotInited = false;
         protected Vector2 CursorPos;

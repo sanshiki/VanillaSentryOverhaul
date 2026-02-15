@@ -26,9 +26,16 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         protected override float TAIL_OFFSET_Y_2 => -63f;   
         protected override Color TAIL_COLOR => new Color(102, 60, 102, 100);
         protected override bool TAIL_DYNAMIC_DEBUG => false;
+        protected override float MAX_FALL_SPEED => 17.5f;
         // protected override bool TAIL_ENABLE_GLOBAL => false;
         protected override int FULLY_CHARGED_DUST => 124;
         protected override int ENHANCE_BUFF_ID => ModBuffID.GoblinFlagBuff;
         protected override int NPC_DEBUFF_ID => BuffID.ThornWhipNPCDebuff;
+
+        protected override float SENTRY_RECALL_SPEED => 30f;
+        protected override float SENTRY_RECALL_THRESHOLD => 40f;
+        protected override float SENTRY_RECALL_DECAY_DIST => 600f;
+        protected override float SENTRY_RECALL_MAX_DIST => 3000f;
+        protected override int ONGROUND_CNT_THRESHOLD => 30;
     }
 }

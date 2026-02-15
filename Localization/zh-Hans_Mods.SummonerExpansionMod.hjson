@@ -40,72 +40,72 @@ Buffs: {
 	}
 
 	GoblinFlagBuff: {
-		DisplayName: Goblin Flag Buff
-		Description: Mods.SummonerExpansionMod.Buffs.GoblinFlagBuff.Description
+		DisplayName: 部落战旗
+		Description: 召唤伤害增加7.5%
 	}
 
 	HellFlagBuff: {
-		DisplayName: Hell Flag Buff
-		Description: Mods.SummonerExpansionMod.Buffs.HellFlagBuff.Description
+		DisplayName: 炼狱战旌
+		Description: 召唤伤害增加7.5%，你的令旗会点燃敌人
 	}
 
 	HolyFlagBuff: {
-		DisplayName: Holy Flag Buff
-		Description: Mods.SummonerExpansionMod.Buffs.HolyFlagBuff.Description
+		DisplayName: 辉耀战旗
+		Description: 召唤伤害增加10%，令旗攻速提升25%
 	}
 
 	NormalFlagBuff: {
-		DisplayName: Normal Flag Buff
-		Description: Mods.SummonerExpansionMod.Buffs.NormalFlagBuff.Description
+		DisplayName: 指挥令旗
+		Description: 召唤伤害增加5%
 	}
 
 	PirateFlagBuff: {
-		DisplayName: Pirate Flag Buff
-		Description: Mods.SummonerExpansionMod.Buffs.PirateFlagBuff.Description
+		DisplayName: 黑旗罗杰
+		Description: 召唤伤害增加10%
 	}
 
 	PirateFlagDebuff: {
-		DisplayName: Pirate Flag Debuff
-		Description: Mods.SummonerExpansionMod.Buffs.PirateFlagDebuff.Description
+		DisplayName: 黑旗罗杰减益
+		Description: 使敌人附带8的标记伤害
 	}
 
 	OneTrueFlagBuff: {
-		DisplayName: One True Flag Buff
-		Description: Mods.SummonerExpansionMod.Buffs.OneTrueFlagBuff.Description
+		DisplayName: 唯一真旗
+		Description: 召唤伤害增加20%，召唤物获得20%暴击率
 	}
 
 	SantaFlagBuff: {
-		DisplayName: Santa Flag Buff
-		Description: Mods.SummonerExpansionMod.Buffs.SantaFlagBuff.Description
+		DisplayName: 圣诞令旗
+		Description: 召唤伤害增加16%，召唤物获得15%暴击率
 	}
 
 	TikiFlagBuff: {
-		DisplayName: Tiki Flag Buff
-		Description: Mods.SummonerExpansionMod.Buffs.TikiFlagBuff.Description
+		DisplayName: 提基令旗
+		Description: 召唤伤害增加13%，获得13点防御力加成
 	}
 
 	SantaFlagDebuff: {
-		DisplayName: Santa Flag Debuff
-		Description: Mods.SummonerExpansionMod.Buffs.SantaFlagDebuff.Description
+		DisplayName: 圣诞令旗减益
+		Description: 使敌人附带13的标记伤害
 	}
 
 	TikiFlagDebuff: {
-		DisplayName: Tiki Flag Debuff
-		Description: Mods.SummonerExpansionMod.Buffs.TikiFlagDebuff.Description
+		DisplayName: 提基令旗减益
+		Description: 使敌人附带11的标记伤害
 	}
 
 	OneTrueFlagDebuff: {
-		DisplayName: One True Flag Debuff
-		Description: Mods.SummonerExpansionMod.Buffs.OneTrueFlagDebuff.Description
+		DisplayName: 唯一真旗减益
+		Description: 使敌人附带20的标记伤害
 	}
 
 	MothronDustDebuff: {
-		DisplayName: Mothron Dust Debuff
-		Description: Mods.SummonerExpansionMod.Buffs.MothronDustDebuff.Description
+		DisplayName: 蛾怪粉尘
+		Description: 受到来自蛾怪女王的伤害增加
 	}
 
 	SummonFatigueDebuff: {
-		// DisplayName: Summon Fatigue Debuff
+		DisplayName: 召唤疲惫
 		// Description: Mods.SummonerExpansionMod.Buffs.SummonFatigueDebuff.Description
 	}
 }
@@ -122,33 +122,54 @@ Items: {
 	}
 
 	DarkMagicTowerStaff: {
-		DisplayName: Dark Magic Tower Staff
-		Tooltip: ""
+		DisplayName: 暗黑魔法塔召唤杖
+		Tooltip:
+			'''
+			召唤暗黑魔法塔哨兵
+			发射暗黑法球追击敌人
+			'''
 	}
 
 	BunnySentryStaff: {
-		DisplayName: Bunny Sentry Staff
-		Tooltip: ""
+		DisplayName: 哨戒兔兔召唤杖
+		Tooltip:
+			'''
+			召唤哨戒兔兔
+			发射种子子弹
+			'''
 	}
 
 	MachineGunSentryStaff: {
-		DisplayName: Machine Gun Sentry Staff
-		Tooltip: ""
+		DisplayName: MG-43哨戒机枪召唤杖
+		Tooltip: 召唤一台全自动哨戒机枪扫射敌人
 	}
 
 	RocketSentryStaff: {
-		DisplayName: Rocket Sentry Staff
-		Tooltip: ""
+		DisplayName: MLS-4X火箭哨戒炮召唤杖
+		Tooltip:
+			'''
+			召唤一台全自动火箭哨戒炮
+			射出高伤害的火箭弹追踪敌人
+			"跟我的四绿战备说去吧"
+			'''
 	}
 
 	AntlionSentryStaff: {
-		DisplayName: Antlion Sentry Staff
-		Tooltip: ""
+		DisplayName: 蚁狮哨戒炮召唤杖
+		Tooltip:
+			'''
+			召唤蚁狮哨戒炮
+			投射松散的沙弹，造成范围伤害
+			'''
 	}
 
 	TowerOfDryadsBlessingStaff: {
-		DisplayName: Tower Of Dryads Blessing Staff
-		Tooltip: ""
+		DisplayName: 树妖祝福塔召唤杖
+		Tooltip:
+			'''
+			召唤树妖祝福塔
+			释放祝福光环，为玩家提供增益并对敌人造成伤害
+			'''
 	}
 
 	FlagWeapon: {
@@ -162,43 +183,76 @@ Items: {
 	}
 
 	HoneyCombSentryStaff: {
-		DisplayName: Honey Comb Sentry Staff
-		Tooltip: ""
+		DisplayName: 哨戒蜂巢召唤杖
+		Tooltip:
+			'''
+			召唤哨戒蜂巢
+			释放蜜蜂追踪敌人
+			'''
 	}
 
 	MechEyeballTurretStaff: {
-		DisplayName: Mech Eyeball Turret Staff
-		Tooltip: ""
+		DisplayName: 机械眼球激光塔召唤杖
+		Tooltip:
+			'''
+			召唤机械眼球激光塔
+			在激光眼和魔焰眼两种形态切换
+			发射激光攻击远处的敌人，喷射咒焰烧灼近处的敌人
+			'''
 	}
 
 	CursedMagicTowerStaff: {
-		DisplayName: Cursed Magic Tower Staff
-		Tooltip: ""
+		DisplayName: 诅咒魔法塔召唤杖
+		Tooltip:
+			'''
+			召唤诅咒魔法塔
+			发射追踪玩家的魔法骷髅头
+			使用令旗或鞭子朝着敌人打出骷髅头
+			'''
 	}
 
 	GatlingSentryStaff: {
-		DisplayName: Gatling Sentry Staff
-		Tooltip: ""
+		DisplayName: G-16加特林哨戒炮召唤杖
+		Tooltip:
+			'''
+			召唤一台全自动加特林哨戒炮
+			以超高速度扫射敌人
+			"你已被送至军事法庭"
+			'''
 	}
 
 	MachineGunSentrySummon: {
-		DisplayName: Machine Gun Sentry Summon
-		Tooltip: ""
+		DisplayName: MG-43 哨戒机枪
+		Tooltip: 召唤一台全自动哨戒机枪扫射敌人
 	}
 
 	RocketSentrySummon: {
-		DisplayName: Rocket Sentry Summon
-		Tooltip: ""
+		DisplayName: MLS-4X 火箭哨戒炮
+		Tooltip:
+			'''
+			召唤一台全自动火箭哨戒炮
+			射出高伤害的火箭弹追踪敌人
+			"跟我的四绿战备说去吧"
+			'''
 	}
 
 	GatlingSentrySummon: {
-		DisplayName: Gatling Sentry Summon
-		Tooltip: ""
+		DisplayName: G-16 加特林哨戒炮
+		Tooltip:
+			'''
+			召唤一台全自动加特林哨戒炮
+			以超高速度扫射敌人
+			"你已被送至军事法庭"
+			'''
 	}
 
 	AutocannonSentrySummon: {
-		DisplayName: Autocannon Sentry Summon
-		Tooltip: ""
+		DisplayName: AC-8 自动哨戒炮
+		Tooltip:
+			'''
+			召唤一台全自动机炮
+			射出高速子弹贯穿敌人
+			'''
 	}
 
 	SelfDamagePreventer: {
@@ -207,8 +261,12 @@ Items: {
 	}
 
 	SuperEarthCloak: {
-		DisplayName: Super Earth Cloak
-		Tooltip: ""
+		DisplayName: 超级地球制式披风
+		Tooltip:
+			'''
+			降低来自某些不长眼的武器的伤害……也许
+
+			'''
 	}
 
 	VertexTest: {
@@ -217,38 +275,83 @@ Items: {
 	}
 
 	PirateFlag: {
-		DisplayName: Pirate Flag
-		Tooltip: ""
+		DisplayName: 黑旗罗杰
+		Tooltip:
+			'''
+			8点召唤标记伤害
+			左键点击攻击可标记敌人
+			右键长按举旗可获得增益
+			右键长按蓄力满时可将令旗插入地面，可以吸引你的哨兵
+			再次交互可回收令旗
+			'''
 	}
 
 	TempleSentryStaff: {
-		DisplayName: Temple Sentry Staff
-		Tooltip: ""
+		DisplayName: 蜥族信标法杖
+		Tooltip:
+			'''
+			召唤蜥族信标
+			发射由慢至快的激光弹以充能
+			充能满后发射高威力的激光
+			发射激光之后进入短暂冷却
+			'''
 	}
 
 	StardustSentryStaff: {
-		DisplayName: Stardust Sentry Staff
-		Tooltip: ""
+		DisplayName: 星辰方尖碑召唤杖
+		Tooltip:
+			'''
+			召唤星辰方尖碑
+			呼叫从天而降的星尘射弹
+			'''
 	}
 
 	NormalFlag: {
-		DisplayName: Normal Flag
-		Tooltip: ""
+		DisplayName: 指挥令旗
+		Tooltip:
+			'''
+			4点召唤标记伤害
+			左键点击攻击可标记敌人
+			右键长按举旗可获得增益
+			右键长按蓄力满时可将令旗插入地面，可以吸引你的哨兵
+			再次交互可回收令旗
+			'''
 	}
 
 	GoblinFlag: {
-		DisplayName: Goblin Flag
-		Tooltip: ""
+		DisplayName: 部落战旗
+		Tooltip:
+			'''
+			6点召唤标记伤害
+			左键点击攻击可标记敌人
+			右键长按举旗可获得增益
+			右键长按蓄力满时可将令旗插入地面，可以吸引你的哨兵
+			再次交互可回收令旗
+			'''
 	}
 
 	HellFlag: {
-		DisplayName: Hell Flag
-		Tooltip: ""
+		DisplayName: 炼狱战旌
+		Tooltip:
+			'''
+			7点召唤标记伤害
+			左键点击攻击可标记敌人
+			右键长按举旗可获得增益，并为令旗附上火焰
+			右键长按蓄力满时可将令旗插入地面，可以吸引你的哨兵
+			再次交互可回收令旗
+			'''
 	}
 
 	HolyFlag: {
-		DisplayName: Holy Flag
-		Tooltip: ""
+		DisplayName: 辉耀战旗
+		Tooltip:
+			'''
+			9点召唤标记伤害
+			左键点击攻击可标记敌人
+			右键长按举旗可获得增益，提高令旗攻速
+			右键长按蓄力满时可将令旗插入地面，可以吸引你的哨兵
+			再次交互可回收令旗
+			'''
 	}
 
 	ExampleSword: {
@@ -257,13 +360,28 @@ Items: {
 	}
 
 	OneTrueFlag: {
-		DisplayName: One True Flag
-		Tooltip: ""
+		DisplayName: CQC-1 唯一真旗
+		Tooltip:
+			'''
+			20点召唤标记伤害
+			左键点击攻击可标记敌人
+			右键长按举旗可获得增益
+			右键长按蓄力满时可将令旗插入地面，可以吸引你的哨兵
+			再次交互可回收令旗
+			"超级地球是投注"
+			'''
 	}
 
 	SantaFlag: {
-		DisplayName: Santa Flag
-		Tooltip: ""
+		DisplayName: 圣诞行军旗
+		Tooltip:
+			'''
+			14点召唤标记伤害
+			左键点击攻击可标记敌人
+			右键长按举旗可获得增益，并为武器附上寒霜
+			右键长按蓄力满时可将令旗插入地面，可以吸引你的哨兵
+			再次交互可回收令旗
+			'''
 	}
 
 	TikiFlag: {
@@ -277,28 +395,45 @@ Items: {
 	}
 
 	IchorPressorStaff: {
-		DisplayName: Ichor Pressor Staff
-		Tooltip: ""
+		DisplayName: 灵液榨取器召唤杖
+		Tooltip:
+			'''
+			召唤灵液榨取器
+			从灵液黏黏怪体内榨取灵液用以攻击敌人
+			'''
 	}
 
 	CursedFireExtractorStaff: {
-		DisplayName: Cursed Fire Extractor Staff
-		Tooltip: ""
+		DisplayName: 咒火制取器召唤杖
+		Tooltip:
+			'''
+			召唤咒火制取器
+			从噬魂怪体内制取咒火用以攻击敌人
+			'''
 	}
 
 	MothronQueenTurretStaffStaff: {
-		DisplayName: Mothron Queen Turret Staff Staff
-		Tooltip: ""
-	}
-
-	MothronQueenTurretStaff: {
-		// DisplayName: Mothron Queen Turret Staff
+		// DisplayName: Mothron Queen Turret Staff Staff
 		// Tooltip: ""
 	}
 
+	MothronQueenTurretStaff: {
+		DisplayName: 蛾怪女王召唤杖
+		Tooltip:
+			'''
+			召唤蛾怪女王
+			向敌人喷吐蛾怪蛋，分裂成蛾怪宝宝追击敌人
+			'''
+	}
+
 	SandustSentryStaff: {
-		DisplayName: Sandust Sentry Staff
-		Tooltip: ""
+		DisplayName: 禁忌瓮召唤杖
+		Tooltip:
+			'''
+			召唤禁忌瓮
+			向敌人投射附魔沙弹
+			沙弹命中后有概率生成远古风暴
+			'''
 	}
 
 	SentinelTalismanLv1: {
@@ -317,13 +452,26 @@ Items: {
 	}
 
 	GiantLeavesOfPlantera: {
-		DisplayName: Giant Leaves Of Plantera
-		Tooltip: ""
+		DisplayName: 绽放彼岸
+		Tooltip:
+			'''
+			11点召唤标记伤害
+			左键点击攻击可标记敌人
+			右键长按举旗可获得增益，并使武器发射种子
+			右键长按蓄力满时可将令旗插入地面，可以吸引你的哨兵
+			再次交互可回收令旗
+			'''
 	}
 
 	SentryAnchor: {
-		// DisplayName: Sentry Anchor
+		DisplayName: 哨兵锚
 		// Tooltip: ""
+		Tooltip_Unlocked: 右键哨兵锚以锁定哨兵，使其无法被令旗吸引
+		Tooltip_Locked:
+			'''
+			你的哨兵已被锁定，无法被令旗吸引
+			右键哨兵锚以解锁哨兵
+			'''
 	}
 }
 
@@ -331,79 +479,81 @@ Projectiles: {
 	ExampleSimpleMinion.DisplayName: Example Simple Minion
 	BabySlimeOverride.DisplayName: Baby Slime Override
 	SentryPlatform.DisplayName: Sentry Platform
-	DarkMagicTower.DisplayName: Dark Magic Tower
-	BunnySentry.DisplayName: Bunny Sentry
-	MachineGunSentry.DisplayName: Machine Gun Sentry
-	RocketSentry.DisplayName: Rocket Sentry
-	AntlionSentry.DisplayName: Antlion Sentry
-	AntlionSentryBullet.DisplayName: Antlion Sentry Bullet
-	TowerOfDryadsBlessing.DisplayName: Tower Of Dryads Blessing
-	TowerOfDryadsBlessingProjectile.DisplayName: Tower Of Dryads Blessing Projectile
-	MachineGunSentryBullet.DisplayName: Machine Gun Sentry Bullet
+	DarkMagicTower.DisplayName: 暗黑魔法塔
+	BunnySentry.DisplayName: 哨戒兔兔
+	MachineGunSentry.DisplayName: MG-43 哨戒机枪
+	RocketSentry.DisplayName: MLS-4X 火箭哨戒炮
+	AntlionSentry.DisplayName: 蚁狮哨戒炮
+	AntlionSentryBullet.DisplayName: 蚁狮哨戒炮沙弹
+	TowerOfDryadsBlessing.DisplayName: 树妖祝福塔
+	TowerOfDryadsBlessingProjectile.DisplayName: 树妖祝福塔叶片
+	MachineGunSentryBullet.DisplayName: 哨戒机枪子弹
 	FlagWeaponProjectile.DisplayName: Flag Weapon Projectile
 	FlagProjectile.DisplayName: Flag Projectile
 	FlagWeaponProjectileV1.DisplayName: Flag Weapon Projectile V1
-	HoneyCombSentry.DisplayName: Honey Comb Sentry
-	HoneyCombSentryBullet.DisplayName: Honey Comb Sentry Bullet
-	DarkMagicTowerBullet.DisplayName: Dark Magic Tower Bullet
-	MechEyeballTurret.DisplayName: Mech Eyeball Turret
-	CursedMagicTower.DisplayName: Cursed Magic Tower
-	CursedMagicTowerBullet.DisplayName: Cursed Magic Tower Bullet
+	HoneyCombSentry.DisplayName: 哨戒蜂巢
+	HoneyCombSentryBullet.DisplayName: 哨戒蜜蜂
+	DarkMagicTowerBullet.DisplayName: 暗黑魔法塔法球
+	MechEyeballTurret.DisplayName: 机械眼球激光塔
+	CursedMagicTower.DisplayName: 诅咒魔法塔
+	CursedMagicTowerBullet.DisplayName: 诅咒魔法骷髅头
 	CursedMagicTowerV1.DisplayName: Cursed Magic Tower V1
 	CursedMagicTowerBulletSmall.DisplayName: Cursed Magic Tower Bullet Small
 	CursedMagicTowerBulletSphere.DisplayName: Cursed Magic Tower Bullet Sphere
 	CursedMagicTowerBulletLarge.DisplayName: Cursed Magic Tower Bullet Large
-	GatlingSentry.DisplayName: Gatling Sentry
-	Hellpod.DisplayName: Hellpod
-	HellpodSummonBall.DisplayName: Hellpod Summon Ball
-	HellpodSummonSignal.DisplayName: Hellpod Summon Signal
-	RocketSentryBullet.DisplayName: Rocket Sentry Bullet
-	AutocannonSentry.DisplayName: Autocannon Sentry
-	AutocannonSentryBullet.DisplayName: Autocannon Sentry Bullet
+	GatlingSentry.DisplayName: G-16 加特林哨戒炮
+	Hellpod.DisplayName: 地狱空投仓
+	HellpodSummonBall.DisplayName: 地狱空投仓呼叫信标
+	HellpodSummonSignal.DisplayName: 地狱空投仓呼叫信号
+	RocketSentryBullet.DisplayName: 火箭哨戒炮火箭弹
+	AutocannonSentry.DisplayName: AC-8 自动哨戒炮
+	AutocannonSentryBullet.DisplayName: 自动哨戒炮射弹
 	VertexTestProj.DisplayName: Vertex Test Proj
-	PirateFlagProjectile.DisplayName: Pirate Flag Projectile
-	TempleSentry.DisplayName: Temple Sentry
-	TempleSentryHeatRay.DisplayName: Temple Sentry Heat Ray
-	StardustSentry.DisplayName: Stardust Sentry
-	StardustSentrySignal.DisplayName: Stardust Sentry Signal
-	StardustSentryBullet.DisplayName: Stardust Sentry Bullet
-	NormalFlagProjectile.DisplayName: Normal Flag Projectile
-	GoblinFlagProjectile.DisplayName: Goblin Flag Projectile
-	HellFlagProjectile.DisplayName: Hell Flag Projectile
-	HolyFlagProjectile.DisplayName: Holy Flag Projectile
-	OneTrueFlagProjectile.DisplayName: One True Flag Projectile
-	SantaFlagProjectile.DisplayName: Santa Flag Projectile
+	PirateFlagProjectile.DisplayName: 黑旗罗杰
+	TempleSentry.DisplayName: 蜥族信标
+	TempleSentryHeatRay.DisplayName: 蜥族信标热射线
+	StardustSentry.DisplayName: 星辰方尖碑
+	StardustSentrySignal.DisplayName: 星辰方尖碑信号
+	StardustSentryBullet.DisplayName: 星辰方尖碑射弹
+	NormalFlagProjectile.DisplayName: 指挥令旗
+	GoblinFlagProjectile.DisplayName: 部落战旗
+	HellFlagProjectile.DisplayName: 炼狱战旌
+	HolyFlagProjectile.DisplayName: 辉耀战旗
+	OneTrueFlagProjectile.DisplayName: 唯一真旗
+	SantaFlagProjectile.DisplayName: 圣诞行军旗
 	TikiFlagProjectile.DisplayName: Tiki Flag Projectile
 	FlagBladeShot.DisplayName: Flag Blade Shot
-	TikiFlagBladeShot.DisplayName: Tiki Flag Blade Shot
-	SantaFlagBladeShot.DisplayName: Santa Flag Blade Shot
-	OneTrueFlagBladeShot.DisplayName: One True Flag Blade Shot
-	OneTrueFlagDrone.DisplayName: One True Flag Drone
-	OneTrueFlagAnchor.DisplayName: One True Flag Anchor
-	IchorPressorSentry.DisplayName: Ichor Pressor Sentry
-	BunnySentryBullet.DisplayName: Bunny Sentry Bullet
-	HoneyCombSentryGiantBullet.DisplayName: Honey Comb Sentry Giant Bullet
+	TikiFlagBladeShot.DisplayName: 提基旗射弹
+	SantaFlagBladeShot.DisplayName: 圣诞旗刃
+	OneTrueFlagBladeShot.DisplayName: 真旗之影
+	// OneTrueFlagDrone.DisplayName: One True Flag Drone
+	OneTrueFlagAnchor.DisplayName: 真旗锚点
+	IchorPressorSentry.DisplayName: 灵液榨取器召唤杖
+	BunnySentryBullet.DisplayName: 哨戒兔兔种子
+	HoneyCombSentryGiantBullet.DisplayName: 巨型哨戒蜜蜂
 	AutocannonSentryBulletClone.DisplayName: Autocannon Sentry Bullet Clone
 	BunnySentryBulletClone.DisplayName: Bunny Sentry Bullet Clone
 	HoneyCombSentryBulletClone.DisplayName: Honey Comb Sentry Bullet Clone
 	MachineGunSentryBulletClone.DisplayName: Machine Gun Sentry Bullet Clone
-	TempleSentryEyeBeamBullet.DisplayName: Temple Sentry Eye Beam Bullet
-	IchorPressorSentryBullet.DisplayName: Ichor Pressor Sentry Bullet
-	CursedFireExtractorSentry.DisplayName: Cursed Fire Extractor Sentry
-	CursedFireExtractorSentryBullet.DisplayName: Cursed Fire Extractor Sentry Bullet
-	MothronQueenTurret.DisplayName: Mothron Queen Turret
-	MothronQueenTurretBullet.DisplayName: Mothron Queen Turret Bullet
-	MothronBabyFriendly.DisplayName: Mothron Baby Friendly
-	SandustSentry.DisplayName: Sandust Sentry
-	SandustSentryBullet.DisplayName: Sandust Sentry Bullet
-	SandustSentrySandadoFriendly.DisplayName: Sandust Sentry Sandado Friendly
-	SandustSentrySandnadoFriendly.DisplayName: Sandust Sentry Sandnado Friendly
-	MechEyeballTurretEyeFire.DisplayName: Mech Eyeball Turret Eye Fire
-	CursedMagicTowerBulletV3.DisplayName: Cursed Magic Tower Bullet V3
+	TempleSentryEyeBeamBullet.DisplayName: 蜥族信标激光弹
+	IchorPressorSentryBullet.DisplayName: 灵液榨取器射线
+	CursedFireExtractorSentry.DisplayName: 咒火制取器
+	CursedFireExtractorSentryBullet.DisplayName: 咒火制取器射弹
+	MothronQueenTurret.DisplayName: 蛾怪女王
+	MothronQueenTurretBullet.DisplayName: 哨戒蛾怪蛋
+	MothronBabyFriendly.DisplayName: 哨戒蛾怪宝宝
+	SandustSentry.DisplayName: 禁忌瓮
+	SandustSentryBullet.DisplayName: 禁忌沙弹
+	// SandustSentrySandadoFriendly.DisplayName: Sandust Sentry Sandado Friendly
+	SandustSentrySandnadoFriendly.DisplayName: 禁忌瓮远古风暴
+	MechEyeballTurretEyeFire.DisplayName: 机械眼球咒火
+	CursedMagicTowerBulletV3.DisplayName: 诅咒魔法塔
 	CursedMagicTowerV2.DisplayName: Cursed Magic Tower V2
-	GiantLeavesOfPlanteraProjectile.DisplayName: Giant Leaves Of Plantera Projectile
-	GiantLeavesOfPlanteraBullet1.DisplayName: Giant Leaves Of Plantera Bullet1
-	GiantLeavesOfPlanteraBullet2.DisplayName: Giant Leaves Of Plantera Bullet2
+	GiantLeavesOfPlanteraProjectile.DisplayName: 绽放彼岸
+	GiantLeavesOfPlanteraBullet1.DisplayName: 绽放彼岸种子
+	GiantLeavesOfPlanteraBullet2.DisplayName: 绽放彼岸毒种子
+	HellFlagAnchor.DisplayName: 炼狱战旌锚点
+	GiantLeavesOfPlanteraAnchor.DisplayName: 绽放彼岸锚点
 }
 
 NPCs: {
