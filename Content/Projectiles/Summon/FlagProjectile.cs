@@ -297,13 +297,16 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 
             float offset_delta = 0f;
             float offsetSplitRatio = 0.5f;// DynamicParamManager.QuickGet("OffsetSplitRatio", 0.5f, 0f, 1f).value;
+            float offset_max = 0.5f;
+            float offset_min = offset_max - 0.6f * player.whipRangeMultiplier;
+            // Main.NewText("offset_min: "+offset_min);
             if (RotRate < offsetSplitRatio)
             {
-                offset_delta = MathHelper.Lerp(0.5f, -0.1f, RotRate / offsetSplitRatio) * PoleLength;
+                offset_delta = MathHelper.Lerp(offset_max, offset_min, RotRate / offsetSplitRatio) * PoleLength;
             }
             else
             {
-                offset_delta = MathHelper.Lerp(-0.1f, 0.5f, (RotRate - offsetSplitRatio) / (1f - offsetSplitRatio)) * PoleLength;
+                offset_delta = MathHelper.Lerp(offset_min, offset_max, (RotRate - offsetSplitRatio) / (1f - offsetSplitRatio)) * PoleLength;
             }
             STICK_OFFSET = new Vector2(0f, -PoleLength / 2f + offset_delta);
             Vector2 StickOffset = new Vector2(STICK_OFFSET.X * dir, STICK_OFFSET.Y);

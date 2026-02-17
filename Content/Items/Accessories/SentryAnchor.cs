@@ -8,6 +8,7 @@ using Terraria.ModLoader;
 using Terraria.Audio;
 using Terraria.ModLoader.IO;
 using System.IO;
+using Terraria.Localization;
 
 using Microsoft.Xna.Framework.Graphics;
 using SummonerExpansionMod.ModUtils;
@@ -28,7 +29,16 @@ namespace SummonerExpansionMod.Content.Items.Accessories
         private const string LOCKED_TEXTURE_PATH = ModGlobal.MOD_TEXTURE_PATH + "Items/SentryAnchorLocked";
         private const string RELEASED_TEXTURE_PATH = ModGlobal.MOD_TEXTURE_PATH + "Items/SentryAnchorReleased";
 
+        public static LocalizedText TooltipLocked;
+        public static LocalizedText TooltipUnlocked;
+
         public override string Texture => RELEASED_TEXTURE_PATH;
+
+        public override void SetStaticDefaults()
+        {
+            TooltipLocked = Mod.GetLocalization("Items.SentryAnchor.Tooltip_Locked");
+            TooltipUnlocked = Mod.GetLocalization("Items.SentryAnchor.Tooltip_Unlocked");
+        }
 
         public override void SetDefaults()
         {
@@ -163,6 +173,12 @@ namespace SummonerExpansionMod.Content.Items.Accessories
             recipe.AddIngredient(ItemID.IronBar, 12);
             recipe.AddTile(TileID.Anvils);
             recipe.Register();
+        }
+
+        public override void ModifyTooltips (List< TooltipLine > tooltips)
+        {
+            tooltips.Add(new TooltipLine(Mod, "Tooltip",
+            Locked ? TooltipLocked.Value : TooltipUnlocked.Value));
         }
     }
 

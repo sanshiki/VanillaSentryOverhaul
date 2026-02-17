@@ -14,6 +14,7 @@ using SummonerExpansionMod.ModUtils;
 using SummonerExpansionMod.Initialization;
 
 using SummonerExpansionMod.Content.Items.Weapons.Summon;
+using SummonerExpansionMod.Content.Items.Armors;
 
 namespace SummonerExpansionMod.Content.NPCs
 {
@@ -25,6 +26,13 @@ namespace SummonerExpansionMod.Content.NPCs
             {
                 shop.Add(
                     ModContent.ItemType<TowerOfDryadsBlessingStaff>()
+                );
+            }
+            if(shop.NpcType == NPCID.WitchDoctor)
+            {
+                shop.Add(
+                    ModContent.ItemType<TikiVisage>(),
+                    Condition.DownedPlantera
                 );
             }
         }

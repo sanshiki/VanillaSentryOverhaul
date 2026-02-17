@@ -413,8 +413,6 @@ Items: {
 	}
 
 	MothronQueenTurretStaffStaff: {
-		// DisplayName: Mothron Queen Turret Staff Staff
-		// Tooltip: ""
 	}
 
 	MothronQueenTurretStaff: {
@@ -472,6 +470,55 @@ Items: {
 			你的哨兵已被锁定，无法被令旗吸引
 			右键哨兵锚以解锁哨兵
 			'''
+		// Tooltip: ""
+	}
+
+	TikiVisage: {
+		Tooltip:
+			'''
+			哨兵数量上限增加1个
+			召唤伤害增加10%
+			鞭子和令旗范围增加10%
+			'''
+		DisplayName: 提基面甲
+		SetBonus:
+			'''
+			召唤伤害增加10%
+			鞭子和令旗范围增加20%
+			'''
+	}
+
+	SpookySkull: {
+		DisplayName: 阴森头颅
+		SetBonus: 召唤伤害增加25%
+		Tooltip:
+			'''
+			哨兵数量上限增加1个
+			召唤伤害增加11%
+			'''
+	}
+
+	SuperEarthCloakLv2: {
+		Tooltip:
+			'''
+			6 防御力
+			哨兵数量上限增加1个
+			召唤伤害增加10%
+			大幅降低来自某些不长眼的武器的伤害……也许
+			被击中时增加无敌帧长度
+			"当光能者威胁超级地球这颗民主之心时，绝地潜兵应召而战"
+			'''
+		DisplayName: 民主之心捍卫者披肩
+	}
+
+	SuperEarthCloakLv1: {
+		Tooltip:
+			'''
+			4 防御力
+			降低来自某些不长眼的武器的伤害……也许
+			"耐用，防水，搭配保暖内衬！"
+			'''
+		DisplayName: 歼敌战士披肩
 	}
 }
 
@@ -622,3 +669,16 @@ Configs: {
 		}
 	}
 }
+
+HallowSetBonus:
+	'''
+	套装奖励：攻击敌人后进入免疫状态，
+	仆从数量上限提高2个，哨兵数量上限提高1个
+	每召唤1个哨兵提供1点额外防御力
+	'''
+// HallowTooltip0: Mods.SummonerExpansionMod.HallowTooltip0
+// TikiShirtTooltip0: Mods.SummonerExpansionMod.TikiShirtTooltip0
+// TikiPantsTooltip0: Mods.SummonerExpansionMod.TikiPantsTooltip0
+// SpookyBreastplateTooltip0: Mods.SummonerExpansionMod.SpookyBreastplateTooltip0
+// SpookyLeggingsTooltip0: Mods.SummonerExpansionMod.SpookyLeggingsTooltip0
+AddSentryToTooltip: 仆从和哨兵数量上限增加1个

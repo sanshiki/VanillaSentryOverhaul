@@ -10,6 +10,9 @@ using SummonerExpansionMod.Initialization;
 using Terraria.ID;
 using System.Linq;
 using Terraria.WorldBuilding;
+using Terraria.DataStructures;
+
+using SummonerExpansionMod.Content.Items.Accessories;
 
 
 namespace SummonerExpansionMod.ModUtils
@@ -293,8 +296,11 @@ namespace SummonerExpansionMod.ModUtils
 								// if (!hasHeadroom)
 								// 	continue;
 
+								if (debug)
+									Dust.QuickDust(worldPos, Color.Green);
+
 								// ✅ 找到最近的合格表面
-								return worldPos;
+								return worldPos + new Vector2(0, 16f);
 							}
 							else if (debug)
                             {
@@ -304,7 +310,7 @@ namespace SummonerExpansionMod.ModUtils
 						else if (debug)
                         {
 							if (tile.HasTile) Dust.QuickDust(new Point(checkX, checkY), Color.Red);
-							if (!tile.HasTile && !tileBelow.HasTile) Dust.QuickDust(new Point(checkX, checkY), Color.Green);
+							if (!tile.HasTile && !tileBelow.HasTile) Dust.QuickDust(new Point(checkX, checkY), Color.Yellow);
 							if (!tile.HasTile && tileBelow.HasTile && !(Main.tileSolid[tileBelow.TileType] || Main.tileSolidTop[tileBelow.TileType])) Dust.QuickDust(new Point(checkX, checkY), Color.Blue);
                         }
 					}
@@ -1070,6 +1076,55 @@ namespace SummonerExpansionMod.ModUtils
 			return player.meleeEnchant == 7;
         }
 
+		#endregion
+
+		#region SelfHarm Methods
+		/// <summary>
+		/// 对玩家自身造成伤害（召唤物误伤）。返回是否成功造成伤害（canHarm）。
+		/// </summary>
+		public static bool DoHarmToSelf(Player player, Projectile projectile, int damage, float knockback, int armorPenetration=9999, bool requireIntersection=true)
+		{
+			// get accessory level
+			float reduce_level = 0;
+			if(player.GetModPlayer<HD2SentryDmgReductionPlayer>().hasLv1Accessory) reduce_level = 1f;
+			if(player.GetModPlayer<HD2SentryDmgReductionPlayer>().hasLv2Accessory) reduce_level = 2f;
+
+			// calculate difficulty factor
+			float DifficultyFactor = 1f;
+			if(Main.expertMode && !Main.masterMode)
+            {
+                DifficultyFactor = 0.5f;
+            }
+            else if (Main.masterMode)
+            {
+                DifficultyFactor = 1f/3f;
+            }
+
+			// calculate reduce factor
+			float ReduceFactor = 1f;
+			if(reduce_level == 1f) ReduceFactor = 0.5f;
+			else if (reduce_level == 2f) ReduceFactor = 0.2f;
+
+			bool canHarm = requireIntersection ? (projectile.Hitbox.Intersects(player.Hitbox) && !player.immune) : !player.immune;
+			if(canHarm)
+			{
+				int hitDir = projectile.Center.X > player.Center.X ? 1 : -1;
+				player.Hurt(
+					PlayerDeathReason.ByProjectile(
+						player.whoAmI,
+						projectile.whoAmI),
+						(int) (damage * DifficultyFactor * ReduceFactor),
+						hitDir,
+						knockback: reduce_level == 0f ? knockback : 0f,
+						armorPenetration: armorPenetration
+				);
+
+				// apply additional ef
+				if(ReduceFactor == 2f) player.immuneTime += 30;
+				return true;
+			}
+			return false;
+		}
 		#endregion
 	}
 } 

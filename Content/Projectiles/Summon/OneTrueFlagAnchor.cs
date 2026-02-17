@@ -36,6 +36,9 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             Projectile.timeLeft = 60*2;
             Projectile.alpha = 255;
             Projectile.friendly = true;
+            Projectile.tileCollide = false;
+            Projectile.ignoreWater = true;
+            Projectile.penetrate = -1;
         }
 
         public override void AI()
@@ -55,7 +58,10 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                     Projectile.knockBack,
                     Projectile.owner
                 );
-                HellpodProjectile.hostile = false;
+                if (HellpodProjectile.ModProjectile is Hellpod hellpod_)
+                {
+                    hellpod_.DoHarmToOwner = false;
+                }
             }
 
             if (HellpodProjectile != null)
@@ -101,7 +107,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                         var sentry = Main.projectile[sentryInfo.ID];
                         if (sentry != null && sentry.active)
                         {
-                            sentry.Center = sentryInfo.TargetPos + new Vector2(0, -sentry.height * 0.55f);
+                            sentry.Center = sentryInfo.TargetPos + new Vector2(0, -sentry.height * 0.5f);
                             sentry.velocity = sentryInfo.TileCollide ? new Vector2(0, 20f) : Vector2.Zero;
                             sentryInfo.IsRecalled = true;
                         }

@@ -16,7 +16,7 @@ namespace SummonerExpansionMod.Content.Items.Weapons.Summon
 
         private const float THROW_SPEED =10f;
 
-        public override string Texture => ModGlobal.MOD_TEXTURE_PATH + "Items/GatlingSentrySummon";
+        public override string Texture => ModGlobal.MOD_TEXTURE_PATH + "Items/GatlingSentrySummonV2";
 
         public override void SetStaticDefaults()
         {

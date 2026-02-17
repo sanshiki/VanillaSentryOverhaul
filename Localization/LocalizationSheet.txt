@@ -1,0 +1,26 @@
+武器中文名	武器英文名	内部名称
+哨戒兔兔召唤杖	Bunny Sentry Staff	BunnySentryStaff
+蚁狮哨戒炮召唤杖	Antlion Sentry Staff	AntlionSentryStaff
+树妖祝福塔召唤杖	Dryad Spire Staff	TowerOfDryadsBlessingStaff
+暗黑魔法塔召唤杖	Void Spire Staff	DarkMagicTowerStaff
+MG-43 哨戒机枪	MG-43 Machine Gun Sentry	MachineGunSentrySummon
+哨戒蜂巢召唤杖	Honey Comb Sentry Staff	HoneyCombSentryStaff
+禁忌瓮召唤杖	Forbidden Urn Staff	SandustSentryStaff
+灵液榨取器召唤杖	Ichor Pressor Staff	IchorPressorStaff
+咒火制取器召唤杖	Cursed Fire Extractor Staff	CursedFireExtractorStaff
+G-16 加特林哨戒炮	G-16 Gatling Sentry	GatlingSentrySummon
+机械眼球激光塔召唤杖	Mechanic Eye Laser Turret Staff	MechEyeballTurretStaff
+AC-8 自动哨戒炮	AC-8 Autocannon Sentry	AutoCannonSentrySummon
+诅咒魔法塔召唤杖	Cursed Spire Staff	CursedMagicTowerStaff
+蛾怪女王召唤杖	Mothron Queen Turret Staff	MothronQueenTurretStaff
+蜥族信标法杖	Lihzahrd Beacon Staff	TempleSentryStaff
+MLS-4X 火箭哨戒炮	MLS-4X Rocket Sentry	RockeySentrySummon
+星辰方尖碑召唤杖	Stardust Obelisk Staff	StardustSentryStaff
+指挥令旗	Command Pennant	NormalFlag
+部落战旗	Horde Banner	GoblinFlag
+炼狱战旌	Infernal Warbanner	HellFlag
+黑旗罗杰	Jolly Roger	PirateFlag
+辉耀战旗	St. George	HolyFlag
+绽放彼岸	Far Beyond Bloom	GiantLeavesOfPlantra
+圣诞行军旗	Yuletide Snowmarch	SantaFlag
+CQC-1唯一真旗	CQC-1 One True Flag	OneTrueFlag

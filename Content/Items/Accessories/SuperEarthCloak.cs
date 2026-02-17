@@ -11,7 +11,7 @@ using SummonerExpansionMod.Initialization;
 namespace SummonerExpansionMod.Content.Items.Accessories
 {
     [AutoloadEquip(EquipType.Back)]
-    public class SuperEarthCloak : ModItem
+    public class SuperEarthCloakLv1 : ModItem
     {
         public override void SetDefaults()
         {
@@ -20,35 +20,67 @@ namespace SummonerExpansionMod.Content.Items.Accessories
 			Item.maxStack = 1;
 			Item.value = Item.sellPrice(gold: 5);
 			Item.accessory = true;
-			Item.rare = ItemRarityID.Red;
+			Item.rare = ItemRarityID.Blue;
         }
 
         public override void UpdateAccessory(Player player, bool hideVisual) {
-            player.GetModPlayer<HD2SentryDmgReductionPlayer>().hasAccessory = true;
+            player.GetModPlayer<HD2SentryDmgReductionPlayer>().hasLv1Accessory = true;
+
+            player.statDefense += 4;
+        }
+
+        public override void AddRecipes() {
+            CreateRecipe()
+                .AddIngredient(ItemID.Silk, 10)
+                .AddIngredient(ItemID.TissueSample, 5)
+                .AddTile(TileID.Anvils)
+                .Register();
+            CreateRecipe()
+                .AddIngredient(ItemID.Silk, 10)
+                .AddIngredient(ItemID.ShadowScale, 5)
+                .AddTile(TileID.Anvils)
+                .Register();
+        }
+    }
+
+    [AutoloadEquip(EquipType.Back)]
+    public class SuperEarthCloakLv2 : ModItem
+    {
+        public override void SetDefaults()
+        {
+			Item.width = 26;
+			Item.height = 30;
+			Item.maxStack = 1;
+			Item.value = Item.sellPrice(gold: 5);
+			Item.accessory = true;
+			Item.rare = ItemRarityID.Yellow;
+        }
+
+        public override void UpdateAccessory(Player player, bool hideVisual) {
+            player.GetModPlayer<HD2SentryDmgReductionPlayer>().hasLv2Accessory = true;
+
+            player.statDefense += 6;
+            player.GetDamage(DamageClass.Summon) += 0.01f;
+            player.maxTurrets += 1;
+        }
+
+        public override void AddRecipes() {
+            CreateRecipe()
+                .AddIngredient(ModContent.ItemType<SuperEarthCloakLv1>(), 1)
+                .AddIngredient(ItemID.MartianConduitPlating, 20)
+                .AddTile(TileID.MythrilAnvil)
+                .Register();
         }
     }
 
     public class HD2SentryDmgReductionPlayer : ModPlayer
     {
-        public bool hasAccessory = false;
+        public bool hasLv1Accessory = false;
+        public bool hasLv2Accessory = false;
 
         public override void ResetEffects() {
-            hasAccessory = false;
+            hasLv1Accessory = false;
+            hasLv2Accessory = false;
         }
-
-
-        // public override void ModifyHitByProjectile(Projectile proj, ref Player.HurtModifiers modifiers) {
-        //     if (hasAccessory) {
-        //         if(proj.owner == Player.whoAmI) {
-        //             // decrease dealt damage and completely disable knockback
-        //             float t = 200f / 19f;
-        //             float dynamicDecayCoeff = (float)MathHelper.Clamp(t / (t + proj.damage), 0.005f, 0.8f);
-        //             modifiers.FinalDamage *= dynamicDecayCoeff;
-        //             modifiers.Knockback *= 0f;
-        //             // Main.NewText("dynamicDecayCoeff: " + dynamicDecayCoeff  + " SourceDamage: " + proj.damage);
-        //         }
-        //         // Main.NewText("hasAccessory: " + hasAccessory + " proj.owner: " + proj.owner + " Player.whoAmI: " + Player.whoAmI);
-        //     }
-        // }
     }
 }

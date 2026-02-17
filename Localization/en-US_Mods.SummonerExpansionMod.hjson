@@ -106,7 +106,7 @@ Buffs: {
 
 	SummonFatigueDebuff: {
 		DisplayName: Summon Fatigue
-		// Description: Mods.SummonerExpansionMod.Buffs.SummonFatigueDebuff.Description
+		Description: Mods.SummonerExpansionMod.Buffs.SummonFatigueDebuff.Description
 	}
 }
 
@@ -262,10 +262,7 @@ Items: {
 
 	SuperEarthCloak: {
 		DisplayName: Super Earth Cloak
-		Tooltip:
-			'''
-			Reduces damage from certain blind weapons... maybe
-			'''
+		Tooltip: Reduces damage from certain blind weapons... maybe
 	}
 
 	VertexTest: {
@@ -412,8 +409,6 @@ Items: {
 	}
 
 	MothronQueenTurretStaffStaff: {
-		// DisplayName: Mothron Queen Turret Staff Staff
-		// Tooltip: ""
 	}
 
 	MothronQueenTurretStaff: {
@@ -471,6 +466,29 @@ Items: {
 			Your sentries are locked and cannot be attracted by flags
 			Right-click sentry anchor to unlock sentries
 			'''
+		Tooltip: ""
+	}
+
+	TikiVisage: {
+		Tooltip: ""
+		DisplayName: Tiki Visage
+		SetBonus: Mods.SummonerExpansionMod.Items.TikiVisage.SetBonus
+	}
+
+	SpookySkull: {
+		DisplayName: Spooky Skull
+		SetBonus: Mods.SummonerExpansionMod.Items.SpookySkull.SetBonus
+		Tooltip: ""
+	}
+
+	SuperEarthCloakLv2: {
+		Tooltip: ""
+		DisplayName: Super Earth Cloak Lv2
+	}
+
+	SuperEarthCloakLv1: {
+		Tooltip: ""
+		DisplayName: Super Earth Cloak Lv1
 	}
 }
 
@@ -621,3 +639,11 @@ Configs: {
 		}
 	}
 }
+
+HallowSetBonus: Mods.SummonerExpansionMod.HallowSetBonus
+HallowTooltip0: Mods.SummonerExpansionMod.HallowTooltip0
+TikiShirtTooltip0: Mods.SummonerExpansionMod.TikiShirtTooltip0
+TikiPantsTooltip0: Mods.SummonerExpansionMod.TikiPantsTooltip0
+SpookyBreastplateTooltip0: Mods.SummonerExpansionMod.SpookyBreastplateTooltip0
+SpookyLeggingsTooltip0: Mods.SummonerExpansionMod.SpookyLeggingsTooltip0
+AddSentryToTooltip: Mods.SummonerExpansionMod.AddSentryToTooltip

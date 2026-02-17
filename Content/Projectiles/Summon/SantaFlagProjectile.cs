@@ -69,7 +69,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                 Projectile bladeShot = Projectile.NewProjectileDirect(
                     Projectile.GetSource_FromAI(),
                     player.Center + direction * PoleLength * 0.8f,
-                    Vector2.Normalize(CursorPos - player.Center) * 6f,
+                    Vector2.Normalize(CursorPos - player.Center) * 6f * player.whipRangeMultiplier,
                     ModProjectileID.SantaFlagBladeShot,
                     Projectile.damage,
                     Projectile.knockBack,

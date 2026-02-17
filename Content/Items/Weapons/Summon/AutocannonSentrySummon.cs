@@ -15,7 +15,7 @@ namespace SummonerExpansionMod.Content.Items.Weapons.Summon
 
         private const float THROW_SPEED =10f;
 
-        public override string Texture => ModGlobal.MOD_TEXTURE_PATH + "Items/AutocannonSentrySummon";
+        public override string Texture => ModGlobal.MOD_TEXTURE_PATH + "Items/AutocannonSentrySummonV2";
 
         public override void SetStaticDefaults()
         {

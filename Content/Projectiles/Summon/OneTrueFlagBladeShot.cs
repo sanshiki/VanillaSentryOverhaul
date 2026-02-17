@@ -55,6 +55,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             Projectile.localNPCHitCooldown = 1000;
             Projectile.DamageType = DamageClass.SummonMeleeSpeed;
             Projectile.ownerHitCheck = true;
+            Projectile.alpha = 255;
         }
         public override void OnSpawn(IEntitySource source)
         {
@@ -62,7 +63,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             ShootDirection = Vector2.Normalize(Main.MouseWorld - player.Center);
             Projectile.timeLeft = (int)Projectile.ai[0];
             TimeLeft = Projectile.timeLeft;
-            ShootSpeed = SHOOT_DIST / TimeLeft * 2f;
+            ShootSpeed = SHOOT_DIST / TimeLeft * 2f * player.whipRangeMultiplier;
             RelativeVelocity = ShootDirection * ShootSpeed;
             // Main.NewText("ShootSpeed: " + ShootSpeed + " TimeLeft: " + TimeLeft + " ShootDist: " + SHOOT_DIST);
         }
