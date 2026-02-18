@@ -52,7 +52,7 @@ namespace SummonerExpansionMod.Content.Items.Weapons.Summon
             Item.shoot = MOD_PROJECTILE_ID;
             Item.shootSpeed = 0f;
 
-            DynamicParamManager.Register("State Debug", 0f, 0f, 1f);
+            // DynamicParamManager.Register("State Debug", 0f, 0f, 1f);
         }
 
         public override bool MeleePrefix() {
@@ -138,7 +138,8 @@ namespace SummonerExpansionMod.Content.Items.Weapons.Summon
 
         public override void HoldItem(Player player)
         {
-            bool state_debug = DynamicParamManager.Get("State Debug").value > 0.5f;
+            // bool state_debug = DynamicParamManager.Get("State Debug").value > 0.5f;
+            bool state_debug = false;
             if(state_debug)
             {
                 string StateStr = "";

@@ -178,7 +178,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 
                     if(bullet.ModProjectile is MachineGunSentryBullet machineGunBullet)
                     {
-                        machineGunBullet.SelfDamage = 5;
+                        machineGunBullet.SelfDamage = 8;
                     }
 
                     shootTimer = 0; // Reset shoot animation

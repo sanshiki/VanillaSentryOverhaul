@@ -53,9 +53,9 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             Projectile.height = SIGNAL_HEIGHT;
             Projectile.alpha = 150;
 
-            DynamicParamManager.Register("Global alpha", GLOBAL_ALPHA, 0f, 1f);
-            DynamicParamManager.Register("Bright slice num", BRIGHT_SLICE_NUM, 0, SIGNAL_HEIGHT / SIGNAL_SLICE_HEIGHT);
-            DynamicParamManager.Register("Bright alpha max", BRIGHT_ALPHA_MAX, 1f, 20f);
+            // DynamicParamManager.Register("Global alpha", GLOBAL_ALPHA, 0f, 1f);
+            // DynamicParamManager.Register("Bright slice num", BRIGHT_SLICE_NUM, 0, SIGNAL_HEIGHT / SIGNAL_SLICE_HEIGHT);
+            // DynamicParamManager.Register("Bright alpha max", BRIGHT_ALPHA_MAX, 1f, 20f);
         }
 
         public override void AI()
@@ -111,7 +111,8 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             {
                 GlobalAlphaMultiplier = (float)Projectile.timeLeft / FadeOutTime;
             }
-            float globalAlpha = DynamicParamManager.Get("Global alpha").value;
+            // float globalAlpha = DynamicParamManager.Get("Global alpha").value;
+            float globalAlpha = GLOBAL_ALPHA;
             GlobalAlphaMultiplier *= globalAlpha;
         }
         
@@ -133,8 +134,10 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         
         private float GetAlpha(float CurrentSliceRatio)
         {
-            int BrightSliceNum = (int)DynamicParamManager.Get("Bright slice num").value;
-            float BrightAlphaMax = DynamicParamManager.Get("Bright alpha max").value;
+            // int BrightSliceNum = (int)DynamicParamManager.Get("Bright slice num").value;
+            int BrightSliceNum = BRIGHT_SLICE_NUM;
+            // float BrightAlphaMax = DynamicParamManager.Get("Bright alpha max").value;
+            float BrightAlphaMax = BRIGHT_ALPHA_MAX;
             float BrightSlicePartRatio = (float)BrightSliceNum / (SIGNAL_HEIGHT / SIGNAL_SLICE_HEIGHT);
             float MaxAnimationRatio = AnimationRatio;
             float MinAnimationRatio = Math.Max(0f, AnimationRatio - BrightSlicePartRatio);

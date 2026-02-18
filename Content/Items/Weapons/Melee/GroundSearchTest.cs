@@ -27,13 +27,13 @@ namespace SummonerExpansionMod.Content.Items.Weapons.Melee
 			Item.value = Item.buyPrice(gold: 1); // The value of the weapon in copper coins.
             Item.UseSound = SoundID.Item1; // The sound when the weapon is being used.
 
-            DynamicParamManager.Register("SearchWidth", 32, 1, 100);
-            DynamicParamManager.Register("SearchHeight", 32, 1, 100);
+            // DynamicParamManager.Register("SearchWidth", 32, 1, 100);
+            // DynamicParamManager.Register("SearchHeight", 32, 1, 100);
 		}
 
 		public override void MeleeEffects(Player player, Rectangle hitbox) {
-            int width = (int)DynamicParamManager.Get("SearchWidth").value;
-            int height = (int)DynamicParamManager.Get("SearchHeight").value;
+            int width = 32;
+            int height = 32;
             Vector2 Pos = MinionAIHelper.SearchForGround(player.Center+new Vector2(0, -50f), 10, width, height);
             Rectangle PosRect = new Rectangle((int)Pos.X - width / 2, (int)Pos.Y - height, width, height);
             Dust.QuickDustLine(PosRect.BottomLeft(), PosRect.TopLeft(), 10, Color.Yellow);

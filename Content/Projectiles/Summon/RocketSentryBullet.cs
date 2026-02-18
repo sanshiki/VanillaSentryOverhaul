@@ -25,7 +25,6 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         private const float ACC = 2f;
         private const float HOMING_INERTIA = 7f;
 
-        private bool hasAccessory = false;
 
         private bool DamageDebug = false;
         
@@ -52,13 +51,6 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 
             Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = 20;
-        }
-
-        public override void OnSpawn(IEntitySource source)
-        {
-            Player player = Main.player[Projectile.owner];
-            HD2SentryDmgReductionPlayer hd2SentryDmgReductionPlayer = player.GetModPlayer<HD2SentryDmgReductionPlayer>();
-            hasAccessory = hd2SentryDmgReductionPlayer.hasAccessory;
         }
 
         public override void AI()
@@ -175,41 +167,15 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         private void DealDamage(int damage, bool checkIntersection = true)
         {
             Player player = Main.player[Projectile.owner];
-            if(player.dead || player.active == false)
+            if(player.dead || !player.active)
             {
                 return;
             }
 
-            float DifficultyFactor = 1f;
-            float expertFactor = DamageDebug ? 1f : DynamicParamManager.QuickGet("RocketSentryBulletExpertFactor", 1.95f, 1f, 3f).value;
-            float masterFactor = DamageDebug ? 1f : DynamicParamManager.QuickGet("RocketSentryBulletMasterFactor", 2.9f, 1f, 3f).value;
-            if(Main.expertMode && !Main.masterMode)
+            bool harmed = MinionAIHelper.DoHarmToSelf(player, Projectile, damage, Projectile.knockBack, requireIntersection: checkIntersection);
+            if (harmed || !checkIntersection)
             {
-                DifficultyFactor = 1f/expertFactor;
-            }
-            else if (Main.masterMode)
-            {
-                DifficultyFactor = 1f/masterFactor;
-            }
-
-            float ReductionFactor = hasAccessory ? 0.5f : 1f;
-
-            if ((checkIntersection && Projectile.Hitbox.Intersects(player.Hitbox) || !checkIntersection) && !player.immune)
-            {
-                int hitDir = Projectile.Center.X > player.Center.X ? 1 : -1;
-                player.Hurt(
-                    PlayerDeathReason.ByProjectile(
-                        player.whoAmI,
-                        Projectile.whoAmI),
-                    (int)(damage * DifficultyFactor * ReductionFactor),
-                    hitDir,
-                    knockback: hasAccessory ? 0f : Projectile.knockBack,
-                    armorPenetration:SelfArmorPenetration
-                );
-
-                if(hasAccessory) player.immuneTime += 30;
-
-                Projectile.Kill(); // 避免每帧重复触发
+                Projectile.Kill(); // 成功造成伤害则销毁；爆炸半径调用时无论是否造成伤害都销毁
             }
         }
 

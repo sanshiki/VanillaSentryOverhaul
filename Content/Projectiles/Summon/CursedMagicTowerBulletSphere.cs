@@ -64,7 +64,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = 30;
 
-            DynamicParamManager.Register("DustIDIdx", 0f, 0f, (float)(DustIDs.Count-1), null);
+            // DynamicParamManager.Register("DustIDIdx", 0f, 0f, (float)(DustIDs.Count-1), null);
             
         }
 

@@ -200,7 +200,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                 DynamicParamManager.Register("TailColor.A", TAIL_COLOR.A, 0, 255);
             }
             
-            DynamicParamManager.Register("StickOffsetList.extra", 0, -30, 30);
+            // DynamicParamManager.Register("StickOffsetList.extra", 0, -30, 30);
         }
 
         public override void OnSpawn(IEntitySource source)
@@ -904,7 +904,8 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                 Vector2 UpperVertexPffset, LowerVertexPffset;
                 if (State == WAVE_STATE)
                 {
-                    int extra = (int)DynamicParamManager.Get("StickOffsetList.extra").value;
+                    // int extra = (int)DynamicParamManager.Get("StickOffsetList.extra").value;
+                    int extra = 0;
                     // Vector2 StickOffset = new Vector2(0, StickOffsetList[(int)MathHelper.Clamp(StickOffsetList.Count - (i + extra), 0, StickOffsetList.Count - 1)]);
                     Vector2 StickOffset = new Vector2(0, (float)PolarPoints[i].r - PoleLength);
                     SpinCenter = CenterMapping(Projectile.Center, StickOffset, Projectile.rotation + ModGlobal.PI_FLOAT);

@@ -178,7 +178,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 
                     if(bullet.ModProjectile is MachineGunSentryBullet machineGunBullet)
                     {
-                        machineGunBullet.SelfDamage = 10;
+                        machineGunBullet.SelfDamage = 14;
                         machineGunBullet.SelfArmorPenetration = 27;
                     }
 

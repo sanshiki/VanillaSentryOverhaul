@@ -1,83 +1,83 @@
-using Microsoft.Xna.Framework;
-using System;
-using Terraria;
-using Terraria.DataStructures;
-using Terraria.ID;
-using Terraria.ModLoader;
-using Microsoft.Xna.Framework.Graphics;
+// using Microsoft.Xna.Framework;
+// using System;
+// using Terraria;
+// using Terraria.DataStructures;
+// using Terraria.ID;
+// using Terraria.ModLoader;
+// using Microsoft.Xna.Framework.Graphics;
 
-using SummonerExpansionMod.Content.Projectiles.Summon;
-using SummonerExpansionMod.Initialization;
-using SummonerExpansionMod.ModUtils;
+// using SummonerExpansionMod.Content.Projectiles.Summon;
+// using SummonerExpansionMod.Initialization;
+// using SummonerExpansionMod.ModUtils;
 
-namespace SummonerExpansionMod.Content.Items.Accessories
-{
-    public class SentinelTalismanLv3 : ModItem
-    {
-        public override string Texture => ModGlobal.MOD_TEXTURE_PATH + "Items/SentinelTalismanLv3";
-        public override void SetDefaults()
-        {
-            Texture2D texture = ModContent.Request<Texture2D>(Texture).Value;
-			Item.width = texture.Width;
-			Item.height = texture.Height;
-			Item.maxStack = 1;
-			Item.value = Item.sellPrice(gold: 5);
-			Item.accessory = true;
-			Item.rare = ItemRarityID.Red;
-        }
+// namespace SummonerExpansionMod.Content.Items.Accessories
+// {
+//     public class SentinelTalismanLv3 : ModItem
+//     {
+//         public override string Texture => ModGlobal.MOD_TEXTURE_PATH + "Items/SentinelTalismanLv3";
+//         public override void SetDefaults()
+//         {
+//             Texture2D texture = ModContent.Request<Texture2D>(Texture).Value;
+// 			Item.width = texture.Width;
+// 			Item.height = texture.Height;
+// 			Item.maxStack = 1;
+// 			Item.value = Item.sellPrice(gold: 5);
+// 			Item.accessory = true;
+// 			Item.rare = ItemRarityID.Red;
+//         }
 
-        public override void UpdateAccessory(Player player, bool hideVisual)
-        {
-            player.maxTurrets += 1;
+//         public override void UpdateAccessory(Player player, bool hideVisual)
+//         {
+//             player.maxTurrets += 1;
 
-            if (player.maxTurrets >= 5)
-            {
-                int armorDefense = 0;
+//             if (player.maxTurrets >= 5)
+//             {
+//                 int armorDefense = 0;
 
-                for (int i = 0; i < 3; i++)
-                {
-                    Item armorPiece = player.armor[i];
-                    if (!armorPiece.IsAir)
-                        armorDefense += armorPiece.defense;
-                }
+//                 for (int i = 0; i < 3; i++)
+//                 {
+//                     Item armorPiece = player.armor[i];
+//                     if (!armorPiece.IsAir)
+//                         armorDefense += armorPiece.defense;
+//                 }
 
-                int bonusDefense = MinionAIHelper.DefenseCompensate(
-                    armorDefense, 60, 0.5f, 25f, 25f);
+//                 int bonusDefense = MinionAIHelper.DefenseCompensate(
+//                     armorDefense, 60, 0.5f, 25f, 25f);
 
-                player.statDefense += bonusDefense;
-            }
-        }
+//                 player.statDefense += bonusDefense;
+//             }
+//         }
 
-    }
+//     }
 
-    // public class SentinelTalismanLv3Player : ModPlayer
-    // {
-    //     public bool hasAccessory = false;
+//     // public class SentinelTalismanLv3Player : ModPlayer
+//     // {
+//     //     public bool hasAccessory = false;
 
-    //     public override void ResetEffects() {
-    //         hasAccessory = false;
-    //     }
+//     //     public override void ResetEffects() {
+//     //         hasAccessory = false;
+//     //     }
 
-    //     public override void PostUpdate()
-    //     {
-    //         // Main.NewText("hasAccessory: " + hasAccessory + " maxTurrets: " + Player.maxTurrets);
-    //         if (hasAccessory && Player.maxTurrets >= 5) {
-    //             int armorDefense = 0;
+//     //     public override void PostUpdate()
+//     //     {
+//     //         // Main.NewText("hasAccessory: " + hasAccessory + " maxTurrets: " + Player.maxTurrets);
+//     //         if (hasAccessory && Player.maxTurrets >= 5) {
+//     //             int armorDefense = 0;
 
-    //             for (int i = 0; i < 3; i++)
-    //             {
-    //                 Item armorPiece = Player.armor[i];
-    //                 if (armorPiece != null && !armorPiece.IsAir)
-    //                 {
-    //                     armorDefense += armorPiece.defense;
-    //                 }
-    //             }
+//     //             for (int i = 0; i < 3; i++)
+//     //             {
+//     //                 Item armorPiece = Player.armor[i];
+//     //                 if (armorPiece != null && !armorPiece.IsAir)
+//     //                 {
+//     //                     armorDefense += armorPiece.defense;
+//     //                 }
+//     //             }
 
-    //             int bonusDefense = MinionAIHelper.DefenseCompensate(armorDefense, 60, 0.5f, 25f, 25f);
+//     //             int bonusDefense = MinionAIHelper.DefenseCompensate(armorDefense, 60, 0.5f, 25f, 25f);
 
-    //             Player.statDefense += bonusDefense;
-    //             Player.maxTurrets += 8;
-    //         }
-    //     }
-    // }
-}
+//     //             Player.statDefense += bonusDefense;
+//     //             Player.maxTurrets += 8;
+//     //         }
+//     //     }
+//     // }
+// }
