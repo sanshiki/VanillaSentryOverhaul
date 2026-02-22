@@ -383,10 +383,10 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         public override bool OnTileCollide(Vector2 oldVelocity)
         {
             bool onGround = true;
+            if(Projectile.ai[2]==0) Projectile.netUpdate = true;
             Projectile.ai[2] = onGround ? 1f : 0f;
             // Projectile.velocity = Vector2.Zero;
             Projectile.velocity.X = 0f;
-            Projectile.netUpdate = true;
             return false;
         }
 

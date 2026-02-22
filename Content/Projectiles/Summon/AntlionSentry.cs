@@ -244,18 +244,19 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             }
             if(onSand)
             {
+                if(!isOnSand) Projectile.netUpdate = true;
                 isOnSand = true;
             }
             else
             {
+                if(isOnSand) Projectile.netUpdate = true;
                 isOnSand = false;
             }
 
             // set velocity to 0
             // Projectile.velocity = Vector2.Zero;
+            if(Projectile.velocity.X != 0f) Projectile.netUpdate = true;
             Projectile.velocity.X = 0f;
-
-            Projectile.netUpdate = true;
 
             return false;
         }

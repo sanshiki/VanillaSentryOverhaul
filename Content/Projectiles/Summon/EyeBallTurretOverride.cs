@@ -51,6 +51,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         public override bool OnTileCollide(Projectile projectile, Vector2 oldVelocity)
         {
             // projectile.velocity = Vector2.Zero;
+            if(projectile.velocity.X != 0f) projectile.netUpdate = true;
             projectile.velocity.X = 0f;
             lastVelocity = new Vector2(0, 0);
             return true;

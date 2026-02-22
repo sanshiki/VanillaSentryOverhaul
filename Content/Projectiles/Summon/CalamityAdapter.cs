@@ -37,6 +37,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             {
                 if(CalamitySentriesNeedToBeStopped.Contains(projectile.ModProjectile.GetType().Name))
                 {
+                    if(projectile.velocity.X != 0f) projectile.netUpdate = true;
                     projectile.velocity.X = 0f;
                 }
             }

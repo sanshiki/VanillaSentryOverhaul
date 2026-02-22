@@ -287,8 +287,8 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 
         public override bool OnTileCollide(Vector2 oldVelocity)
         {
+            if(Projectile.velocity.X != 0f) Projectile.netUpdate = true;
             Projectile.velocity.X = 0f;
-            Projectile.netUpdate = true;
             return false;
         }
 

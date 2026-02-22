@@ -215,6 +215,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             if (Projectile.velocity.X != oldVelocity.X && Math.Abs(oldVelocity.X) > 0.1f)
             {
                 Projectile.velocity.X = -oldVelocity.X * BOUNCE_DECAY;
+                Projectile.netUpdate = true;
             }
             if (Projectile.velocity.Y != oldVelocity.Y && Math.Abs(oldVelocity.Y) > 0.1f)
             {
@@ -222,14 +223,15 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                 {
                     Projectile.ai[1] = extraPacker.Set(Projectile.ai[1], 0, 1);
                     // Projectile.velocity = Vector2.Zero;
+                    if(Projectile.velocity.X != 0f) Projectile.netUpdate = true;
                     Projectile.velocity.X = 0f;
                 }
                 else
                 {
                     Projectile.velocity.Y = -oldVelocity.Y * BOUNCE_DECAY;
+                    Projectile.netUpdate = true;
                 }
             }
-            Projectile.netUpdate = true;
             
             return false;
         }

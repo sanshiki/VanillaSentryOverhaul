@@ -292,8 +292,8 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             bool onGround = true;
             Projectile.ai[2] = onGround ? 1f : 0f;
             // Projectile.velocity = Vector2.Zero;
+            if(Projectile.velocity.X != 0f) Projectile.netUpdate = true;
             Projectile.velocity.X = 0f;
-            Projectile.netUpdate = true;
             return false;
         }
 

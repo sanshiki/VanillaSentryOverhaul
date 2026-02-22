@@ -269,7 +269,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         public override void OnSpawn(IEntitySource source)
         {
             Player player = Main.player[Projectile.owner];
-            AttackSpeed = player.GetAttackSpeed(DamageClass.Melee);  
+            AttackSpeed = player.GetAttackSpeed(DamageClass.SummonMeleeSpeed);  
 
             if(MinionAIHelper.IsServer())
             {
