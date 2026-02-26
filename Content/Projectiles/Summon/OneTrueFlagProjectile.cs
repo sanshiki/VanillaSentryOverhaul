@@ -49,6 +49,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         protected override float SENTRY_RECALL_THRESHOLD => 40f;
         protected override float SENTRY_RECALL_DECAY_DIST => 1000f;
         protected override float SENTRY_RECALL_MAX_DIST => 4200f;
+        protected override int SENTRY_RECALL_ANCHOR_PROJECTILE_TYPE => ModProjectileID.OneTrueFlagAnchor;
         protected override int ONGROUND_CNT_THRESHOLD => 10;
         protected bool BladShotInited = false;
         protected bool SoundPlayed = false;
@@ -76,7 +77,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                     Projectile proj = Main.projectile[info.Anchor_ID];
                     if (proj.ModProjectile is OneTrueFlagAnchor anchor_)
                     {
-                        anchor_.sentryInfo = info;
+                        anchor_.Configure(new ProjectileReference(sentry), info.TargetPos, info.TileCollide);
                     }
                 }
                 if(!SoundPlayed)

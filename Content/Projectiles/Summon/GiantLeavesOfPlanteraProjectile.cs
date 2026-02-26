@@ -41,6 +41,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         protected override float SENTRY_RECALL_THRESHOLD => 40f;
         protected override float SENTRY_RECALL_DECAY_DIST => 900f;
         protected override float SENTRY_RECALL_MAX_DIST => 3700f;
+        protected override int SENTRY_RECALL_ANCHOR_PROJECTILE_TYPE => ModProjectileID.GiantLeavesOfPlanteraAnchor;
         protected override int ONGROUND_CNT_THRESHOLD => 15;
         protected bool isCharged = false;
 
@@ -66,7 +67,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                     Projectile proj = Main.projectile[info.Anchor_ID];
                     if (proj.ModProjectile is GiantLeavesOfPlanteraAnchor anchor_)
                     {
-                        anchor_.sentryInfo = info;
+                        anchor_.Configure(new ProjectileReference(sentry), info.TargetPos, info.TileCollide);
                     }
                 }
             }

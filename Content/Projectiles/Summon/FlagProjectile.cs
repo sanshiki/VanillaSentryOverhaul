@@ -92,6 +92,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         protected virtual float SENTRY_RECALL_TARGET_OFFSET => 70f;
         protected virtual float SENTRY_RANDOM_OFFSET => 20f;
         protected virtual bool USE_CUSTOM_SENTRY_RECALL => false;
+        protected virtual int SENTRY_RECALL_ANCHOR_PROJECTILE_TYPE => -1;
         protected virtual bool AUTO_READD_BUFF_ON_PLANT => false;
         protected virtual bool USE_CURSOR_ASSISTED_PLANT => false;
         protected virtual float CURSOR_ASSISTED_PLANT_DISTANCE => 100f;
@@ -175,7 +176,6 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         protected bool HasPlayedBuffSound = false;      // played buff-adding sound flag(low update freq)
         protected bool UseFastAnimation = false;    // if to use fast animation(higher freq)(low update freq)
 
-        protected List<SentryRecallInfo> SentryRecallInfos = new List<SentryRecallInfo>();
         protected Vector2 STICK_OFFSET = new Vector2(0f, -MIN_POLE_PENGTH / 2f + 20f);
         protected List<float> StickOffsetList = new List<float>();
         protected Vector2 CursorAssistedPlantPos = Vector2.Zero;
@@ -218,6 +218,60 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         protected const int ControlUseTileFlagBit = 5;
         protected const int ControlUseItemFlagBit = 6;
         
+        protected virtual void IssueSentryRecallCommands()
+        {
+            List<Projectile> candidateSentries = new List<Projectile>();
+            foreach (Projectile proj in Main.projectile)
+            {
+                if (proj.active && proj.owner == Projectile.owner && proj.sentry && (proj.Center - Projectile.Center).Length() <= SENTRY_RECALL_MAX_DIST)
+                {
+                    candidateSentries.Add(proj);
+                }
+            }
+
+            int sentryCount = candidateSentries.Count;
+            if (sentryCount == 0)
+            {
+                return;
+            }
+
+            float totalLength = sentryCount == 1 ? 0f : (float)Math.Sqrt(sentryCount - 1) * 200f;
+            int ranDir = ((Projectile.identity + Projectile.owner) & 1) == 0 ? 1 : -1;
+
+            for (int i = 0; i < sentryCount; i++)
+            {
+                Projectile sentry = candidateSentries[i];
+                float localX = sentryCount == 1 ? 0f : (float)i / (float)(sentryCount - 1) * totalLength - totalLength / 2f;
+                float preciseX = Projectile.Center.X + localX * ranDir;
+                float preciseY = Projectile.Center.Y - SENTRY_RECALL_TARGET_OFFSET;
+                float randomSeed = Main.rand.NextFloat(-SENTRY_RANDOM_OFFSET, SENTRY_RANDOM_OFFSET);
+                float x = preciseX + randomSeed;
+                float y = preciseY + randomSeed;
+                Vector2 targetPos = MinionAIHelper.SearchForValidPosition(new Vector2(x, y), (int)(sentry.width * 1.5f), (int)(sentry.height * 1.5f), 10);
+                if (USE_CUSTOM_SENTRY_RECALL && sentry.tileCollide)
+                {
+                    // Anchor recalls need a ground-resolved destination for sentries that collide with tiles.
+                    targetPos = MinionAIHelper.SearchForGround(targetPos + new Vector2(0, 100f), 10, 16, (int)(sentry.height * 0.5f));
+                }
+
+                SentryRecallCommand command = new SentryRecallCommand
+                {
+                    TargetPos = targetPos,
+                    RecallSpeed = SENTRY_RECALL_SPEED,
+                    RecallThreshold = SENTRY_RECALL_THRESHOLD,
+                    RecallDecayDist = SENTRY_RECALL_DECAY_DIST,
+                    UseAnchorRecall = USE_CUSTOM_SENTRY_RECALL,
+                    AnchorProjectileType = SENTRY_RECALL_ANCHOR_PROJECTILE_TYPE,
+                    DisableTileCollideWhileRecalling = !USE_CUSTOM_SENTRY_RECALL
+                };
+
+                RecallSentryGlobal.IssueRecallCommand(sentry, command);
+                Mod.Logger.Info(
+                    $"[FlagProjectile] IssueRecall flagWho={Projectile.whoAmI} flagIdentity={Projectile.identity} owner={Projectile.owner} mode={Main.netMode} " +
+                    $"sentryWho={sentry.whoAmI} sentryIdentity={sentry.identity} useAnchor={USE_CUSTOM_SENTRY_RECALL} target={targetPos} tile={sentry.tileCollide}");
+            }
+        }
+
 
 
         /* -------------------------- Setting Defaults -------------------------- */
@@ -608,43 +662,9 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                     bool SentryRecallInitialized = flagPacker.Get(Projectile.ai[1],SentryRecallInitializeFlagBit)!=0;
                     if (!SentryRecallInitialized)
                     {
-                        // find affected sentries
-                        SentryRecallInfos.Clear();
-                        foreach (var proj in Main.projectile)
+                        if (Projectile.owner == Main.myPlayer)
                         {
-                            if (proj.active && proj.owner == Projectile.owner && proj.sentry && (proj.Center - Projectile.Center).Length() <= SENTRY_RECALL_MAX_DIST)
-                            {
-                                SentryRecallInfo info = new SentryRecallInfo()
-                                {
-                                    ID = proj.identity,
-                                    TileCollide = proj.tileCollide,
-                                    TargetPos = proj.Center,
-                                    Seed = Main.rand.NextFloat(-SENTRY_RANDOM_OFFSET, SENTRY_RANDOM_OFFSET)
-                                };
-                                SentryRecallInfos.Add(info);
-                                // make sentry can go through tile
-                                if(!USE_CUSTOM_SENTRY_RECALL) proj.tileCollide = false;
-                            }
-                        }
-                        // set target pos
-                        int SentryCount = SentryRecallInfos.Count;
-                        float TotalLength = SentryCount == 0 ? 0f : (float)Math.Sqrt(SentryCount - 1) * 200f;
-                        Random random = new Random();
-                        int ranDir = random.Next(2) == 0 ? 1 : -1;
-                        for (int i = 0; i < SentryCount; i++)
-                        {
-                            SentryRecallInfo info = SentryRecallInfos[i];
-                            float LocalX = SentryCount == 1 ? 0f : (float)i / (float)(SentryCount - 1) * TotalLength - TotalLength / 2f;
-                            float PreciseX = Projectile.Center.X + LocalX * ranDir;
-                            float PreciseY = Projectile.Center.Y - SENTRY_RECALL_TARGET_OFFSET;
-                            float X = PreciseX + info.Seed;
-                            float Y = PreciseY + info.Seed;
-                            int SentryWidth = Main.projectile[info.ID].width;
-                            int SentryHeight = Main.projectile[info.ID].height;
-                            Vector2 PossiblePos = MinionAIHelper.SearchForValidPosition(new Vector2(X, Y), (int)(SentryWidth * 1.5), (int)(SentryHeight * 1.5), 10);
-                            SentryRecallInfos[i].TargetPos = PossiblePos;
-
-                            // Main.NewText("Sentry "+i+" target pos: "+info.TargetPos);
+                            IssueSentryRecallCommands();
                         }
 
                         // reset buff
@@ -654,35 +674,6 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                         SentryRecallInitialized = true;
                     }
                     Projectile.ai[1] = flagPacker.Set(Projectile.ai[1],SentryRecallInitializeFlagBit,SentryRecallInitialized?1:0);
-                
-                    foreach (var info in SentryRecallInfos)
-                    {
-                        if (USE_CUSTOM_SENTRY_RECALL)
-                        {
-                            CustomSentryRecall(info);
-                        }
-                        else
-                        {
-                            // move sentries
-                            var sentry = Main.projectile[info.ID];
-                            Vector2 ToTargetDist = info.TargetPos - sentry.Center;
-                            if (ToTargetDist.Length() >= SENTRY_RECALL_THRESHOLD && !info.IsRecalled)
-                            {
-                                Vector2 ToTargetDir = ToTargetDist.SafeNormalize(Vector2.UnitX);
-                                float DecayFactor = MathHelper.Clamp(ToTargetDist.Length() / SENTRY_RECALL_DECAY_DIST, 0.1f, 1f);
-                                // float DecayFactor = MathHelper.Clamp(2f-SENTRY_RECALL_DECAY_DIST/(ToTargetDist.Length()+0.0001f), 0f, 1f);
-                                sentry.velocity = ToTargetDir * SENTRY_RECALL_SPEED * DecayFactor;
-                                // sentry.velocity = Vector2.Zero;
-                                // sentry.Center += ToTargetDir * SENTRY_RECALL_SPEED * DecayFactor;
-                            }
-                            else
-                            {
-                                // reset sentry tile collide
-                                sentry.tileCollide = info.TileCollide;
-                                info.IsRecalled = true;
-                            }
-                        }
-                    }
                 }
             }
 
@@ -718,12 +709,6 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                 SwitchFlag = false;
                 Initialized = false;
                 HasPlayedOnGroundSound = false;
-
-                foreach (var info in SentryRecallInfos)
-                {
-                    Projectile sentry = Main.projectile[info.ID];
-                    sentry.velocity /= 2f;
-                }
 
                 Projectile.netUpdate = true;
             }
@@ -1211,14 +1196,6 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 
         public override void Kill(int timeLeft)
         {
-            foreach(var info in SentryRecallInfos)
-            {
-                var proj = Main.projectile[info.ID];
-                proj.tileCollide = info.TileCollide;
-                // Main.NewText("Sentry "+entry.Key+" tileCollide: "+entry.Value);
-            }
-            SentryRecallInfos.Clear();
-
             // Main.NewText("projectile kill triggered, timeLeft:"+timeLeft);
         }
 
@@ -1390,12 +1367,6 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             writer.Write(TimeLeftRaise);
             writer.Write(AimAngle);
 
-            writer.Write(SentryRecallInfos.Count);
-            foreach(var info in SentryRecallInfos)
-            {
-                info.SendExtraAI(writer);
-            }
-
             writer.Write(CursorAssistedPlantPos.X);
             writer.Write(CursorAssistedPlantPos.Y);
         }
@@ -1405,15 +1376,6 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             PoleLength = reader.ReadInt32();
             TimeLeftRaise = reader.ReadInt32();
             AimAngle = reader.ReadSingle();
-
-            SentryRecallInfos.Clear();
-            int SentryInfoLen = reader.ReadInt32();
-            for(int i=0;i < SentryInfoLen; i++)
-            {
-                SentryRecallInfo info = new SentryRecallInfo();
-                info.ReceiveExtraAI(reader);
-                SentryRecallInfos.Add(info);
-            }
 
             float CursorAssistedPlantPosX = reader.ReadSingle();
             float CursorAssistedPlantPosY = reader.ReadSingle();

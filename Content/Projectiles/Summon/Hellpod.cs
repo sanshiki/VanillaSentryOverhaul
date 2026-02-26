@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
@@ -19,6 +20,8 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
     {
 
         private const float GRAVITY = 0.8f;
+
+        private const int HELLPOD_TIMELEFT = 600;
 
         private const int FLAME_OFFSET_X = 17;
         private const int FLAME_OFFSET_Y = 24;
@@ -41,7 +44,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             Projectile.friendly = true;
             Projectile.hostile = false;
             Projectile.tileCollide = false;
-            Projectile.timeLeft = 600;
+            Projectile.timeLeft = HELLPOD_TIMELEFT;
             Projectile.penetrate = -1;
         }
 
@@ -49,6 +52,11 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         public override void AI()
         {
             MinionAIHelper.ApplyGravity(Projectile, GRAVITY, 20f);
+
+            if(Projectile.owner == Main.myPlayer)
+            {
+                if(HELLPOD_TIMELEFT - Projectile.timeLeft == 2) Projectile.netUpdate = true;
+            }
 
             // left flame
             Vector2 LeftFlameOffset = new Vector2(-FLAME_OFFSET_X, -FLAME_OFFSET_Y);
@@ -90,6 +98,16 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             {
                 MinionAIHelper.DoHarmToSelf(player, Projectile, SelfDamage, Projectile.knockBack);
             }
+        }
+        
+        public override void SendExtraAI(BinaryWriter writer)
+        {
+            writer.Write(DoHarmToOwner);
+        }
+
+        public override void ReceiveExtraAI(BinaryReader reader)
+        {
+            DoHarmToOwner = reader.ReadBoolean();
         }
 
     }

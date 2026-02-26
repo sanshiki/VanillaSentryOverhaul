@@ -1,0 +1,5 @@
+---
+alwaysApply: true
+---
+
+do not try to run dotnet build, just remind me to build in tmodloader.

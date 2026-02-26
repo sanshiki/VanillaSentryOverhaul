@@ -36,6 +36,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         protected override float SENTRY_RECALL_THRESHOLD => 40f;
         protected override float SENTRY_RECALL_DECAY_DIST => 600f;
         protected override float SENTRY_RECALL_MAX_DIST => 3250f;
+        protected override int SENTRY_RECALL_ANCHOR_PROJECTILE_TYPE => ModProjectileID.HellFlagAnchor;
         protected override int ONGROUND_CNT_THRESHOLD => 15;
         // protected override bool TAIL_ENABLE_GLOBAL => false;
         protected override int FULLY_CHARGED_DUST => 182;
@@ -73,8 +74,9 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                     Projectile proj = Main.projectile[info.Anchor_ID];
                     if (proj.ModProjectile is HellFlagAnchor anchor_)
                     {
-                        anchor_.sentryInfo = info;
+                        anchor_.Configure(new ProjectileReference(sentry), info.TargetPos, info.TileCollide);
                     }
+                    proj.netUpdate = true;
                 }
             }
         }
