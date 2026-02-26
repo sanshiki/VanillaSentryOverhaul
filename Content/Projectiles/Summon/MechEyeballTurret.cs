@@ -60,12 +60,14 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         private const float RED_BULLET_SPEED = 12f;
         private const float PRED_RED_BULLET_SPEED = 35f;
         private const float GREEN_BULLET_SPEED = 4f;
+        private const bool ENABLE_NET_DEBUG_TEXT = false;
 
         // variables
         private int State = RED_STATE;
         private float direction = 0f;
         private float AngleBeforeSwitch;
         private float CurrentStickDownDist;
+        private int debugLastState = -1;
 
         public override string Texture => TEXTURE_PATH;
 
@@ -96,6 +98,8 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             Projectile.ai[0] = 0f; // shootTimer
             Projectile.ai[1] = 1f; // RealFrame
             Projectile.ai[2] = 0f; // StateMaintainCnt
+            debugLastState = State;
+            DebugText($"Spawn state={StateName(State)}, owner={Projectile.owner}, myPlayer={Main.myPlayer}");
         }
 
         public override void AI()
@@ -105,6 +109,12 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             int StateMaintainCnt = (int)Projectile.ai[2];
 
             Player owner = Main.player[Projectile.owner];
+
+            if (debugLastState != State)
+            {
+                DebugText($"State changed {StateName(debugLastState)} -> {StateName(State)}, ai1={RealFrame}, frame={Projectile.frame}, netUpdate={Projectile.netUpdate}, tilcollide={Projectile.tileCollide}");
+                debugLastState = State;
+            }
             
             // apply gravity
             Projectile.velocity.Y += Gravity;
@@ -182,6 +192,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                     // swtich state
                     if(StateMaintainCnt++ > STATE_MAINTAIN_DURATION && distance < SWTICH_STATE_THRESHOLD && target != null)
                     {
+                        DebugText($"Trigger RED->GREEN, dist={distance:F1}, cnt={StateMaintainCnt}, dir={direction:F2}, target={target.whoAmI}");
                         AngleBeforeSwitch = direction;
                         StateMaintainCnt = 0;
                         State = RED_TO_GREEN;
@@ -193,6 +204,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                     bool finished = Red2GreenAnimation();
                     if(finished)
                     {
+                        DebugText($"Finish RED->GREEN anim, ai1={(int)Projectile.ai[1]}, frame={Projectile.frame}");
                         State = GREEN_STATE;
                         Projectile.netUpdate = true;
                     }
@@ -240,6 +252,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                     // swtich state
                     if(StateMaintainCnt++ > STATE_MAINTAIN_DURATION && distance > SWTICH_STATE_THRESHOLD && target != null)
                     {
+                        DebugText($"Trigger GREEN->RED, dist={distance:F1}, cnt={StateMaintainCnt}, dir={direction:F2}, target={target.whoAmI}");
                         StateMaintainCnt = 0;
                         AngleBeforeSwitch = direction;
                         State = GREEN_TO_RED;
@@ -251,6 +264,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                     bool finished = Green2RedAnimation();
                     if(finished)
                     {
+                        DebugText($"Finish GREEN->RED anim, ai1={(int)Projectile.ai[1]}, frame={Projectile.frame}");
                         State = RED_STATE;
                         Projectile.netUpdate = true;
                     }
@@ -565,16 +579,49 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 
         public override void SendExtraAI(BinaryWriter writer)
         {
+            writer.Write((byte)State);
             writer.Write(direction);
             writer.Write(AngleBeforeSwitch);
             writer.Write(CurrentStickDownDist);
+            DebugText($"SendExtraAI state={StateName(State)}, ai1={(int)Projectile.ai[1]}, dir={direction:F2}, before={AngleBeforeSwitch:F2}, stick={CurrentStickDownDist:F2}, tilcollide={Projectile.tileCollide}");
         }
         
         public override void ReceiveExtraAI(BinaryReader reader)
         {
+            State = reader.ReadByte();
             direction = reader.ReadSingle();
             AngleBeforeSwitch = reader.ReadSingle();
             CurrentStickDownDist = reader.ReadSingle();
+            DebugText($"RecvExtraAI state={StateName(State)}, ai1={(int)Projectile.ai[1]}, dir={direction:F2}, before={AngleBeforeSwitch:F2}, stick={CurrentStickDownDist:F2}, tilcollide={Projectile.tileCollide}");
+        }
+
+        private static string StateName(int state)
+        {
+            return state switch
+            {
+                RED_STATE => "RED",
+                RED_TO_GREEN => "RED_TO_GREEN",
+                GREEN_STATE => "GREEN",
+                GREEN_TO_RED => "GREEN_TO_RED",
+                _ => $"UNKNOWN({state})"
+            };
+        }
+
+        private void DebugText(string message)
+        {
+            if (!ENABLE_NET_DEBUG_TEXT || Main.dedServ)
+            {
+                return;
+            }
+
+            string netMode = Main.netMode switch
+            {
+                NetmodeID.SinglePlayer => "SP",
+                NetmodeID.MultiplayerClient => "Client",
+                NetmodeID.Server => "Server",
+                _ => $"Net{Main.netMode}"
+            };
+            Main.NewText($"[MechEye:{netMode}] proj={Projectile.whoAmI} owner={Projectile.owner} local={Main.myPlayer} {message}");
         }
 
     }

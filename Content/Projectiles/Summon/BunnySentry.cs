@@ -113,8 +113,6 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                     }
 
 
-                    shootTimer = 0; // Reset shoot animation
-
                     SoundStyle style = new SoundStyle("Terraria/Sounds/Item_11") with { Volume = .7f,  Pitch = .72f,  PitchVariance = .26f, };
                     SoundEngine.PlaySound(style, Projectile.Center);
 

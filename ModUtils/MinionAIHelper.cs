@@ -1130,7 +1130,7 @@ namespace SummonerExpansionMod.ModUtils
 		#region Server Methods
 		public static void SetProjectileNetUpdate(Projectile projectile)
 		{
-			if (Main.netMode != NetmodeID.MultiplayerClient)
+			if (projectile.owner == Main.myPlayer)
 				projectile.netUpdate = true;
 		}
 

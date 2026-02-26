@@ -60,19 +60,21 @@ namespace SummonerExpansionMod.Content.Players
             }
         }
 
-        public override void ModifyHitNPCWithProj(
-            Projectile proj, NPC target, ref NPC.HitModifiers modifiers)
-        {
-            if (!proj.minion && !proj.sentry)
-                return;
+        // public override void ModifyHitNPCWithProj(
+        //     Projectile proj, NPC target, ref NPC.HitModifiers modifiers)
+        // {
+        //     // if (!proj.minion && !ProjectileID.Sets.MinionShot[proj.type] && !ProjectileID.Sets.SentryShot[proj.type] && !proj.IsMinionOrSentryRelated && !proj.sentry)
+        //     //     return;
+        //     if (proj.DamageType != DamageClass.Summon && !proj.DamageType != DamageClass.SummonMeleeSpeed)
+        //         return;
 
-            if (fatigueLevel <= 0)
-                return;
+        //     if (fatigueLevel <= 0)
+        //         return;
 
-            modifiers.FinalDamage *= fatigueMultiplier;
+        //     modifiers.FinalDamage *= fatigueMultiplier;
 
-            // Main.NewText("Fatigue level: " + fatigueLevel + " Multiplier: " + multiplier);
-        }
+        //     // Main.NewText("Fatigue level: " + fatigueLevel + " Multiplier: " + multiplier);
+        // }
     }
 
     public class SummonFatigueSentryProjectile : GlobalProjectile
@@ -86,7 +88,8 @@ namespace SummonerExpansionMod.Content.Players
             var mp = player.GetModPlayer<SummonFatiguePlayer>();
             float fatigueLevel = mp.fatigueLevel;
 
-            if (!ProjectileID.Sets.SentryShot[projectile.type])
+            // if (!projectile.minion && !ProjectileID.Sets.MinionShot[projectile.type] && !ProjectileID.Sets.SentryShot[projectile.type] && !projectile.IsMinionOrSentryRelated && !projectile.sentry)
+            if (!(projectile.DamageType == DamageClass.Summon) && !(projectile.DamageType == DamageClass.SummonMeleeSpeed))
                 return;
 
             if (fatigueLevel <= 0)

@@ -1,11 +1,13 @@
 using Microsoft.Xna.Framework;
 using System;
+using System.IO;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Audio;
+using Terraria.ModLoader.IO;
 
 using Microsoft.Xna.Framework.Graphics;
 using SummonerExpansionMod.Content.Buffs.Summon;
@@ -36,8 +38,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         protected int shootTimer = SHOOT_INTERVAL / 2;
         protected int TimerDuringShoot = -1;
 
-        protected bool SquireArmorSet = false;
-        protected bool SquireAltArmorSet = false;
+        protected bool enchanced = false;
 
         public FlameburstTowerOverride()
         {
@@ -59,24 +60,26 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             projectile.DamageType = DamageClass.Summon;
         }
 
-        protected void CheckArmorSet(Player player)
+        protected bool CheckArmorSet(Player player)
         {
-            SquireArmorSet = player.armor[0].type == 3797 &&
+            bool SquireArmorSet = player.armor[0].type == 3797 &&
                    player.armor[1].type == 3798 &&
                    player.armor[2].type == 3799;
-            SquireAltArmorSet = player.armor[0].type == 3874 &&
+            bool SquireAltArmorSet = player.armor[0].type == 3874 &&
                    player.armor[1].type == 3875 &&
                    player.armor[2].type == 3876;
+            return SquireArmorSet || SquireAltArmorSet;
         }
 
-        protected bool GetEnhanced(Player player)
+        protected bool GetEnhanced(Projectile projectile, Player player)
         {
-            CheckArmorSet(player);
-            if(SquireArmorSet || SquireAltArmorSet)
+            bool new_enchanced = CheckArmorSet(player);
+            if(enchanced ^ new_enchanced)
             {
-                return true;
+                MinionAIHelper.SetProjectileNetUpdate(projectile);
             }
-            return false;
+            enchanced = new_enchanced;
+            return enchanced;
         }
 
         protected void UpdateAnimation(Projectile projectile)
@@ -100,6 +103,24 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                 projectile.frameCounter = 0;
             }
         }
+
+        public override void SendExtraAI(Projectile projectile, BitWriter bitWriter, BinaryWriter binaryWriter)
+        {
+            binaryWriter.Write(direction.X);
+            binaryWriter.Write(direction.Y);
+            binaryWriter.Write(shootTimer);
+            binaryWriter.Write(TimerDuringShoot);
+            bitWriter.WriteBit(enchanced);
+        }
+		public override void ReceiveExtraAI(Projectile projectile, BitReader bitReader, BinaryReader binaryReader)
+        {
+            float directionX = binaryReader.ReadSingle();
+            float directionY = binaryReader.ReadSingle();
+            direction = new Vector2(directionX, directionY);
+            shootTimer = binaryReader.ReadInt32();
+            TimerDuringShoot = binaryReader.ReadInt32();
+            enchanced = bitReader.ReadBit();
+        }
     }
 
     public class FlameburstShotOverride : IProjectileOverride
@@ -114,8 +135,6 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         protected virtual int lvl => 1;
 
         protected float lastError = 0f;
-
-        private bool targetLost = false;
 
         public FlameburstShotOverride()
         {
@@ -132,27 +151,19 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             int targetId = (int)projectile.ai[0];
             NPC target = targetId != -1 ? Main.npc[targetId] : null;
 
-                        if(targetLost || target == null || !target.active || (target.Center - projectile.Center).Length() > HOMING_RANGE)
+            if(target == null || !target.active || (target.Center - projectile.Center).Length() > HOMING_RANGE)
             {
-                // targetLost = true;
                 float spd = (float)Math.Min(projectile.velocity.Length() + 0.5f, HOMING_SPEED);
                 projectile.velocity = projectile.velocity.SafeNormalize(Vector2.Zero) * spd;
                 return;
             }
 
-            // float inertia = DynamicParamManager.Get("InertiaT" + lvl).value;
-            float inertia = HOMING_INERTIA;
-
-            // float direction = (target.Center - projectile.Center).ToRotation();
-            // float dir_err = direction - projectile.velocity.ToRotation();
-            // dir_err = (dir_err + ModGlobal.PI_FLOAT) % ModGlobal.TWO_PI_FLOAT - ModGlobal.PI_FLOAT;
-            // float turn_speed = dir_err * CONTROL_P + (dir_err - lastError) * CONTROL_D;
-            // lastError = dir_err;
-            // turn_speed = MathHelper.Clamp(turn_speed, -MAX_TURN_SPEED, MAX_TURN_SPEED);
-            // Vector2 velocity = projectile.velocity;
-            // projectile.velocity = velocity.RotatedBy(turn_speed);
-
-            MinionAIHelper.HomeinToTarget(projectile, target.Center, HOMING_SPEED, inertia);
+            // NPC target = MinionAIHelper.SearchForTargets(
+            //     Main.player[projectile.owner], 
+            //     projectile, 
+            //     HOMING_RANGE, 
+            //     true, 
+            //     null).TargetNPC;
         }
     }
 
@@ -177,7 +188,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             MinionAIHelper.ApplyGravity(projectile, ModGlobal.SENTRY_GRAVITY, ModGlobal.SENTRY_MAX_FALL_SPEED);
 
             // calculate range
-            bool Enhanced = GetEnhanced(Main.player[projectile.owner]);
+            bool Enhanced = GetEnhanced(projectile, Main.player[projectile.owner]);
             float maxRange = MAX_RANGE_1 * (Enhanced ? RANGE_FACTOR : 1f);
 
             // targeting
@@ -280,7 +291,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             MinionAIHelper.ApplyGravity(projectile, ModGlobal.SENTRY_GRAVITY, ModGlobal.SENTRY_MAX_FALL_SPEED);
 
             // calculate range
-            bool Enhanced = GetEnhanced(Main.player[projectile.owner]);
+            bool Enhanced = GetEnhanced(projectile, Main.player[projectile.owner]);
             float maxRange = MAX_RANGE_2 * (Enhanced ? RANGE_FACTOR : 1f);
 
             // targeting
@@ -383,7 +394,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             MinionAIHelper.ApplyGravity(projectile, ModGlobal.SENTRY_GRAVITY, ModGlobal.SENTRY_MAX_FALL_SPEED);
 
             // calculate range
-            bool Enhanced = GetEnhanced(Main.player[projectile.owner]);
+            bool Enhanced = GetEnhanced(projectile, Main.player[projectile.owner]);
             float maxRange = MAX_RANGE_3 * (Enhanced ? RANGE_FACTOR : 1f);
 
             // targeting

@@ -4,6 +4,8 @@ using Terraria.ModLoader;
 using Microsoft.Xna.Framework;
 using Terraria.DataStructures;
 using System;
+using System.IO;
+using Terraria.ModLoader.IO;
 
 using System.Collections.Generic;
 
@@ -25,6 +27,8 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 		public virtual void ModifyHitNPC(Projectile projectile, NPC target, ref NPC.HitModifiers modifiers) {}
 		public virtual bool TileCollideStyle(Projectile projectile, ref int width, ref int height, ref bool fallThrough, ref Vector2 hitboxCenterFrac) => true;
 		public virtual void OnSpawn(Projectile projectile, IEntitySource source) {}
+		public virtual void SendExtraAI(Projectile projectile, BitWriter bitWriter, BinaryWriter binaryWriter) {}
+		public virtual void ReceiveExtraAI(Projectile projectile, BitReader bitReader, BinaryReader binaryReader) {}
 		// register flags
 		public Dictionary<string, bool> RegisterFlags = new()
 		{
@@ -37,7 +41,9 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 			{ "OnHitNPC", false },
 			{ "ModifyHitNPC", false },
 			{ "TileCollideStyle", false },
-			{ "OnSpawn", false}
+			{ "OnSpawn", false},
+			{ "SendExtraAI", false},
+			{ "ReceiveExtraAI", false}
 		};
 	}
 	
@@ -173,6 +179,22 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 				handler.OnSpawn(projectile, source);
 			else
 				base.OnSpawn(projectile, source);
+		}
+
+		public override void SendExtraAI(Projectile projectile, BitWriter bitWriter, BinaryWriter binaryWriter)
+		{
+			if (overrides.TryGetValue(projectile.type, out var handler))
+				handler.SendExtraAI(projectile, bitWriter, binaryWriter);
+			else
+				base.SendExtraAI(projectile, bitWriter, binaryWriter);
+		}
+
+		public override void ReceiveExtraAI(Projectile projectile, BitReader bitReader, BinaryReader binaryReader)
+		{
+			if (overrides.TryGetValue(projectile.type, out var handler))
+				handler.ReceiveExtraAI(projectile, bitReader, binaryReader);
+			else
+				base.ReceiveExtraAI(projectile, bitReader, binaryReader);
 		}
 	}
 }
