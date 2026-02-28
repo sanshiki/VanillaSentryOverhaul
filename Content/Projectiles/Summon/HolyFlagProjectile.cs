@@ -24,7 +24,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         protected override float TAIL_OFFSET_Y_1 => -90f;  
         protected override float TAIL_OFFSET_X_2 => -33f;  
         protected override float TAIL_OFFSET_Y_2 => -63f;   
-        protected override Color TAIL_COLOR => new Color(255, 255, 235, 100);
+        protected override Color TAIL_COLOR => new Color(145, 145, 145, 47);
         protected override bool TAIL_DYNAMIC_DEBUG => false;
         protected override float GRAVITY => 1.5f;
         protected override float MAX_FALL_SPEED => 25f;
@@ -39,5 +39,6 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         protected override float SENTRY_RECALL_DECAY_DIST => 800f;
         protected override float SENTRY_RECALL_MAX_DIST => 3500f;
         protected override int ONGROUND_CNT_THRESHOLD => 20;
+        // protected override int TAIL_BLEND_STATE => TAIL_BLEND_STATE_NONPREMULTIPLIED;
     }
 }

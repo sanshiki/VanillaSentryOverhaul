@@ -144,6 +144,10 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         protected virtual string FLAG_TAIL_TEXTURE_PATH => ModGlobal.MOD_TEXTURE_PATH + "Vertexes/SwordTail4";
         protected virtual bool ENABLE_VERTEX_FLAG => true;
         protected virtual bool VERTEX_DEBUG => false;
+        protected const int TAIL_BLEND_STATE_ALPHABLEND = 0;
+        protected const int TAIL_BLEND_STATE_ADDITIVE = 1;
+        protected const int TAIL_BLEND_STATE_NONPREMULTIPLIED = 2;
+        protected virtual int TAIL_BLEND_STATE => 0;
 
         /* ------------------------- Buff Constants ------------------------- */
         protected virtual int ENHANCE_BUFF_ID => ModBuffID.SentryEnhancement;
@@ -434,23 +438,31 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 
             float RotDisplacement = ROT_DISPLACEMENT * 1.12f/* DynamicParamManager.QuickGet("RotDisplacement", 100f, 0f, 200f).value / 100f */;
             
-            // float ItemRot = player.itemRotation;
-            float RotRate = (ItemRot/*  * FixedDirection */ + RotDisplacement/2f) / RotDisplacement; // 0 to 1
-            // float WaveUseTime = TIME_LEFT_WAVE / AttackSpeed;
-            float WaveUseTime = player.itemAnimationMax;
+            // Parameterize swing with normalized time u to avoid frame-rate dependent integration drift.
+            float WaveUseTime = Math.Max(1f, player.itemAnimationMax);
+            float waveSteps = Math.Max(1f, WaveUseTime - 1f);
+            float elapsed = MathHelper.Clamp(WaveUseTime - Projectile.timeLeft, 0f, waveSteps);
+            float u = elapsed / waveSteps; // 0 to 1 over visible frames
 
-            // rotate speed: accelerate then deaccelerate
-            // RotAcc = -2 * ROT_DISPLACEMENT / WaveUseTime / WaveUseTime;
             float accSplitRatio = 0.333f;// DynamicParamManager.QuickGet("AccSplitRatio", 0.333f, 0f, 1f).value;
-            if(RotRate < accSplitRatio)
+            float split = MathHelper.Clamp(accSplitRatio, 0.001f, 0.999f);
+
+            float RotRate;
+            if (u < split)
             {
-                RotAcc = 2*RotDisplacement / (float)WaveUseTime / (float)(WaveUseTime * accSplitRatio);
+                RotRate = (u * u) / split;
+                RotAcc = 2f * RotDisplacement / (WaveUseTime * WaveUseTime * split);
+                RotSpd = 2f * RotDisplacement * u / (split * WaveUseTime);
             }
             else
             {
-                RotAcc = -2*RotDisplacement / (float)WaveUseTime / (float)(WaveUseTime * (1f-accSplitRatio));
+                float du = u - split;
+                RotRate = split + 2f * du - (du * du) / (1f - split);
+                RotAcc = -2f * RotDisplacement / (WaveUseTime * WaveUseTime * (1f - split));
+                RotSpd = 2f * RotDisplacement * (1f - u) / ((1f - split) * WaveUseTime);
             }
-            RotSpd += RotAcc;
+            RotRate = MathHelper.Clamp(RotRate, 0f, 1f);
+            ItemRot = (RotRate - 0.5f) * RotDisplacement;
 
             float offset_delta = 0f;
             float offsetSplitRatio = 0.5f;// DynamicParamManager.QuickGet("OffsetSplitRatio", 0.5f, 0f, 1f).value;
@@ -469,6 +481,24 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             Vector2 StickOffset = new Vector2(STICK_OFFSET.X * dir, STICK_OFFSET.Y);
             StickOffsetList.Add(-PoleLength / 2f + offset_delta);
 
+            // Main.NewText($"Rotrate:{RotRate,10:0.00} RotAcc:{RotAcc,10:0.00} RotSpd:{RotSpd,10:0.00} ItemRot:{ItemRot,10:0.00}");
+
+            // string stickOffsetString = "";
+            // foreach(var offset in StickOffsetList)
+            // {
+            //     stickOffsetString += $"{offset,10:0.00} ";
+            // }
+            // Main.NewText($"{ "StickOffsetList:",-20}\t{stickOffsetString}");
+            // string oldrotstring = "";
+            // List<float> oldrotlist = new List<float>(Projectile.oldRot);
+            // oldrotlist.RemoveAll(rot => rot == 0f);
+            // oldrotlist.Reverse();
+            // foreach(var rot in oldrotlist)
+            // {
+            //     oldrotstring += $"{rot,10:0.00} ";
+            // }
+            // Main.NewText($"{ "Projectile.oldRot:",-20}\t{oldrotstring}");
+
             // string stickOffsetString = "";
             // foreach(var offset in StickOffsetList)
             // {
@@ -483,9 +513,6 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             // Main.NewText("Projectile.oldPos: "+TailString);
             // Main.NewText("RotRate: "+RotRate);
             
-            // ItemRot += (1.275f + 2.05f) / (float)WaveUseTime;
-            ItemRot += RotSpd;
-
             // Main.NewText("RotRate: "+RotRate + " RotAcc: "+RotAcc + " RotSpd: "+RotSpd + " ItemRot: "+ItemRot);
 
             float Rot = AimAngle + (ROT_ANGLE * RotRate - ROT_ANGLE / 2f) * dir;
@@ -596,8 +623,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                 Projectile.friendly = false;
 
                 // reset buff
-                if(MinionAIHelper.IsServer())
-                    player.AddBuff(ENHANCE_BUFF_ID, BuffTimePlanted);
+                player.AddBuff(ENHANCE_BUFF_ID, BuffTimePlanted);
 
                 // calculate cursor assisted plant pos
                 if(Projectile.owner == Main.myPlayer)
@@ -672,8 +698,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                         }
 
                         // reset buff
-                        if(MinionAIHelper.IsServer())
-                            player.AddBuff(ENHANCE_BUFF_ID, BuffTimePlanted);
+                        player.AddBuff(ENHANCE_BUFF_ID, BuffTimePlanted);
 
                         SentryRecallInitialized = true;
                     }
@@ -703,8 +728,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             // auto re-add buff
             if (AUTO_READD_BUFF_ON_PLANT/*  && !player.HasBuff(ENHANCE_BUFF_ID) */)
             {
-                if(MinionAIHelper.IsServer())
-                    player.AddBuff(ENHANCE_BUFF_ID, BuffTimePlanted);
+                player.AddBuff(ENHANCE_BUFF_ID, BuffTimePlanted);
             }
 
             if (SwitchFlag)
@@ -1006,9 +1030,16 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             int OverlapSize = TAIL_OVERLAP_SIZE;
             if(State == RECALL_STATE) CurrentTime = TIME_LEFT_RECALL - Projectile.timeLeft;
             int OldPosSize = (int)Math.Min(CurrentTime, TAIL_LENGTH+FLAG_CLOTH_LENGTH-OverlapSize);
+            bool VertexDebug = VERTEX_DEBUG || DynamicParamManager.QuickGet("VertexDebug", 0f, 0f, 1f).value > 0.5f;
+            List<Vector2> debugSpinCenters = new List<Vector2>();
+            List<Vector2> debugUpperWorldPoints = new List<Vector2>();
+            List<Vector2> debugLowerWorldPoints = new List<Vector2>();
+            List<float> debugStickOffsets = new List<float>();
+            List<float> debugOldRots = new List<float>();
 
             // construct polar points（循环上界必须同时不超过 StickOffsetList 与 Projectile.oldRot 的长度，否则会越界）
             List<float> StickOffsetListInvert = new List<float>(StickOffsetList);
+            StickOffsetListInvert.RemoveAt(StickOffsetListInvert.Count - 1);
             StickOffsetListInvert.Reverse();
             int polarCount = Math.Min(OldPosSize, Math.Min(StickOffsetListInvert.Count, Projectile.oldRot.Length));
             List<MinionAIHelper.PolarCurveFitter.Polar> PolarPoints = new List<MinionAIHelper.PolarCurveFitter.Polar>();
@@ -1016,27 +1047,8 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             {
                 PolarPoints.Add(new MinionAIHelper.PolarCurveFitter.Polar(StickOffsetListInvert[i] + PoleLength, Projectile.oldRot[i]));
             }
-            
-            bool VertexDebug = DynamicParamManager.QuickGet("VertexDebug", 0f, 0f, 1f).value > 0.5f;
-            if(VertexDebug)
-            {
-                string polarPointsString = "";
-                foreach(var point in PolarPoints)
-                {
-                    polarPointsString += Math.Round(point.r, 2) + " " + Math.Round(point.theta, 2) + "\n";
-                }
-                Main.NewText("Before fit: "+ polarPointsString);
-            }
+
             PolarPoints = MinionAIHelper.PolarCurveFitter.FitAndInsert(PolarPoints, TAIL_FIT_INSERT_SIZE);
-            if(VertexDebug)
-            {
-                string polarPointsString = "";
-                foreach(var point in PolarPoints)
-                {
-                    polarPointsString += Math.Round(point.r, 2) + " " + Math.Round(point.theta, 2) + "\n";
-                }
-                Main.NewText("After fit: "+ polarPointsString);
-            }
 
             float FlagClothLength = FLAG_CLOTH_LENGTH * (TAIL_FIT_INSERT_SIZE+1) - 1;
             float TailLength = TAIL_LENGTH * (TAIL_FIT_INSERT_SIZE+1) - 1;
@@ -1074,29 +1086,43 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                 }
 
                 float OldRot = (float)PolarPoints[i].theta;
+                float debugStickOffset = (float)PolarPoints[i].r - PoleLength;
+                Vector2 upperWorldPos = SpinCenter + UpperVertexPffset.RotatedBy(OldRot);
+                Vector2 lowerWorldPos = SpinCenter + LowerVertexPffset.RotatedBy(OldRot);
 
                 if (i < FlagClothLength)  // add flag cloth verteces
                 {
                     // Color b = new Color(255, 255, 255, 225);
                     Color b = lightColor;
-                    FlagClothVerteces.Add(new Vertex(SpinCenter - Main.screenPosition + UpperVertexPffset.RotatedBy(OldRot),
+                    FlagClothVerteces.Add(new Vertex(upperWorldPos - Main.screenPosition,
                             new Vector3(1-FlagClothRatio, 0, 1),
                             b));
-                    FlagClothVerteces.Add(new Vertex(SpinCenter - Main.screenPosition + LowerVertexPffset.RotatedBy(OldRot),
+                    FlagClothVerteces.Add(new Vertex(lowerWorldPos - Main.screenPosition,
                             new Vector3(1-FlagClothRatio, 1, 1),
                             b));
                 }
                 if (i >= FlagClothLength - OverlapSize && i < FlagClothLength + TailLength - OverlapSize)  // add flag tail verteces
                 {
                     byte alpha = (byte)(MathHelper.Clamp(FlagTailRatio * 255, 0, 255));
-                    Color tailColor = new Color(TAIL_COLOR.R, TAIL_COLOR.G, TAIL_COLOR.B, alpha);
-                    Color b = new Color(Math.Min(lightColor.R, tailColor.R), Math.Min(lightColor.G, tailColor.G), Math.Min(lightColor.B, tailColor.B), alpha);
-                    FlagTailVerteces.Add(new Vertex(SpinCenter - Main.screenPosition + UpperVertexPffset.RotatedBy(OldRot),
+                    Color tailColor = new Color(TAIL_COLOR.R, TAIL_COLOR.G, TAIL_COLOR.B, TAIL_COLOR.A);
+                    if(TAIL_DYNAMIC_DEBUG)
+                        tailColor = new Color((int)DynamicParamManager.Get("TailColor.R").value, (int)DynamicParamManager.Get("TailColor.G").value, (int)DynamicParamManager.Get("TailColor.B").value, (int)DynamicParamManager.Get("TailColor.A").value);
+                    Color b = new Color(Math.Min(lightColor.R, tailColor.R), Math.Min(lightColor.G, tailColor.G), Math.Min(lightColor.B, tailColor.B), Math.Min(alpha, tailColor.A));
+                    FlagTailVerteces.Add(new Vertex(upperWorldPos - Main.screenPosition,
                             new Vector3(FlagTailRatio, 1, 1),
                             b));
-                    FlagTailVerteces.Add(new Vertex(SpinCenter - Main.screenPosition + LowerVertexPffset.RotatedBy(OldRot),
+                    FlagTailVerteces.Add(new Vertex(lowerWorldPos - Main.screenPosition,
                             new Vector3(FlagTailRatio, 0, 1),
                             b));
+                }
+
+                if(VertexDebug)
+                {
+                    debugSpinCenters.Add(SpinCenter);
+                    debugUpperWorldPoints.Add(upperWorldPos);
+                    debugLowerWorldPoints.Add(lowerWorldPos);
+                    debugStickOffsets.Add(debugStickOffset);
+                    debugOldRots.Add(OldRot);
                 }
 
             }
@@ -1118,8 +1144,12 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                 gd.DrawUserPrimitives(PrimitiveType.TriangleStrip, FlagClothVerteces.ToArray(), 0, FlagClothVerteces.Count - 2);
             }
 
+            BlendState TailBlendState = BlendState.AlphaBlend;
+            if(TAIL_BLEND_STATE == TAIL_BLEND_STATE_ADDITIVE) TailBlendState = BlendState.Additive;
+            if(TAIL_BLEND_STATE == TAIL_BLEND_STATE_NONPREMULTIPLIED) TailBlendState = BlendState.NonPremultiplied;
+
             sb.End();
-            sb.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.AnisotropicClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+            sb.Begin(SpriteSortMode.Immediate, TailBlendState, SamplerState.AnisotropicClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
 
             if(FlagTailVerteces.Count >= 3) // verteces should be at least 3 to form a triangle
             {
@@ -1129,6 +1159,21 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 
             sb.End();
             sb.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.AnisotropicClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+
+            if(VertexDebug)
+            {
+                Texture2D pixel = TextureAssets.MagicPixel.Value;
+                int debugCount = Math.Min(debugUpperWorldPoints.Count, 20);
+                for(int i = 0; i < debugCount; i++)
+                {
+                    // DrawDebugWorldLine(sb, pixel, debugSpinCenters[i], debugUpperWorldPoints[i], Color.Red, 2f);
+                    // DrawDebugWorldLine(sb, pixel, debugUpperWorldPoints[i], debugLowerWorldPoints[i], Color.OrangeRed, 1f);
+
+                    Vector2 textPos = debugUpperWorldPoints[i] - Main.screenPosition + new Vector2(8f, (i % 2 == 0) ? -16f : 2f);
+                    string debugText = $"S:{debugStickOffsets[i],7:0.00} R:{debugOldRots[i],7:0.00}";
+                    Utils.DrawBorderString(sb, debugText, textPos, Color.Red * 0.9f, 0.65f);
+                }
+            }
 
         }
 
@@ -1174,6 +1219,33 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                 origin,
                 Projectile.scale,
                 Projectile.spriteDirection == 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally,
+                0f
+            );
+        }
+
+        protected void DrawDebugWorldLine(SpriteBatch sb, Texture2D pixel, Vector2 fromWorld, Vector2 toWorld, Color color, float thickness)
+        {
+            Vector2 fromScreen = fromWorld - Main.screenPosition;
+            Vector2 toScreen = toWorld - Main.screenPosition;
+            Vector2 edge = toScreen - fromScreen;
+            float rotation = edge.ToRotation();
+            float length = edge.Length();
+            if(length <= 0.001f)
+            {
+                return;
+            }
+
+            // float angle = (float)Math.Atan2(edge.Y, edge.X);
+            // sb.Draw(pixel, fromScreen, null, color, angle, Vector2.Zero, new Vector2(length, thickness), SpriteEffects.None, 0f);
+            sb.Draw(
+                pixel,
+                fromScreen,
+                null,
+                color,
+                rotation,
+                Vector2.Zero,
+                new Vector2(length, thickness),
+                SpriteEffects.None,
                 0f
             );
         }

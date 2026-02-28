@@ -6,6 +6,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 using System.IO;
+using Terraria.DataStructures;
 
 namespace SummonerExpansionMod.Content.Projectiles.Summon
 {
@@ -48,6 +49,9 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         private bool LoggedAnchorCompleted;
         private bool LoggedNormalCompleted;
 
+        public int HasInitSync = 0;
+        public int SyncTime = 0;
+
         private void LogDebug(string message)
         {
             if (!DEBUG_RECALL_SYNC)
@@ -82,6 +86,9 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             recallGlobal.LoggedAnchorCompleted = false;
             recallGlobal.LoggedNormalCompleted = false;
 
+            recallGlobal.HasInitSync = 0;
+            recallGlobal.SyncTime = 0;
+
             if (recallGlobal.DisableTileCollideWhileRecalling)
             {
                 sentry.tileCollide = false;
@@ -98,7 +105,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             sentry.netUpdate = true;
         }
 
-        public override void AI(Projectile projectile)
+        public override void PostAI(Projectile projectile)
         {
             if (!projectile.active || !projectile.sentry || !RecallActive || RecallCompleted)
             {
@@ -106,12 +113,18 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             }
 
             // Server/Singleplayer authoritative recall logic, clients only receive state.
-            if (projectile.owner != Main.myPlayer)
-            {
-                return;
-            }
+            // if (projectile.owner != Main.myPlayer)
+            // {
+            //     return;
+            // }
 
-            if (UseAnchorRecall && AnchorProjectileType > -1)
+            if(HasInitSync == 2)
+            {
+                MinionAIHelper.SetProjectileNetUpdate(projectile);
+            }
+            HasInitSync++;
+
+            if (UseAnchorRecall && AnchorProjectileType > -1 && projectile.owner == Main.myPlayer)
             {
                 if (!AnchorSpawned)
                 {
@@ -143,7 +156,8 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                             }
                         }
                     }
-                    projectile.netUpdate = true;
+                    // projectile.netUpdate = true;
+                    MinionAIHelper.SetProjectileNetUpdate(projectile);
                 }
                 else
                 {
@@ -151,7 +165,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                     if (anchor == null || !anchor.active)
                     {
                         projectile.Center = TargetPos + new Vector2(0, -projectile.height * 0.5f);
-                        projectile.velocity = OriginalTileCollide ? new Vector2(0, 20f) : Vector2.Zero;
+                        projectile.velocity =/*  OriginalTileCollide ? new Vector2(0, 20f) :  */Vector2.Zero;
                         projectile.tileCollide = OriginalTileCollide;
                         RecallCompleted = true;
                         RecallActive = false;
@@ -162,24 +176,36 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                                 $"target={TargetPos} tile={OriginalTileCollide}");
                             LoggedAnchorCompleted = true;
                         }
-                        projectile.netUpdate = true;
+                        // projectile.netUpdate = true;
+                        MinionAIHelper.SetProjectileNetUpdate(projectile);
                     }
                 }
                 return;
             }
 
             Vector2 toTarget = TargetPos - projectile.Center;
+            Main.NewText("toTarget: " + toTarget.Length());
             if (toTarget.Length() >= RecallThreshold)
             {
                 Vector2 toTargetDir = toTarget.SafeNormalize(Vector2.UnitX);
                 float decayFactor = MathHelper.Clamp(toTarget.Length() / RecallDecayDist, 0.1f, 1f);
                 projectile.velocity = toTargetDir * RecallSpeed * decayFactor;
-                projectile.netUpdate = true;
+                // projectile.netUpdate = true;
+                // SyncTimer++;
+                // if(SyncTimer >= 10)
+                // {
+                //     SyncTimer = 0;
+                //     MinionAIHelper.SetProjectileNetUpdate(projectile);
+                // }
                 return;
             }
 
             if (DisableTileCollideWhileRecalling)
             {
+                if(projectile.tileCollide != OriginalTileCollide)
+                {
+                    MinionAIHelper.SetProjectileNetUpdate(projectile);
+                }
                 projectile.tileCollide = OriginalTileCollide;
             }
 
@@ -191,7 +217,6 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                     $"CompleteNormal whoAmI={projectile.whoAmI} identity={projectile.identity} owner={projectile.owner} mode={Main.netMode} target={TargetPos}");
                 LoggedNormalCompleted = true;
             }
-            projectile.netUpdate = true;
         }
 
         public override void SendExtraAI(Projectile projectile, BitWriter bitWriter, BinaryWriter binaryWriter)
@@ -209,6 +234,9 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             binaryWriter.Write(RecallSpeed);
             binaryWriter.Write(RecallThreshold);
             binaryWriter.Write(RecallDecayDist);
+
+            // Main.NewText("Data Sync Triggered: " + SyncTime);
+            SyncTime++;
         }
 
         public override void ReceiveExtraAI(Projectile projectile, BitReader bitReader, BinaryReader binaryReader)
