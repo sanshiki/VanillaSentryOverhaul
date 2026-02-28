@@ -24,8 +24,8 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         protected override float TAIL_OFFSET_Y_1 => -90f;  
         protected override float TAIL_OFFSET_X_2 => -33f;  
         protected override float TAIL_OFFSET_Y_2 => -63f;   
-        protected override Color TAIL_COLOR => new Color(145, 145, 145, 47);
-        protected override bool TAIL_DYNAMIC_DEBUG => false;
+        protected override Color TAIL_COLOR => new Color(168, 168, 142, 5);
+        protected override bool TAIL_DYNAMIC_DEBUG => true;
         protected override float GRAVITY => 1.5f;
         protected override float MAX_FALL_SPEED => 25f;
         protected override bool USE_CURSOR_ASSISTED_PLANT => true;

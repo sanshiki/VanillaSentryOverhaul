@@ -1,6 +1,5 @@
 using Microsoft.Xna.Framework;
 using System;
-using System.Collections.Generic;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
@@ -26,6 +25,10 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         private const int LEAF_RESPAWN_INTERVAL = 40*17;
         private const int LIVE_TIME = 40*10;
         private const int INIT_LEAF_CNT = LEAF_RESPAWN_INTERVAL - 40*3;
+        private const int LEAF_FIRST_STAGE = (int)(0.167f * LIVE_TIME);
+        private const int LEAF_SECOND_STAGE = (int)(0.333f * LIVE_TIME + LEAF_FIRST_STAGE);
+        private const int LEAF_THIRD_STAGE = (int)(0.333f * LIVE_TIME + LEAF_SECOND_STAGE);
+        private const int LEAF_FOURTH_STAGE = (int)(0.167f * LIVE_TIME + LEAF_THIRD_STAGE);
 
         // gravity constants
         public const float Gravity = ModGlobal.SENTRY_GRAVITY;
@@ -35,8 +38,6 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 
         /* ----------------- variables ----------------- */
         Vector2 CenterOffset = new Vector2(0, -10);
-
-        private List<int> LeafProjectileIndex = new List<int>();
 
         public override void SetStaticDefaults()
         {
@@ -78,19 +79,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 
             if (LeafTimer <= LIVE_TIME)
             {
-
-                foreach(int index in LeafProjectileIndex)
-                {
-                    Projectile proj = Main.projectile[index];
-                    if(proj.ModProjectile is TowerOfDryadsBlessingProjectile leafProj)
-                    {
-                        leafProj.RotateCenter = Projectile.Center + CenterOffset;
-                        proj.netUpdate = true;
-                    }
-                }
-
-                Projectile leaf = Main.projectile[LeafProjectileIndex[0]];
-                int radius = (int)Vector2.Distance(leaf.Center, Projectile.Center+CenterOffset);
+                int radius = (int)CalculateAuraRadius(LeafTimer);
 
                 if(MinionAIHelper.IsServer())
                 {
@@ -147,50 +136,79 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 
         private void SpawnOrbitingLeaves()
         {
-            // 先清理旧叶子，避免生成过多
-            for (int i = 0; i < Main.maxProjectiles; i++)
-            {
-                Projectile proj = Main.projectile[i];
-                if (proj.active && proj.type == ModProjectileID.TowerOfDryadsBlessingProjectile && proj.ai[0] == Projectile.whoAmI)
-                {
-                    proj.Kill();
-                }
-            }
-
-            // 清理旧叶子索引
-            LeafProjectileIndex.Clear();
-
-            
-
             // 按当前旋转角度生成外环叶子
             for (int i = 0; i < LEAF_NUM; i++)
             {
                 float angle = MathHelper.TwoPi / LEAF_NUM * i;
-                Vector2 AngleVecTemp = new Vector2(0, angle);
+                Vector2 spawnVelocity = Vector2.Zero;
 
                 // 接口重映射
                 int LeaftOuter = Projectile.NewProjectile(
                     Projectile.GetSource_FromThis(),
                     Projectile.Center + CenterOffset, // 投射物坐标->叶圆环中心
-                    AngleVecTemp, // 投射物速度->叶片角度
+                    spawnVelocity, // 投射物速度
                     ModProjectileID.TowerOfDryadsBlessingProjectile,
-                    LEAF_ORBIT_RADIUS_OUTER, // 投射物伤害->叶圆环半径
-                    2, // 投射物击退->叶片角速度
-                    Projectile.owner
+                    0, // 投射物伤害
+                    0, // 投射物击退
+                    Projectile.owner,
+                    angle, // ai[0] -> 叶片角度
+                    LEAF_ORBIT_RADIUS_OUTER, // ai[1] -> 叶圆环半径
+                    0.02f // ai[2] -> 叶片角速度
                 );
-                LeafProjectileIndex.Add(LeaftOuter);
+                if (Main.projectile.IndexInRange(LeaftOuter) &&
+                    Main.projectile[LeaftOuter].ModProjectile is TowerOfDryadsBlessingProjectile outerLeaf)
+                {
+                    outerLeaf.SetTowerReference(Projectile);
+                    Main.projectile[LeaftOuter].netUpdate = true;
+                }
 
                 int LeafInner = Projectile.NewProjectile(
                     Projectile.GetSource_FromThis(),
                     Projectile.Center + CenterOffset, // 投射物坐标->叶圆环中心
-                    AngleVecTemp, // 投射物速度->叶片角度
+                    spawnVelocity, // 投射物速度
                     ModProjectileID.TowerOfDryadsBlessingProjectile,
-                    LEAF_ORBIT_RADIUS_INNER, // 投射物伤害->叶圆环半径
-                    -1, // 投射物击退->叶片角速度
-                    Projectile.owner
+                    0, // 投射物伤害
+                    0, // 投射物击退
+                    Projectile.owner,
+                    angle, // ai[0] -> 叶片角度
+                    LEAF_ORBIT_RADIUS_INNER, // ai[1] -> 叶圆环半径
+                    -0.01f // ai[2] -> 叶片角速度
                 );
-                LeafProjectileIndex.Add(LeafInner);
+                if (Main.projectile.IndexInRange(LeafInner) &&
+                    Main.projectile[LeafInner].ModProjectile is TowerOfDryadsBlessingProjectile innerLeaf)
+                {
+                    innerLeaf.SetTowerReference(Projectile);
+                    Main.projectile[LeafInner].netUpdate = true;
+                }
             }
+        }
+
+        private float CalculateAuraRadius(int leafTimer)
+        {
+            float radius = LEAF_ORBIT_RADIUS_OUTER;
+
+            // 二阶段：半径扩大到 2 倍
+            if (leafTimer > LEAF_FIRST_STAGE && leafTimer <= LEAF_SECOND_STAGE)
+            {
+                int tick = leafTimer - LEAF_FIRST_STAGE;
+                radius = LEAF_ORBIT_RADIUS_OUTER + tick * LEAF_ORBIT_RADIUS_OUTER / (float)(LEAF_SECOND_STAGE - LEAF_FIRST_STAGE);
+                return Math.Min(radius, LEAF_ORBIT_RADIUS_OUTER * 2f);
+            }
+
+            // 四阶段：半径扩大到 4 倍
+            if (leafTimer > LEAF_THIRD_STAGE && leafTimer <= LEAF_FOURTH_STAGE)
+            {
+                int tick = leafTimer - LEAF_THIRD_STAGE;
+                radius = LEAF_ORBIT_RADIUS_OUTER * 2f + tick * LEAF_ORBIT_RADIUS_OUTER * 2f / (float)(LEAF_FOURTH_STAGE - LEAF_THIRD_STAGE);
+                return Math.Min(radius, LEAF_ORBIT_RADIUS_OUTER * 4f);
+            }
+
+            if (leafTimer > LEAF_FOURTH_STAGE)
+            {
+                return LEAF_ORBIT_RADIUS_OUTER * 4f;
+            }
+
+            return radius;
         }
 
         public override bool OnTileCollide(Vector2 oldVelocity)

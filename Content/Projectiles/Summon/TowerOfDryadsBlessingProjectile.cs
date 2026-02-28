@@ -9,6 +9,7 @@ using Terraria.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria.GameContent;
 using SummonerExpansionMod.Initialization;
+using SummonerExpansionMod.ModUtils;
 
 namespace SummonerExpansionMod.Content.Projectiles.Summon
 {
@@ -28,9 +29,11 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         private bool initialized = false;
         public Vector2 RotateCenter;
         public float RotateRadius;
+        private float BaseRotateRadius;
         public float RotateAngle;
         public float RotateSpeed;
         private static int BuffProjectileID = -1;
+        private ProjectileReference TowerReference;
 
         // public override string Texture => "Terraria/Images/Projectile_" + ProjectileID.DryadsWardCircle;
         public override string Texture => ModGlobal.VANILLA_PROJECTILE_TEXTURE_PATH + ProjectileID.DryadsWardCircle;
@@ -53,6 +56,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             Projectile.ignoreWater = true;
 
             Projectile.alpha = 255;
+            TowerReference.Clear();
 
         }
 
@@ -62,6 +66,20 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             {
                 Initialize();
             }
+
+            if (!TowerReference.IsValidIdentity)
+            {
+                return;
+            }
+
+            Projectile tower = TowerReference.Get();
+            if (tower == null || !tower.active || tower.type != ModProjectileID.TowerOfDryadsBlessing)
+            {
+                Projectile.Kill();
+                return;
+            }
+
+            RotateCenter = tower.Center + new Vector2(0, -10);
             
             // fade in and out
             int alpha = Projectile.alpha;
@@ -82,9 +100,10 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         private void Initialize()
         {
             RotateCenter = Projectile.Center;
-            RotateRadius = Projectile.damage;
-            RotateAngle = Projectile.velocity.Y;
-            RotateSpeed = (float)(Projectile.knockBack)/100f;
+            RotateAngle = Projectile.ai[0];
+            BaseRotateRadius = Projectile.ai[1];
+            RotateRadius = BaseRotateRadius;
+            RotateSpeed = Projectile.ai[2];
             initialized = true;
         }
 
@@ -119,20 +138,45 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 
         private void CalculateRadius()
         {
+            int elapsedTick = LIVE_TIME - Projectile.timeLeft;
+
             // second stage: radius increase to double
-            if (Projectile.timeLeft > LIVE_TIME - SECOND_STAGE && Projectile.timeLeft <= LIVE_TIME - FIRST_STAGE)
+            if (elapsedTick > FIRST_STAGE && elapsedTick <= SECOND_STAGE)
             {
-                int tick = (LIVE_TIME - FIRST_STAGE) - Projectile.timeLeft;
-                RotateRadius = Projectile.damage + tick * (Projectile.damage * 2 - Projectile.damage) / (float) (SECOND_STAGE - FIRST_STAGE);
-                RotateRadius = RotateRadius > Projectile.damage * 2 ? Projectile.damage * 2 : RotateRadius;
+                int tick = elapsedTick - FIRST_STAGE;
+                RotateRadius = BaseRotateRadius + tick * BaseRotateRadius / (float) (SECOND_STAGE - FIRST_STAGE);
+                RotateRadius = RotateRadius > BaseRotateRadius * 2 ? BaseRotateRadius * 2 : RotateRadius;
             }
             // fourth stage: radius increase to four times
-            else if (Projectile.timeLeft > LIVE_TIME - FOURTH_STAGE && Projectile.timeLeft <= LIVE_TIME - THIRD_STAGE)
+            else if (elapsedTick > THIRD_STAGE && elapsedTick <= FOURTH_STAGE)
             {
-                int tick = (LIVE_TIME - THIRD_STAGE) - Projectile.timeLeft;
-                RotateRadius = Projectile.damage * 2 + tick * (Projectile.damage * 4 - Projectile.damage * 2) / (float) (FOURTH_STAGE - THIRD_STAGE);
-                RotateRadius = RotateRadius > Projectile.damage * 4 ? Projectile.damage * 4 : RotateRadius;
+                int tick = elapsedTick - THIRD_STAGE;
+                RotateRadius = BaseRotateRadius * 2 + tick * BaseRotateRadius * 2 / (float) (FOURTH_STAGE - THIRD_STAGE);
+                RotateRadius = RotateRadius > BaseRotateRadius * 4 ? BaseRotateRadius * 4 : RotateRadius;
             }
+            else if (elapsedTick > FOURTH_STAGE)
+            {
+                RotateRadius = BaseRotateRadius * 4;
+            }
+            else
+            {
+                RotateRadius = BaseRotateRadius;
+            }
+        }
+
+        public void SetTowerReference(Projectile tower)
+        {
+            TowerReference.Set(tower);
+        }
+
+        public override void SendExtraAI(System.IO.BinaryWriter writer)
+        {
+            TowerReference.SendExtraAI(writer);
+        }
+
+        public override void ReceiveExtraAI(System.IO.BinaryReader reader)
+        {
+            TowerReference.ReceiveExtraAI(reader);
         }
 
     }

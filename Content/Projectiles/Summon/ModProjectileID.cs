@@ -5,6 +5,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         // sentries
         public static int DarkMagicTower;
         public static int BunnySentry;
+        public static int TowerOfDryadsBlessing;
         public static int HoneyCombSentry;
         public static int IchorPressorSentry;
         public static int CursedFireExtractorSentry;
