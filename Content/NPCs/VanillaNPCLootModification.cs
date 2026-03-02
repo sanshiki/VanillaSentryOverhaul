@@ -100,6 +100,57 @@ namespace SummonerExpansionMod.Content.NPCs
                     // Console.WriteLine(rule.GetType().Name);
                 }
             }
+
+            if(npc.type == NPCID.Plantera)
+            {
+                foreach (var rule in npcLoot.Get())
+                {
+                    if (TryInjectPlanteraWeaponPool(rule))
+                    {
+                        break;
+                    }
+                }
+            }
+
+            bool TryInjectPlanteraWeaponPool(IItemDropRule rule)
+            {
+                if (rule is OneFromRulesRule oneFromRulesRule)
+                {
+                    bool isPlanteraWeaponPool = oneFromRulesRule.options.Any(
+                        option => option is CommonDrop commonDrop && commonDrop.itemId == ItemID.Seedler
+                    );
+
+                    if (isPlanteraWeaponPool)
+                    {
+                        int giantLeavesType = ModContent.ItemType<GiantLeavesOfPlantera>();
+                        bool alreadyAdded = oneFromRulesRule.options.Any(
+                            option => option is CommonDrop commonDrop && commonDrop.itemId == giantLeavesType
+                        );
+
+                        if (!alreadyAdded)
+                        {
+                            var options = oneFromRulesRule.options.ToList();
+                            options.Add(ItemDropRule.Common(giantLeavesType));
+                            oneFromRulesRule.options = options.ToArray();
+                        }
+
+                        return true;
+                    }
+                }
+
+                if (rule is LeadingConditionRule leadingConditionRule)
+                {
+                    foreach (var chainedRule in leadingConditionRule.ChainedRules)
+                    {
+                        if (TryInjectPlanteraWeaponPool(chainedRule.RuleToChain))
+                        {
+                            return true;
+                        }
+                    }
+                }
+
+                return false;
+            }
         }
     }
 }
