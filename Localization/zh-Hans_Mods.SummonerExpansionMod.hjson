@@ -298,10 +298,10 @@ Items: {
 	}
 
 	StardustSentryStaff: {
-		DisplayName: 星辰方尖碑召唤杖
+		DisplayName: 星尘方尖碑召唤杖
 		Tooltip:
 			'''
-			召唤星辰方尖碑
+			召唤星尘方尖碑
 			呼叫从天而降的星尘射弹
 			'''
 	}
@@ -564,9 +564,9 @@ Projectiles: {
 	PirateFlagProjectile.DisplayName: 黑旗罗杰
 	TempleSentry.DisplayName: 蜥族信标
 	TempleSentryHeatRay.DisplayName: 蜥族信标热射线
-	StardustSentry.DisplayName: 星辰方尖碑
-	StardustSentrySignal.DisplayName: 星辰方尖碑信号
-	StardustSentryBullet.DisplayName: 星辰方尖碑射弹
+	StardustSentry.DisplayName: 星尘方尖碑
+	StardustSentrySignal.DisplayName: 星尘方尖碑信号
+	StardustSentryBullet.DisplayName: 星尘方尖碑射弹
 	NormalFlagProjectile.DisplayName: 指挥令旗
 	GoblinFlagProjectile.DisplayName: 部落战旗
 	HellFlagProjectile.DisplayName: 炼狱战旌
