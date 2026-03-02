@@ -460,35 +460,66 @@ Items: {
 	SentryAnchor: {
 		DisplayName: Sentry Anchor
 		// Tooltip: ""
-		Tooltip_Unlocked: Right-click sentry anchor to lock sentries, preventing flag attraction
+		Tooltip_Unlocked:
+			'''
+			Right-click the Sentry Anchor to lock your sentries so flags cannot attract them
+			Left-click to clear summoned sentries
+			'''
 		Tooltip_Locked:
 			'''
 			Your sentries are locked and cannot be attracted by flags
 			Right-click sentry anchor to unlock sentries
+			Left-click to clear summoned sentries
 			'''
 		Tooltip: ""
 	}
 
 	TikiVisage: {
-		Tooltip: ""
+		Tooltip:
+			'''
+			+1 max sentry
+			+10% summon damage
+			+10% whip and flag range
+			'''
 		DisplayName: Tiki Visage
-		SetBonus: Mods.SummonerExpansionMod.Items.TikiVisage.SetBonus
+		SetBonus:
+			'''
+			+10% summon damage
+			+20% whip and flag range
+			'''
 	}
 
 	SpookySkull: {
 		DisplayName: Spooky Skull
-		SetBonus: Mods.SummonerExpansionMod.Items.SpookySkull.SetBonus
-		Tooltip: ""
+		SetBonus: +25% summon damage
+		Tooltip:
+			'''
+			+1 max sentry
+			+11% summon damage
+			'''
 	}
 
 	SuperEarthCloakLv2: {
-		Tooltip: ""
-		DisplayName: Super Earth Cloak Lv2
+		Tooltip:
+			'''
+			6 defense
+			+1 max sentry
+			+10% summon damage
+			Greatly reduces damage from certain wayward weapons... maybe
+			Increases invincibility frame duration when hit
+			"When the Illuminate threaten Super Earth, heart of democracy, Helldivers answer the call"
+			'''
+		DisplayName: Heart of Democracy Defender Cloak
 	}
 
 	SuperEarthCloakLv1: {
-		Tooltip: ""
-		DisplayName: Super Earth Cloak Lv1
+		Tooltip:
+			'''
+			4 defense
+			Reduces damage from certain wayward weapons... maybe
+			"Durable, waterproof, with insulated lining!"
+			'''
+		DisplayName: Enemy Eradicator Cloak
 	}
 }
 
@@ -582,11 +613,11 @@ NPCs: {
 
 Configs: {
 	ProjectileConfig: {
-		DisplayName: Projectile 参数配置
+		DisplayName: Projectile Parameter Config
 
 		ProjectileSettings: {
-			Label: 弹幕参数表
-			Tooltip: 为每个 ModProjectile 定义配置参数
+			Label: Projectile Settings Table
+			Tooltip: Define configuration parameters for each ModProjectile
 		}
 	}
 
@@ -594,56 +625,61 @@ Configs: {
 		Tooltip: ""
 
 		Width: {
-			Label: 宽度
+			Label: Width
 			Tooltip: ""
 		}
 
 		Height: {
-			Label: 高度
+			Label: Height
 			Tooltip: ""
 		}
 
 		AIStyle: {
-			Label: AI 样式
+			Label: AI Style
 			Tooltip: ""
 		}
 
 		Friendly: {
-			Label: 友好
+			Label: Friendly
 			Tooltip: ""
 		}
 
 		Hostile: {
-			Label: 敌对
+			Label: Hostile
 			Tooltip: ""
 		}
 
 		Penetrate: {
-			Label: 穿透次数
+			Label: Penetration Count
 			Tooltip: ""
 		}
 
 		TimeLeft: {
-			Label: 存活时间
+			Label: Lifetime
 			Tooltip: ""
 		}
 
 		TileCollide: {
-			Label: 是否碰撞地形
+			Label: Tile Collision
 			Tooltip: ""
 		}
 
 		DamageType: {
-			Label: 伤害类型
+			Label: Damage Type
 			Tooltip: ""
 		}
 	}
 }
 
-HallowSetBonus: Mods.SummonerExpansionMod.HallowSetBonus
+HallowSetBonus:
+	'''
+	+1 max sentry.
+	Each summoned sentry grants +1 additional defense.
+	'''
 HallowTooltip0: Mods.SummonerExpansionMod.HallowTooltip0
 TikiShirtTooltip0: Mods.SummonerExpansionMod.TikiShirtTooltip0
 TikiPantsTooltip0: Mods.SummonerExpansionMod.TikiPantsTooltip0
 SpookyBreastplateTooltip0: Mods.SummonerExpansionMod.SpookyBreastplateTooltip0
 SpookyLeggingsTooltip0: Mods.SummonerExpansionMod.SpookyLeggingsTooltip0
-AddSentryToTooltip: Mods.SummonerExpansionMod.AddSentryToTooltip
+AddSentryToTooltip: Increases your max number of minions and sentries by 1
+StardustSetBonusExtraDefense: Each summoned sentry grants +1 additional defense.

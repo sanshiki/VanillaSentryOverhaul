@@ -464,11 +464,16 @@ Items: {
 	SentryAnchor: {
 		DisplayName: 哨兵锚
 		// Tooltip: ""
-		Tooltip_Unlocked: 右键哨兵锚以锁定哨兵，使其无法被令旗吸引
+		Tooltip_Unlocked:
+			'''
+			右键哨兵锚以锁定哨兵，使其无法被令旗吸引
+			左键清除已召唤的哨兵
+			'''
 		Tooltip_Locked:
 			'''
 			你的哨兵已被锁定，无法被令旗吸引
 			右键哨兵锚以解锁哨兵
+			左键清除已召唤的哨兵
 			'''
 		// Tooltip: ""
 	}
@@ -672,8 +677,7 @@ Configs: {
 
 HallowSetBonus:
 	'''
-	套装奖励：攻击敌人后进入免疫状态，
-	仆从数量上限提高2个，哨兵数量上限提高1个
+	哨兵数量上限提高1个
 	每召唤1个哨兵提供1点额外防御力
 	'''
 // HallowTooltip0: Mods.SummonerExpansionMod.HallowTooltip0
@@ -682,3 +686,4 @@ HallowSetBonus:
 // SpookyBreastplateTooltip0: Mods.SummonerExpansionMod.SpookyBreastplateTooltip0
 // SpookyLeggingsTooltip0: Mods.SummonerExpansionMod.SpookyLeggingsTooltip0
 AddSentryToTooltip: 仆从和哨兵数量上限增加1个
+StardustSetBonusExtraDefense: 每召唤1个哨兵提供1点额外防御力

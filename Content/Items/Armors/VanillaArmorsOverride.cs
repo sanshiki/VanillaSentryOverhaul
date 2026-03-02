@@ -107,12 +107,30 @@ namespace SummonerExpansionMod.Content.Items.Armors
             {
                 Player.maxTurrets += 1;
             }
+
+            if (Player.head == ArmorIDs.Head.StardustHelmet &&
+                Player.body == ArmorIDs.Body.StardustPlate &&
+                Player.legs == ArmorIDs.Legs.StardustLeggings)
+            {
+                sentryCount = 0f;
+                foreach (Projectile p in Main.projectile)
+                {
+                    if (!p.active || p.owner != Player.whoAmI)
+                        continue;
+
+                    if (p.sentry)
+                        sentryCount++;
+                }
+
+                Player.statDefense += (int)(sentryCount * 1f);
+            }
         }
     }
 
     public class VanillaArmorOverride : GlobalItem
     {
         public static LocalizedText HallowSetBonusText { get; private set; }
+        public static LocalizedText StardustSetBonusExtraDefenseText { get; private set; }
         public static LocalizedText AddSentryToTooltipText { get; private set; }
 
         public static List<int> AddSentryToTooltipItemTypes = new List<int>()
@@ -134,12 +152,15 @@ namespace SummonerExpansionMod.Content.Items.Armors
         public override void SetStaticDefaults()
         {
             HallowSetBonusText = Mod.GetLocalization("HallowSetBonus");
+            StardustSetBonusExtraDefenseText = Mod.GetLocalization("StardustSetBonusExtraDefense");
             AddSentryToTooltipText = Mod.GetLocalization("AddSentryToTooltip");
         }
 
         public override void ModifyTooltips(Item item, List<TooltipLine> tooltips)
         {
-            if (item.type == ItemID.HallowedHood || item.type == ItemID.AncientHallowedHood)
+            if (item.type == ItemID.HallowedHood || item.type == ItemID.AncientHallowedHood ||
+                item.type == ItemID.HallowedPlateMail || item.type == ItemID.AncientHallowedPlateMail ||
+                item.type == ItemID.HallowedGreaves || item.type == ItemID.AncientHallowedGreaves)
             {
                 foreach (var line in tooltips)
                 {
@@ -147,7 +168,33 @@ namespace SummonerExpansionMod.Content.Items.Armors
                     // Console.WriteLine(line.Name + ": " + line.Text);
                     if(line.Mod == "Terraria" && line.Name == "SetBonus")
                     {
-                        line.Text = HallowSetBonusText.Value;
+                        string extraSetBonus = HallowSetBonusText.Value?.Trim() ?? string.Empty;
+
+                        // Keep vanilla set bonus text and only append mod-added lines.
+                        if (extraSetBonus.StartsWith(line.Text, StringComparison.Ordinal))
+                        {
+                            extraSetBonus = extraSetBonus.Substring(line.Text.Length).TrimStart('\r', '\n');
+                        }
+
+                        if (!string.IsNullOrWhiteSpace(extraSetBonus))
+                        {
+                            line.Text = $"{line.Text}\n{extraSetBonus}";
+                        }
+                    }
+                }
+            }
+
+            if (item.type == ItemID.StardustHelmet || item.type == ItemID.StardustBreastplate || item.type == ItemID.StardustLeggings)
+            {
+                foreach (var line in tooltips)
+                {
+                    if (line.Mod == "Terraria" && line.Name == "SetBonus")
+                    {
+                        string extraSetBonus = StardustSetBonusExtraDefenseText.Value?.Trim() ?? string.Empty;
+                        if (!string.IsNullOrWhiteSpace(extraSetBonus))
+                        {
+                            line.Text = $"{line.Text}\n{extraSetBonus}";
+                        }
                     }
                 }
             }
