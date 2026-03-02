@@ -25,6 +25,7 @@ namespace SummonerExpansionMod.Initialization
 			ModProjectileID.DarkMagicTower = ModContent.ProjectileType<DarkMagicTower>();
 			ModProjectileID.BunnySentry = ModContent.ProjectileType<BunnySentry>();
 			ModProjectileID.HoneyCombSentry = ModContent.ProjectileType<HoneyCombSentry>();
+			ModProjectileID.TowerOfDryadsBlessing = ModContent.ProjectileType<TowerOfDryadsBlessing>();
 			ModProjectileID.IchorPressorSentry = ModContent.ProjectileType<IchorPressorSentry>();
 			ModProjectileID.CursedFireExtractorSentry = ModContent.ProjectileType<CursedFireExtractorSentry>();
 			ModProjectileID.SandustSentry = ModContent.ProjectileType<SandustSentry>();

@@ -400,7 +400,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             //     Console.WriteLine($"[{timestamp}][SERVER] active={Projectile.active} timeLeft={Projectile.timeLeft} itemTime={player.itemTime} itemAnimation={player.itemAnimation}");
             // }
 
-            DamageGrassAlongBlade(player);
+            // DamageGrassAlongBlade(player);
 
             CreateDustEffect(player);
 
@@ -621,6 +621,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                 Projectile.ai[0] = timerPacker.Set(Projectile.ai[0],FixedDirectionBit,FixedDirection);
                 Projectile.tileCollide = true;
                 Projectile.friendly = false;
+                Projectile.rotation = 0f;
 
                 // reset buff
                 player.AddBuff(ENHANCE_BUFF_ID, BuffTimePlanted);
@@ -650,7 +651,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 
                 HasPlayedOnGroundSound = false;
 
-                Projectile.netUpdate = true;
+                MinionAIHelper.SetProjectileNetUpdate(Projectile);
 
                 // Main.NewText("Plant init");
             }
@@ -683,6 +684,8 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                 SoundEngine.PlaySound(SoundID.Dig, Projectile.Center);
                 HasPlayedOnGroundSound = true;
             }
+
+            // Main.NewText("rotation:"+Projectile.rotation);
 
             if (OnGroundCnt >= ONGROUND_CNT_THRESHOLD)
             {
@@ -1357,12 +1360,14 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 
                         cnt++;
 
+                        Vector2 TileInWorld = new Vector2(x,y);
+
                         // 只破坏草、瓶子、罐子之类（frame重要）
                         if (tile.HasTile && Main.tileCut[tile.TileType])
                         {
-                            WorldGen.KillTile(tileX, tileY, false, false, true);
                             if (Main.netMode == NetmodeID.MultiplayerClient)
                             {
+                                WorldGen.KillTile(tileX, tileY, false, false, true);
                                 NetMessage.SendData(MessageID.TileManipulation, -1, -1, null, 0, tileX, tileY);
                             }
                         }
@@ -1370,6 +1375,30 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                 }
             }
             // Main.NewText("DamageGrassAlongBlade: " + cnt);
+        }
+
+        public override void CutTiles()
+        {
+            Player player = Main.player[Projectile.owner];
+            if ((State == RAISE_STATE || State == PLANT_STATE) ||
+                (State == WAVE_STATE && Projectile.timeLeft >= (int)(/* TIME_LEFT_WAVE / AttackSpeed */ player.itemAnimationMax) - 1) ||
+                (State == RECALL_STATE && Projectile.timeLeft >= TIME_LEFT_RECALL - 1)) return;
+
+            Vector2 CurrentPoleTip = Projectile.Center + new Vector2(0, PoleLength / 2f).RotatedBy(Projectile.rotation + Math.PI);
+            Vector2 OldPoleTip = Projectile.oldPos[0] + new Vector2(0, PoleLength / 2f).RotatedBy(Projectile.oldRot[0] + Math.PI) + new Vector2(0, PoleLength / 2f);
+            Vector2 MidPoleTip = (CurrentPoleTip + OldPoleTip) / 2f;
+            Utils.PlotTileLine(player.Center, CurrentPoleTip, 10f, DelegateMethods.CutTiles);
+            Utils.PlotTileLine(player.Center, MidPoleTip, 10f, DelegateMethods.CutTiles);
+
+            if (TILE_CUT_RANGE_DEBUG)
+            {
+                Dust.QuickDustLine(CurrentPoleTip, OldPoleTip, 10f, Color.Red);
+                Dust.QuickDustLine(player.Center, CurrentPoleTip, 10f, Color.Green);
+                Dust.QuickDustLine(player.Center, MidPoleTip, 10f, Color.Blue);
+                Dust.QuickDust(Projectile.oldPos[1] + new Vector2(0, PoleLength / 2f), Color.Yellow);
+
+                // Main.NewText("SearchMinX: " + SearchMinX + " SearchMaxX: " + SearchMaxX + " SearchMinY: " + SearchMinY + " SearchMaxY: " + SearchMaxY + " CurrentPoleTip: " + CurrentPoleTip + " OldPoleTip: " + OldPoleTip);
+            }
         }
 
         protected virtual void CreateDustEffect(Player player)

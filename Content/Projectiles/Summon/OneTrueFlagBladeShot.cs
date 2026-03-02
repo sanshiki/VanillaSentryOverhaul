@@ -40,6 +40,8 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         protected Vector2 CursorPos;
         private bool Inited = false;
 
+        public ProjectileReference FlagProjectileRef = new ProjectileReference();
+
         public override void SetStaticDefaults()
         {
             ProjectileID.Sets.TrailingMode[Type] = 2;//这一项赋值2可以记录运动轨迹和方向（用于制作拖尾）
@@ -76,18 +78,28 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         public override void AI()
         {
             Player player = Main.player[Projectile.owner];
-            Projectile FlagProjectile = Main.projectile[(int)Projectile.ai[1]];
-            if(FlagProjectile.type != ModProjectileID.OneTrueFlagProjectile)
+            Projectile FlagProjectile = FlagProjectileRef.Get();
+
+            if(FlagProjectile == null)
             {
                 Projectile.Kill();
                 return;
             }
-            else
+
+            if(Projectile.owner == Main.myPlayer)
             {
-                if(!FlagProjectile.active || FlagProjectile.owner != Projectile.owner)
+                if(FlagProjectile.type != ModProjectileID.OneTrueFlagProjectile)
                 {
                     Projectile.Kill();
                     return;
+                }
+                else
+                {
+                    if(!FlagProjectile.active || FlagProjectile.owner != Projectile.owner)
+                    {
+                        Projectile.Kill();
+                        return;
+                    }
                 }
             }
 

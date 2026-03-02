@@ -49,11 +49,11 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         {
             Projectile.width = 14;
             Projectile.height = 14;
-            Projectile.friendly = true;
+            Projectile.friendly = false;
             Projectile.hostile = false;
             Projectile.tileCollide = true;
             Projectile.timeLeft = 600;
-            Projectile.netImportant = true;
+            // Projectile.netImportant = true;
             // Projectile.sentry = true;
         }
 

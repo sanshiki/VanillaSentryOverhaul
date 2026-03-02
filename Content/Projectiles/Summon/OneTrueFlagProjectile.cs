@@ -118,6 +118,11 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                         Projectile.identity
                     );
                     BladShotInited = true;
+
+                    if(bladeShot.ModProjectile is OneTrueFlagBladeShot bladeShot_)
+                    {
+                        bladeShot_.FlagProjectileRef = new ProjectileReference(Projectile);
+                    }
                 }
             }
         }
