@@ -77,6 +77,29 @@ namespace SummonerExpansionMod.Content.Items.Accessories
             return base.CanUseItem(player);
         }
 
+        public override bool? UseItem(Player player)
+        {
+            // 左键使用：清理该玩家召唤的所有哨兵
+            if (player.altFunctionUse != 2)
+            {
+                if(Main.myPlayer == player.whoAmI)
+                {
+                    for (int i = 0; i < Main.maxProjectiles; i++)
+                    {
+                        Projectile projectile = Main.projectile[i];
+                        if (projectile.active && projectile.owner == player.whoAmI && projectile.sentry)
+                        {
+                            projectile.Kill();
+                        }
+                    }
+                }
+
+                SoundEngine.PlaySound(SoundID.Item4, player.Center);
+            }
+
+            return true;
+        }
+
         public override void RightClick(Player player)
         {   
             Locked = !Locked;
