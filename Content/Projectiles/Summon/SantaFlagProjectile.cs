@@ -56,25 +56,26 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         }
         public override void AI()
         {
+            Player player = Main.player[Projectile.owner];
             if (!BladShotInited)
             {
                 if(Projectile.owner == Main.myPlayer)
-                    CursorPos = Main.MouseWorld;
+                    CursorPos = Main.MouseWorld - player.Center;
                 BladShotInited = true;
                 Projectile.netUpdate = true;
             }
 
             base.AI();
-            Player player = Main.player[Projectile.owner];
+            
             if (State == WAVE_STATE && Projectile.timeLeft == TIME_LEFT_WAVE / 2 && isCharged)
             {
-                Vector2 direction = Vector2.Normalize(CursorPos - player.Center);
                 if(Projectile.owner == Main.myPlayer)
                 {
+                    Vector2 direction = Vector2.Normalize(CursorPos);
                     Projectile bladeShot = Projectile.NewProjectileDirect(
                         Projectile.GetSource_FromAI(),
                         player.Center + direction * PoleLength * 0.8f,
-                        Vector2.Normalize(CursorPos - player.Center) * 6f * player.whipRangeMultiplier,
+                        Vector2.Normalize(CursorPos) * 6f * player.whipRangeMultiplier,
                         ModProjectileID.SantaFlagBladeShot,
                         Projectile.damage,
                         Projectile.knockBack,
