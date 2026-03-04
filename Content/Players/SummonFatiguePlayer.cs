@@ -50,9 +50,13 @@ namespace SummonerExpansionMod.Content.Players
 
             fatigueLevel = Math.Min(minionCount / (Player.maxMinions), sentryCount / (Player.maxTurrets));
 
+            if(Player.maxMinions + 1.5f * Player.maxTurrets <= 4f) fatigueLevel = 0;
+
             // Main.NewText("minionCount: " + minionCount + " sentryCount: " + sentryCount + " fatigueLevel: " + fatigueLevel);
 
-            fatigueMultiplier = MathHelper.Clamp(1-fatigueLevel*fatigueLevel*1.6f, 0.05f, 0.95f);
+            float hardModFactor = Main.hardMode ? 1f : 0.75f;
+
+            fatigueMultiplier = MathHelper.Clamp(1-fatigueLevel*fatigueLevel*1.6f, 0.05f, 0.95f) * hardModFactor;
 
             if(fatigueLevel > 0f)
             {
