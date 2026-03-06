@@ -71,17 +71,21 @@ Buffs: {
 
 	OneTrueFlagBuff: {
 		DisplayName: 唯一真旗
-		Description: 召唤伤害增加20%，召唤物获得20%暴击率
+		Description:
+			'''
+			召唤伤害增加20%，召唤物获得20%暴击率
+			获得一次自动召回哨兵的机会，通过左键触发
+			'''
 	}
 
 	SantaFlagBuff: {
-		DisplayName: 圣诞令旗
+		DisplayName: 圣诞行军旗
 		Description: 召唤伤害增加16%，召唤物获得15%暴击率
 	}
 
 	TikiFlagBuff: {
-		DisplayName: 提基令旗
-		Description: 召唤伤害增加13%，获得13点防御力加成
+		DisplayName: 绽放彼岸
+		Description: 召唤伤害增加13%
 	}
 
 	SantaFlagDebuff: {
@@ -160,6 +164,7 @@ Items: {
 			'''
 			召唤蚁狮哨戒炮
 			投射松散的沙弹，造成范围伤害
+			在沙子上提高攻速
 			'''
 	}
 
