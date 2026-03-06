@@ -32,7 +32,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 
             // 关键：召唤伤害
             Projectile.DamageType = DamageClass.Summon;
-
+            Projectile.timeLeft = 5*60;
             Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = 60;
             Projectile.penetrate = 3;
@@ -64,6 +64,20 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 
             
 
+        }
+
+        public override bool OnTileCollide(Vector2 oldVelocity)
+        {
+            if (Projectile.velocity.X != oldVelocity.X && Math.Abs(oldVelocity.X) > 0.1f)
+            {
+                Projectile.velocity.X = -oldVelocity.X;
+            }
+            if (Projectile.velocity.Y != oldVelocity.Y && Math.Abs(oldVelocity.Y) > 0.1f)
+            {
+                Projectile.velocity.Y = -oldVelocity.Y;
+            }
+
+            return false;
         }
 
         // public override bool PreDraw(ref Color lightColor)

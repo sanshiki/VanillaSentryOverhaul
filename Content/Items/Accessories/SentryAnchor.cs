@@ -192,10 +192,14 @@ namespace SummonerExpansionMod.Content.Items.Accessories
 
         public override void AddRecipes()
         {
-            Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.IronBar, 12);
-            recipe.AddTile(TileID.Anvils);
-            recipe.Register();
+            Recipe recipe1 = CreateRecipe();
+            recipe1.AddIngredient(ItemID.IronBar, 12);
+            recipe1.AddTile(TileID.Anvils);
+            recipe1.Register();
+            Recipe recipe2 = CreateRecipe();
+            recipe2.AddIngredient(ItemID.LeadBar, 12);
+            recipe2.AddTile(TileID.Anvils);
+            recipe2.Register();
         }
 
         public override void ModifyTooltips (List< TooltipLine > tooltips)

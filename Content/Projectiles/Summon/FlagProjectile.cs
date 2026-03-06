@@ -223,12 +223,12 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         protected const int ControlUseTileFlagBit = 5;
         protected const int ControlUseItemFlagBit = 6;
         
-        protected virtual void IssueSentryRecallCommands()
+        protected virtual void IssueSentryRecallCommands(Vector2 RecallCenter)
         {
             List<Projectile> candidateSentries = new List<Projectile>();
             foreach (Projectile proj in Main.projectile)
             {
-                if (proj.active && proj.owner == Projectile.owner && proj.sentry && (proj.Center - Projectile.Center).Length() <= SENTRY_RECALL_MAX_DIST)
+                if (proj.active && proj.owner == Projectile.owner && proj.sentry && (proj.Center - RecallCenter).Length() <= SENTRY_RECALL_MAX_DIST)
                 {
                     candidateSentries.Add(proj);
                 }
@@ -247,8 +247,8 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             {
                 Projectile sentry = candidateSentries[i];
                 float localX = sentryCount == 1 ? 0f : (float)i / (float)(sentryCount - 1) * totalLength - totalLength / 2f;
-                float preciseX = Projectile.Center.X + localX * ranDir;
-                float preciseY = Projectile.Center.Y - SENTRY_RECALL_TARGET_OFFSET;
+                float preciseX = RecallCenter.X + localX * ranDir;
+                float preciseY = RecallCenter.Y - SENTRY_RECALL_TARGET_OFFSET;
                 float randomSeed = Main.rand.NextFloat(-SENTRY_RANDOM_OFFSET, SENTRY_RANDOM_OFFSET);
                 float x = preciseX + randomSeed;
                 float y = preciseY + randomSeed;
@@ -697,7 +697,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                     {
                         if (Projectile.owner == Main.myPlayer)
                         {
-                            IssueSentryRecallCommands();
+                            IssueSentryRecallCommands(Projectile.Center);
                         }
 
                         // reset buff

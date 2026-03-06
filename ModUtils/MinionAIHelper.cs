@@ -460,9 +460,10 @@ namespace SummonerExpansionMod.ModUtils
 			for (int tick = 0; tick < maxPredictionTicks; tick += tickStep)
 			{
 				Vector2 targetPredictedPos = targetCenter + targetVelocity * tick;
-				predictedPos = targetPredictedPos;
 
 				if(Collision.SolidCollision(targetPredictedPos, 1, 1)) continue;
+
+				predictedPos = targetPredictedPos;
 
 				float bulletFlyTime = Vector2.Distance(projectileCenter, targetPredictedPos) / bulletSpeed;
 

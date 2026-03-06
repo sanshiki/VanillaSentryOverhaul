@@ -22,7 +22,7 @@ namespace SummonerExpansionMod.Content.NPCs
     {
         public override void ModifyNPCLoot(NPC npc, NPCLoot npcLoot)
         {
-            if(npc.type == NPCID.CursedSkull)
+            if(npc.type == NPCID.DarkCaster)
             {
                 npcLoot.Add(
                     ItemDropRule.Common(
@@ -61,7 +61,7 @@ namespace SummonerExpansionMod.Content.NPCs
                 npcLoot.Add(
                     ItemDropRule.Common(
                         ModContent.ItemType<PirateFlag>(),
-                        (int)(1f / 0.25f),  // drop rate 
+                        (int)(1f / 0.5f),  // drop rate 
                         1, // min count
                         1 // max count
                     )

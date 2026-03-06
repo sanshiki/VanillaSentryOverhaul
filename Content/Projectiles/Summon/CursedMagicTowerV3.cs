@@ -168,7 +168,8 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             }
             Projectile.netUpdate = true;
 
-            SoundEngine.PlaySound(SoundID.Item43, Projectile.Center);
+            SoundStyle style = new SoundStyle("Terraria/Sounds/Item_43") with { Volume = .8f, };
+            SoundEngine.PlaySound(style, Projectile.Center);
         }
 
         private void TryTeleportNearPlayer(Player player)
