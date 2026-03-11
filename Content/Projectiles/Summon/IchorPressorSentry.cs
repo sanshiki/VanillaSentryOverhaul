@@ -27,7 +27,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         private const int PRESS_TIME = 5;
         private const int SHOOT_TIME = 6;
         private const int RELEASE_TIME = 5;
-        private const int NORMAL_FRAME_SPEED = 20;
+        private const int NORMAL_FRAME_SPEED = 30;
         private const int SHOOT_FRAME_SPEED = 2;
         private const int MAX_BULLET_NUM = 3;
 

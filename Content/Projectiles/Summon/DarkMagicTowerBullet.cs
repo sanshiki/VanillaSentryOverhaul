@@ -51,16 +51,18 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             // You need to set position depending on what you are doing. You may need to subtract width/2 and height/2 as well to center the spawn rectangle.
             Vector2 position = Projectile.Center - Projectile.Size/2f;
             float ang_offset = MinionAIHelper.RandomFloat(-ModGlobal.PI_FLOAT/32f, ModGlobal.PI_FLOAT/32f);
-            dust = Main.dust[Terraria.Dust.NewDust(position, Projectile.width, Projectile.height, 109, Projectile.velocity.X*0.3f, Projectile.velocity.Y*0.3f, 0, new Color(255,255,255), 1.4534883f)];
+            // dust = Main.dust[Terraria.Dust.NewDust(position, Projectile.width, Projectile.height, 109, Projectile.velocity.X*0.3f, Projectile.velocity.Y*0.3f, 0, new Color(255,255,255), 1.4534883f)];
+            dust = Main.dust[Terraria.Dust.NewDust(position, Projectile.width, Projectile.height, 109, 0, 0, 0, new Color(255,255,255), 1.4534883f)];
             dust.noGravity = true;
             dust.fadeIn = 1.4f;
-            dust.velocity = Projectile.velocity.RotatedBy(ang_offset) * 0.7f;
+            // dust.velocity = Projectile.velocity.RotatedBy(ang_offset) * 0.7f;
 
             ang_offset = MinionAIHelper.RandomFloat(-ModGlobal.PI_FLOAT/32f, ModGlobal.PI_FLOAT/32f);
-            dust = Main.dust[Terraria.Dust.NewDust(position, Projectile.width, Projectile.height, 172, Projectile.velocity.X*0.3f, Projectile.velocity.Y*0.3f, 0, new Color(255,255,255), 1.0f)];
+            // dust = Main.dust[Terraria.Dust.NewDust(position, Projectile.width, Projectile.height, 172, Projectile.velocity.X*0.3f, Projectile.velocity.Y*0.3f, 0, new Color(255,255,255), 1.0f)];
+            dust = Main.dust[Terraria.Dust.NewDust(position, Projectile.width, Projectile.height, 172, 0, 0, 0, new Color(255,255,255), 1.0f)];
             dust.noGravity = true;
             dust.fadeIn = 1.4f;
-            dust.velocity = Projectile.velocity.RotatedBy(ang_offset) * 0.7f;
+            // dust.velocity = Projectile.velocity.RotatedBy(ang_offset) * 0.7f;
 
             
 

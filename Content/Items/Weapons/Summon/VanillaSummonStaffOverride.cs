@@ -33,10 +33,10 @@ namespace SummonerExpansionMod.Content.Items.Weapons.Summon
             {
                 item.damage = 60;
             }
-            if (item.type == ItemID.DD2FlameburstTowerT2Popper)
-            {
-                item.damage = 50;
-            }
+            // if (item.type == ItemID.DD2FlameburstTowerT2Popper)
+            // {
+            //     item.damage = 50;
+            // }
 
         }
     }

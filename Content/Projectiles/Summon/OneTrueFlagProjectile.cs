@@ -14,6 +14,7 @@ using SummonerExpansionMod.Content.Items.Weapons.Summon;
 using SummonerExpansionMod.Content.Buffs.Summon;
 using SummonerExpansionMod.Initialization;
 using SummonerExpansionMod.ModUtils;
+using SummonerExpansionMod.Content.Items.Accessories;
 
 namespace SummonerExpansionMod.Content.Projectiles.Summon
 {
@@ -117,7 +118,8 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                     }
                 }
 
-                if(player.GetModPlayer<OneTrueFlagAutoRecallPlayer>().hasAutoRecall && !HasCheckedAutoRecall)
+                SentryAnchorPlayer anchorPlayer = player.GetModPlayer<SentryAnchorPlayer>();
+                if(player.GetModPlayer<OneTrueFlagAutoRecallPlayer>().hasAutoRecall && !HasCheckedAutoRecall && !anchorPlayer.HasLockedSentryAnchor && player.HasBuff(ModBuffID.OneTrueFlagBuff))
                 {
                     bool needRecall = false;
                     for(int i = 0;i < Main.maxProjectiles; i++)

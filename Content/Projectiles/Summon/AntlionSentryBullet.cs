@@ -163,7 +163,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         {
             bool hasSplit = Projectile.ai[0] == 0f ? false : true;
             
-            if(!MinionAIHelper.IsServer())
+            if(!MinionAIHelper.IsServer() || Main.netMode == NetmodeID.SinglePlayer)
             {
                 if(hasSplit)
                 {

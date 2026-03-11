@@ -186,7 +186,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 
     public class FlameburstShotT1Override : FlameburstShotOverride
     {
-        protected override float HOMING_RANGE => 500f;
+        protected override float HOMING_RANGE => 300f;
         protected override float CONTROL_P => 0.15f;
         protected override float CONTROL_D => 0.01f;
         protected override float MAX_TURN_SPEED => 0.02f;
@@ -284,7 +284,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 
     public class FlameburstShotT2Override : FlameburstShotOverride
     {
-        protected override float HOMING_RANGE => 750f;
+        protected override float HOMING_RANGE => 450f;
         protected override float CONTROL_P => 0.15f;
         protected override float CONTROL_D => 0.1f;
         protected override float MAX_TURN_SPEED => 0.08f;
@@ -380,7 +380,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
 
     public class FlameburstShotT3Override : FlameburstShotOverride
     {
-        protected override float HOMING_RANGE => 1000f;
+        protected override float HOMING_RANGE => 750f;
         protected override float CONTROL_P => 3f;
         protected override float CONTROL_D => 0.2f;
         protected override float MAX_TURN_SPEED => 3.0f;

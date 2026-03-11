@@ -147,6 +147,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         protected const int TAIL_BLEND_STATE_ALPHABLEND = 0;
         protected const int TAIL_BLEND_STATE_ADDITIVE = 1;
         protected const int TAIL_BLEND_STATE_NONPREMULTIPLIED = 2;
+        protected const int TAIL_BLEND_STATE_OPAQUE = 3;
         protected virtual int TAIL_BLEND_STATE => 0;
 
         /* ------------------------- Buff Constants ------------------------- */
@@ -1026,7 +1027,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             return center + offset.RotatedBy(rotation);
         }
 
-        protected void PredrawFlagClothDynamicVertices(ref Color lightColor, Vector2 ClothCenter)
+        protected virtual void PredrawFlagClothDynamicVertices(ref Color lightColor, Vector2 ClothCenter)
         {
             Player player = Main.player[Projectile.owner];
             SpriteBatch sb = Main.spriteBatch;
@@ -1157,6 +1158,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             BlendState TailBlendState = BlendState.AlphaBlend;
             if(TAIL_BLEND_STATE == TAIL_BLEND_STATE_ADDITIVE) TailBlendState = BlendState.Additive;
             if(TAIL_BLEND_STATE == TAIL_BLEND_STATE_NONPREMULTIPLIED) TailBlendState = BlendState.NonPremultiplied;
+            if(TAIL_BLEND_STATE == TAIL_BLEND_STATE_OPAQUE) TailBlendState = BlendState.Opaque;
 
             sb.End();
             sb.Begin(SpriteSortMode.Immediate, TailBlendState, SamplerState.AnisotropicClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);

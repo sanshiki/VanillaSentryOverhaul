@@ -36,8 +36,8 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         private const bool USE_PREDICTION = true;
 
         // sentry parameters
-        private const float REAL_BULLET_SPEED = 80f;
-        private const float PRED_BULLET_SPEED = 65f;
+        private const float REAL_BULLET_SPEED = 16f * 8;
+        private const float PRED_BULLET_SPEED = 16f * 8;
 
         // buff constants
         private const float ENHANCEMENT_FACTOR = 0.75f;
