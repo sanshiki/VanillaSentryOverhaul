@@ -48,6 +48,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             NPC.noTileCollide = true;
             NPC.aiStyle = -1;
             NPC.dontTakeDamageFromHostiles = true;
+            NPC.chaseable = false;
         }
 
         public override void AI()
@@ -80,6 +81,16 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                 Dying = true;
                 NPC.netUpdate = true;
             }
+
+            if (owner.dashDelay != 0 && owner.dashType == 2)
+            {
+                NPC.dontTakeDamage = true;
+            }
+            else
+            {
+                NPC.dontTakeDamage = false;
+            }
+            // Main.NewText("dashDelay: " + owner.dashDelay + " dashType: " + owner.dashType + " dontTakeDamage: " + NPC.dontTakeDamage);
 
             UpdateAnimation();
 
@@ -198,13 +209,19 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             // 只允许玩家的鞭子触发
             if (projectile.owner == ownerId &&
                 projectile.DamageType == DamageClass.SummonMeleeSpeed)
-            {
                 return true;
-            }
-            else
-            {
-                return false;
-            }
+            return false;
+        }
+
+        public override bool? CanCollideWithPlayerMeleeAttack(Player player, Item item, Rectangle meleeAttackHitbox)
+        {
+            return false;
+        }
+
+
+        public override bool? CanBeHitByItem(Player player, Item item)
+        {
+            return false;
         }
 
         public override void ModifyIncomingHit(ref NPC.HitModifiers modifiers)
