@@ -43,6 +43,7 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         private const float MAX_RANGE = 1100f;
 
         private const int SHOOT_INTERVAL = 5;
+        private const int NET_SYNC_INTERVAL = 20;
         private const int SPAWN_TIME = 2*26;
 
         // gravity
@@ -52,6 +53,9 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
         // damage
         private const int DEFENSE_TO_IGNORE = 20;
         private const float WHIP_DAGGER_DECAY = 0.5f;
+
+        /* ------------------ variables ------------------  */
+        private int netSyncHeartBeat = 0;
 
         public override void SetStaticDefaults()
         {
@@ -133,6 +137,12 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
             if (target != null && spawnTimer > SPAWN_TIME)
             {
                 shootTimer++;
+                netSyncHeartBeat++;
+                if(netSyncHeartBeat >= NET_SYNC_INTERVAL)
+                {
+                    netSyncHeartBeat = 0;
+                    MinionAIHelper.SetProjectileNetUpdate(Projectile);
+                }
 
                 int shootInterval = SHOOT_INTERVAL;
 
@@ -183,8 +193,6 @@ namespace SummonerExpansionMod.Content.Projectiles.Summon
                     }
 
                     shootTimer = 0; // Reset shoot animation
-
-                    Projectile.netUpdate = true;
 
                     SoundStyle style = new SoundStyle("Terraria/Sounds/Item_41") with { Volume = .49f, };
                     SoundEngine.PlaySound(style, Projectile.Center);
